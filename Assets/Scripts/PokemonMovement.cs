@@ -17,6 +17,8 @@ public class PokemonMovement : MonoBehaviour
     public GameObject[,] tileMap; // Suponiendo que es un arreglo 2D de tiles
 
     public Material grayMaterial;
+    public Material blueMaterial; // Nuevo material azul
+
     public Material originalMaterial;
     public GameObject tilePrefab;
     List<GameObject> instantiatedTiles = new List<GameObject>(); // Lista para almacenar los tiles instanciados
@@ -353,11 +355,40 @@ private IEnumerator MoveVertically(Vector3 targetTile)
 
 
 
-    void ShowTrajectory(Vector3 targetTile)
+    private void ShowTrajectory(Vector3 targetTile)
     {
-        // Dibuja una línea desde el Pokémon hasta el tile objetivo
-        Debug.DrawLine(pokemon.transform.position, targetTile, Color.red, 1.0f); // Dibuja una línea roja
+        // Cambiar el material de los tiles en la trayectoria a azul
+        List<Vector3> path = CalculatePath(pokemon.transform.position, targetTile);
+
+        if (path != null && path.Count > 0)
+        {
+            foreach (var tilePosition in path)
+            {
+                // Asumiendo que los tiles están instanciados como GameObjects
+                GameObject tile = GetTileAtPosition(tilePosition);
+                if (tile != null)
+                {
+                    tile.GetComponent<Renderer>().sharedMaterial = blueMaterial; // Cambia a material azul
+                }
+            }
+        }
     }
+
+    private GameObject GetTileAtPosition(Vector3 position)
+    {
+        // Suponiendo que el tileMap es un arreglo 2D que tiene las referencias a los tiles instanciados
+        int x = Mathf.FloorToInt(position.x);
+        int y = Mathf.FloorToInt(position.y);
+
+        if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight)
+        {
+            return tileMap[x, y]; // Devuelve el GameObject correspondiente al tile
+        }
+
+        return null;
+    }
+
+
 
     // Lógica para calcular los tiles a los que se puede mover usando BFS
 private void CalculateMoveableTiles()

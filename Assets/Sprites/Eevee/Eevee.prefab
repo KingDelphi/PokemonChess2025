@@ -29,13 +29,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7563041121663411961}
+  serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 3.5, y: 0.5, z: -1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &7563041121663411943
 SpriteRenderer:
@@ -109,6 +109,7 @@ Animator:
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!114 &-5235967078421513330
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -127,6 +128,8 @@ MonoBehaviour:
   type2: 
   height: 0
   weight: 0
+  c: 0
+  k: 0
   description: 
   abilities: []
   catchRate: 0
@@ -214,8 +217,10 @@ MonoBehaviour:
   mapWidth: 7
   mapHeight: 7
   grayMaterial: {fileID: 2100000, guid: 0c92df0052b384884b96880c3ee68012, type: 2}
+  blueMaterial: {fileID: 2100000, guid: feffdaf60b71442c5963b84f8c4b94d2, type: 2}
   originalMaterial: {fileID: 10306, guid: 0000000000000000f000000000000000, type: 0}
   tilePrefab: {fileID: 5120432880678291192, guid: 4b94d22d438ae42869c09b7edff24a4e, type: 3}
+  isMoving: 0
 --- !u!61 &5131944338243765039
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -226,6 +231,25 @@ BoxCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
   m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
