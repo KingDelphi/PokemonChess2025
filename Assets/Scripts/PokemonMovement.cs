@@ -147,30 +147,110 @@ public class PokemonMovement : MonoBehaviour
 {
     initialPosition = pokemon.transform.position;
 
-    // Determinar el número de movimientos
-    int horizontalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.x) - Mathf.FloorToInt(initialPosition.x));
-    int verticalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.y) - Mathf.FloorToInt(initialPosition.y));
-    int totalMoves = horizontalMoves + verticalMoves;
+    // Calcular el camino completo (usando BFS o A*)
+    List<Vector3> path = CalculatePath(initialPosition, targetTile);
 
-    // Calcula el costo total de movimiento
+    if (path == null || path.Count == 0)
+    {
+        Debug.Log("No se pudo encontrar un camino.");
+        return;
+    }
+
+    // Determinar el costo del movimiento
+    int totalMoves = path.Count - 1; // Restamos 1 porque la posición inicial no cuenta como movimiento
     int moveCost = CalculateMoveCost(totalMoves, weight);
 
-    // Almacena los puntos de acción iniciales
-    int initialActionPoints = actionPoints;
-
-    Debug.Log($"Total Moves: {totalMoves}, Move Cost: {moveCost}, Initial Action Points: {initialActionPoints}, Action Points Available: {actionPoints}");
-
-    // Verifica si hay suficientes puntos de acción para mover
     if (actionPoints >= moveCost)
     {
         DestroyMoveableTiles();
-        StartCoroutine(MovePokemon(initialPosition, targetTile, moveCost));
+        StartCoroutine(MoveAlongPath(path, moveCost)); // Mueve a través del camino
     }
     else
     {
         Debug.Log("No hay suficientes puntos de acción para mover.");
     }
 }
+
+// Método para mover al Pokémon a lo largo del camino completo
+private IEnumerator MoveAlongPath(List<Vector3> path, int moveCost)
+{
+    if (isMoving) yield break;
+
+    isMoving = true;
+
+    // Recorremos cada tile en la ruta calculada
+    for (int i = 1; i < path.Count; i++) // Comienza en 1 porque la primera posición es la actual
+    {
+        Vector3 nextTile = path[i];
+        while (Vector3.Distance(pokemon.transform.position, nextTile) > 0.1f)
+        {
+            pokemon.transform.position = Vector3.MoveTowards(pokemon.transform.position, nextTile, moveSpeed * Time.deltaTime);
+            yield return null;
+        }
+
+        pokemon.transform.position = nextTile; // Asegura que el Pokémon esté exactamente en el tile
+    }
+
+    actionPoints -= moveCost; // Resta el costo del movimiento de los puntos de acción
+    isMoving = false;
+}
+
+private List<Vector3> CalculatePath(Vector3 start, Vector3 target)
+{
+    Queue<Vector3> queue = new Queue<Vector3>();
+    Dictionary<Vector3, Vector3> cameFrom = new Dictionary<Vector3, Vector3>(); // Para reconstruir el camino
+    HashSet<Vector3> visited = new HashSet<Vector3>();
+
+    queue.Enqueue(start);
+    visited.Add(start);
+    cameFrom[start] = start;
+
+    while (queue.Count > 0)
+    {
+        Vector3 currentTile = queue.Dequeue();
+
+        if (currentTile == target)
+        {
+            // Si hemos llegado al objetivo, reconstruimos el camino
+            return ReconstructPath(cameFrom, start, target);
+        }
+
+        // Exploramos los tiles adyacentes
+        foreach (Vector3 direction in new Vector3[] { Vector3.left, Vector3.right, Vector3.up, Vector3.down })
+        {
+            Vector3 neighborTile = currentTile + direction;
+
+            if (IsWithinMapBounds(neighborTile) && !visited.Contains(neighborTile) && !IsTileBlocked(neighborTile))
+            {
+                queue.Enqueue(neighborTile);
+                visited.Add(neighborTile);
+                cameFrom[neighborTile] = currentTile; // Guardamos de dónde venimos
+            }
+        }
+    }
+
+    // Si no se encuentra un camino, devolvemos null
+    return null;
+}
+
+// Método para reconstruir el camino desde el objetivo hasta el inicio
+private List<Vector3> ReconstructPath(Dictionary<Vector3, Vector3> cameFrom, Vector3 start, Vector3 target)
+{
+    List<Vector3> path = new List<Vector3>();
+    Vector3 currentTile = target;
+
+    while (currentTile != start)
+    {
+        path.Add(currentTile);
+        currentTile = cameFrom[currentTile];
+    }
+
+    path.Add(start); // Agregamos el inicio
+    path.Reverse(); // Invertimos la lista para que vaya del inicio al objetivo
+
+    return path;
+}
+
 
 
 
@@ -179,14 +259,10 @@ public class PokemonMovement : MonoBehaviour
 // Coroutine para mover al Pokémon
 private IEnumerator MovePokemon(Vector3 initialPosition, Vector3 targetTile, int moveCost)
 {
-    // Verifica si la coroutine ya está en ejecución
-    if (isMoving) {
-    Debug.Log("Ya se está moviendo, no se puede realizar otro movimiento.");
-        yield break; // Sale si ya está en movimiento
-    }
-    
-    isMoving = true; // Marca como en movimiento
-    
+    if (isMoving) yield break;
+
+    isMoving = true;
+
     // Mover horizontalmente primero
     if (targetTile.x != pokemon.transform.position.x)
     {
@@ -198,7 +274,7 @@ private IEnumerator MovePokemon(Vector3 initialPosition, Vector3 targetTile, int
         }
     }
 
-    // Ahora mover verticalmente
+    // Mover verticalmente después
     if (targetTile.y != pokemon.transform.position.y)
     {
         Vector3 verticalTarget = new Vector3(pokemon.transform.position.x, targetTile.y, pokemon.transform.position.z);
@@ -209,15 +285,12 @@ private IEnumerator MovePokemon(Vector3 initialPosition, Vector3 targetTile, int
         }
     }
 
-    pokemon.transform.position = targetTile; // Asegura que el Pokémon esté exactamente en el tile
+    pokemon.transform.position = targetTile;
 
-Debug.Log($"Reducción de Action Points antes: {actionPoints}");
     actionPoints -= moveCost;
-Debug.Log($"Reducción de Action Points después: {actionPoints}");
-
-    Debug.Log($"Movimiento realizado. Action Points después del movimiento: {actionPoints}");
     isMoving = false;
 }
+
 
 private IEnumerator MoveHorizontally(Vector3 targetTile)
 {
@@ -289,67 +362,51 @@ private IEnumerator MoveVertically(Vector3 targetTile)
     // Lógica para calcular los tiles a los que se puede mover usando BFS
 private void CalculateMoveableTiles()
 {
-    moveableTiles.Clear(); // Limpiar la lista de tiles movibles
-    instantiatedTiles.Clear(); // Limpiar la lista de tiles instanciados
+    moveableTiles.Clear();
+    instantiatedTiles.Clear();
 
-    Queue<Vector3> queue = new Queue<Vector3>(); // Cola para BFS
-    HashSet<Vector3> visited = new HashSet<Vector3>(); // Para rastrear los tiles visitados
+    Queue<Vector3> queue = new Queue<Vector3>();
+    HashSet<Vector3> visited = new HashSet<Vector3>();
 
-    // Agregar la posición inicial a la cola y a la lista de visitados
     queue.Enqueue(currentPokemonPosition);
     visited.Add(currentPokemonPosition);
 
-    // Calcular el costo de movimiento para una casilla
-    int moveCostPerTile = (int)CalculateMoveCost(1, weight); // Aquí puedes mantenerlo así
-    int maxMoves = actionPoints / moveCostPerTile; // Calcular el rango máximo basado en puntos de acción
+    int moveCostPerTile = CalculateMoveCost(1, weight);
+    int maxMoves = actionPoints / moveCostPerTile;
 
     int movesMade = 0;
 
     while (queue.Count > 0 && movesMade < maxMoves)
     {
-        int tilesInCurrentLevel = queue.Count; // Número de tiles en el nivel actual
+        int tilesInCurrentLevel = queue.Count;
 
         for (int i = 0; i < tilesInCurrentLevel; i++)
         {
             Vector3 currentTile = queue.Dequeue();
 
-            // Intenta agregar cada dirección (izquierda, derecha, arriba, abajo)
             foreach (Vector3 direction in new Vector3[] { Vector3.left, Vector3.right, Vector3.up, Vector3.down })
             {
                 Vector3 neighborTile = currentTile + direction;
 
-                // Verifica si la posición está dentro de los límites del mapa
                 if (IsWithinMapBounds(neighborTile) && !visited.Contains(neighborTile))
                 {
-                    // Verifica si hay un objeto bloqueando el tile
                     if (!IsTileBlocked(neighborTile))
                     {
-                        // Calcula el costo de movimiento para este tile
-                        int moveCost = CalculateMoveCost(1, weight); // Usar 1 para indicar el costo de mover a un solo tile
+                        visited.Add(neighborTile);
+                        queue.Enqueue(neighborTile);
 
-                        // Verifica si hay suficientes puntos de acción
-                        if (moveCost <= actionPoints)
-                        {
-                            visited.Add(neighborTile);
-                            queue.Enqueue(neighborTile);
-
-                            // Instancia el tile y agrégalo a la lista de tiles instanciados
-                            GameObject tile = Instantiate(tilePrefab, neighborTile, Quaternion.identity);
-                            instantiatedTiles.Add(tile);
-                            moveableTiles.Add(neighborTile); // Añadir a la lista de tiles movibles
-                        }
-                    }
-                    else
-                    {
-                        // Si hay un objeto, no instanciar ni agregar el tile
+                        GameObject tile = Instantiate(tilePrefab, neighborTile, Quaternion.identity);
+                        instantiatedTiles.Add(tile);
+                        moveableTiles.Add(neighborTile);
                     }
                 }
             }
         }
 
-        movesMade++; // Aumenta el número de movimientos realizados
+        movesMade++;
     }
 }
+
 
 
 
@@ -441,6 +498,26 @@ private bool IsWithinMapBounds(Vector3 position)
         }
     }
 }
+
+void OnDrawGizmos()
+{
+    if (moveableTiles.Contains(lastClickedPosition))
+    {
+        Vector3 currentPosition = pokemon.transform.position;
+        Vector3 direction = lastClickedPosition - currentPosition;
+
+        // Mueve en X primero, luego en Y
+        Vector3 horizontalTarget = new Vector3(lastClickedPosition.x, currentPosition.y, currentPosition.z);
+        Gizmos.color = Color.red;
+
+        // Dibuja línea horizontal
+        Gizmos.DrawLine(currentPosition, horizontalTarget);
+
+        // Dibuja línea vertical
+        Gizmos.DrawLine(horizontalTarget, lastClickedPosition);
+    }
+}
+
 
 
 
