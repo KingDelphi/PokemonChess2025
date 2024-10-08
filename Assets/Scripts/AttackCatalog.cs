@@ -67,9 +67,28 @@ public class AttackCatalog : MonoBehaviour
     public List<TM> tmCatalog; // Lista para almacenar las TMs
     public List<EggMove> eggMoveCatalog;
     public bool isSelectedForAttack;
+    public bool isAttacking;
+    public GameObject attackTilePrefab; // Prefab del tile a instanciar
+    Dictionary<Vector3, TileHover> instantiatedTiles = new Dictionary<Vector3, TileHover>(); // Lista para almacenar los tiles instanciados
+    public Material grayMaterial;
+    public float tileSize = 1f; // Tamaño del tile
+    public int mapWidth = 7; // Ancho del mapa
+    public int mapHeight = 7; // Alto del mapa
+
+    void Start()
+        {
+            instantiatedTiles = new Dictionary<Vector3, TileHover>(); // Inicializa la lista
+
+            // Asegúrate de que este código solo se aplica a los tiles
+            // foreach (var tile in instantiatedTiles.Values)
+            // {
+            //     Renderer tileRenderer = tile.GetComponent<Renderer>();
+            // }
+        }
 
     public void InitializeAttacks()
     {
+        
         allAttacks = new List<Attack>
         {
             // Ejemplos de ataques básicos sin estado alterado
@@ -179,6 +198,25 @@ public class AttackCatalog : MonoBehaviour
         yield return null; // Esperar un cuadro antes de volver a comprobar
     }
 }
+
+// private TileHover GetTileAtPosition(Vector3 position)
+// {
+//     // Asegúrate de que la posición esté dentro de los límites del mapa
+//     if (IsWithinMapBounds(position))
+//     {
+//         TileHover tile = instantiatedTiles[position];
+//         return tile;
+//     }
+
+//     Debug.Log("Position is out of map bounds."); // Mensaje si la posición está fuera de los límites del mapa
+//     return null;
+// }
+
+// public void TargetTileSelected(Vector3 tile)
+//     {
+//         TileHover tileHover = GetTileAtPosition(tile);
+//         tileHover.ChangeColorToRed();
+//     }
 
 public void CancelAttack()
     {
@@ -357,28 +395,89 @@ public int CalculateDamage(Attack attack, PokemonBase attacker, PokemonBase defe
 
 
     public void Tackle(PokemonBase attacker)
+{
+    Debug.Log("Tackle called.");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (cuadrados alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
     {
-        Vector3 attackerPosition = attacker.transform.position;
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0)  // Abajo
+    };
 
-        // Definir los rangos de alcance (cuadrados alrededor del atacante)
-        List<Vector3> attackPositions = new List<Vector3>
-        {
-            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
-            attackerPosition + new Vector3(1, 0, 0),  // Derecha
-            attackerPosition + new Vector3(0, 1, 0),  // Arriba
-            attackerPosition + new Vector3(0, -1, 0)  // Abajo
-        };
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
 
-        // Dibujar los rangos de ataque (esto se puede mejorar con un método de visualización)
-        foreach (var pos in attackPositions)
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
         {
-            // Aquí puedes usar Gizmos o un método de visualización adecuado
-            Debug.DrawLine(attackerPosition, pos, Color.green, 2.0f); // Dibuja una línea verde para mostrar el rango
+            Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+            continue; // Saltar si está fuera de los límites
         }
 
-        // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker));
+        // Instancia el prefab del tile en la posición de ataque
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        Debug.Log($"Instantiated tile at {position}");
+
+        // Obtener el componente TileHover para cambiar el color del tile
+        TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        if (tileAttack != null)
+        {
+            Debug.Log("TileHover found, changing color to orange.");
+            //tileHover.ChangeColorToOrange(); // Cambiar el color del tile a naranja
+        }
+        else
+        {
+            Debug.LogError("TileHover component not found on instantiated tile.");
+        }
     }
+
+    // Ahora, espera la interacción del usuario
+    StartCoroutine(WaitForUserClick(attackPositions, attacker));
+}
+
+// Método que verifica si una posición está dentro de los límites del mapa
+private bool IsWithinMapBounds(Vector3 position)
+{
+    // Convertir la posición a enteros para acceder al índice del arreglo
+    int xIndex = Mathf.FloorToInt(position.x);
+    int yIndex = Mathf.FloorToInt(position.y);
+
+    // Verificar si está dentro de los límites del mapa
+    return xIndex >= 0 && xIndex < mapWidth && yIndex >= 0 && yIndex < mapHeight;
+}
+
+private bool IsTileBlocked(Vector3 position)
+{
+    // Utiliza un área pequeña alrededor de la posición para verificar colisiones
+    Collider2D[] colliders = Physics2D.OverlapBoxAll(position, new Vector2(tileSize, tileSize), 0);
+    foreach (Collider2D collider in colliders)
+    {
+        if (collider.CompareTag("object")) // Cambiar el tag según corresponda
+        {
+            return true; // Hay un objeto bloqueando el tile
+        }
+    }
+    return false; // No hay objetos bloqueando
+}
+
+
+
+
+
+
+
+
 
     // Método para obtener un ataque por su nombre
     public static Attack GetAttackByName(string name)

@@ -42,6 +42,7 @@ public class PokemonBase : MonoBehaviour
     public int actionPoints;
     public AttackCatalog attackCatalog; // Asignar en el Inspector
     public bool isSelectedForAttack = false;
+    public bool isAttacking = false;
 
 
 

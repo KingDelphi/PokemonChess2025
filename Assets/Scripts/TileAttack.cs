@@ -1,9 +1,9 @@
 using UnityEngine;
 
-public class TileHover : MonoBehaviour
+public class TileAttack : MonoBehaviour
 {
-    public Material grayMaterial;   // Material gris original
-    public Material blueMaterial;   // Material azul
+    public Material redMaterial;
+    public Material orangeMaterial;
     private Renderer tileRenderer;   // Referencia al Renderer del tile
 
     void Start()
@@ -14,26 +14,26 @@ public class TileHover : MonoBehaviour
         Debug.LogError("TileRenderer is null in TileHover!");
         return; // Salir si el renderer no está disponible
     }
-    tileRenderer.material = grayMaterial; // Inicializar con el material gris
+    tileRenderer.material = orangeMaterial; // Inicializar con el material gris
 }
 
     private void OnMouseEnter() // Método que se llama cuando el mouse entra en el collider del tile
     {
-        PokemonMovement.currentPokemon.TileEnter(transform.position);
+        ChangeColorToRed();
     }
 
     private void OnMouseExit() // Método que se llama cuando el mouse sale del collider del tile
     {
-        PokemonMovement.currentPokemon.TileExit(transform.position);
+        ChangeColorToOrange();
     }
 
-    public void ChangeColorToBlue()
+    public void ChangeColorToOrange()
     {
-        tileRenderer.material = blueMaterial;
+        tileRenderer.material = orangeMaterial;
     }
 
-    public void ChangeColorToGray()
+    public void ChangeColorToRed()
     {
-        tileRenderer.material = grayMaterial;
+        tileRenderer.material = redMaterial;
     }
 }

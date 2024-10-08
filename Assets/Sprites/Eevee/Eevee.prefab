@@ -189,6 +189,9 @@ MonoBehaviour:
   friendshipLevel: 0
   isDaytime: 0
   actionPoints: 0
+  attackCatalog: {fileID: 0}
+  isSelectedForAttack: 0
+  isAttacking: 0
   hp: 0
   maxHP: 0
   attackSound: {fileID: 8300000, guid: 5261cad35aa7b4850bce4e3a0cdc6462, type: 3}
@@ -213,6 +216,8 @@ MonoBehaviour:
   moveSpeed: 1
   actionPoints: 55
   weight: 6.5
+  c: 0
+  k: 0
   tileSize: 1
   mapWidth: 7
   mapHeight: 7
@@ -281,3 +286,10 @@ MonoBehaviour:
   allAttacks: []
   tmCatalog: []
   eggMoveCatalog: []
+  isSelectedForAttack: 0
+  isAttacking: 0
+  attackTilePrefab: {fileID: 5120432880678291192, guid: 4d0db30ad192b4a47a9a993244ea5d8f, type: 3}
+  grayMaterial: {fileID: 2100000, guid: 0c92df0052b384884b96880c3ee68012, type: 2}
+  tileSize: 1
+  mapWidth: 7
+  mapHeight: 7
