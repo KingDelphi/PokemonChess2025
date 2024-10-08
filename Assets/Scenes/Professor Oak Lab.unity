@@ -252,6 +252,18 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 1148584360422642532, guid: d35ef899a49fb49b8bed687bb3d66c82, type: 3}
+      propertyPath: c
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148584360422642532, guid: d35ef899a49fb49b8bed687bb3d66c82, type: 3}
+      propertyPath: k
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148584360422642532, guid: d35ef899a49fb49b8bed687bb3d66c82, type: 3}
+      propertyPath: weight
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1148584360422642532, guid: d35ef899a49fb49b8bed687bb3d66c82, type: 3}
       propertyPath: tilePrefab
       value: 
       objectReference: {fileID: 5120432880678291192, guid: 4b94d22d438ae42869c09b7edff24a4e, type: 3}

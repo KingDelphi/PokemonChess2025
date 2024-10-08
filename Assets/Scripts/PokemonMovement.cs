@@ -8,6 +8,9 @@ public class PokemonMovement : MonoBehaviour
     public float moveSpeed = 1f; // Velocidad de movimiento
     public int actionPoints; // Puntos de acción
     public float weight; // Peso del Pokémon
+    public float c; // Constante c del Pokemon
+    public float k; // Constante k del Pokemon
+
     private List<Vector3> moveableTiles = new List<Vector3>(); // Tiles a los que se puede mover
     private MapGenerator mapGenerator; // Referencia al MapGenerator
 
@@ -153,7 +156,7 @@ public class PokemonMovement : MonoBehaviour
                         int verticalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.y) - Mathf.FloorToInt(initialPosition.y));
                         int totalMoves = horizontalMoves + verticalMoves; // Total de movimientos
 
-                        int moveCost = CalculateMoveCost(totalMoves, weight); // Calcular el costo del movimiento
+                        int moveCost = CalculateMoveCost(totalMoves, weight, c, k); // Calcular el costo del movimiento
                         if (moveCost <= actionPoints) // Verificar si hay suficientes puntos de acción
                         {
                             MoveToTile(targetTile); // Mover al Pokémon
@@ -287,7 +290,7 @@ private void ResetTrajectory()
 
     // Determinar el costo del movimiento
     int totalMoves = path.Count; // Restamos 1 porque la posición inicial no cuenta como movimiento
-    int moveCost = CalculateMoveCost(totalMoves, weight);
+    int moveCost = CalculateMoveCost(totalMoves, weight, c, k);
 
     if (actionPoints >= moveCost)
     {
@@ -407,9 +410,9 @@ private List<Vector3> ReconstructPath(Dictionary<Vector3, Vector3> cameFrom, Vec
 
 
     // Método para calcular el costo de movimiento
-    int CalculateMoveCost(int totalMoves, float weight)
+    int CalculateMoveCost(int totalMoves, float weight, float c, float k)
     {
-        return (int)(totalMoves * (5 * weight)); // Costo total de movimiento
+        return (int)(totalMoves * (c + k * weight)); // Costo total de movimiento
     }
 
     // Función para obtener un tile basado en su posición en el mapa
@@ -438,7 +441,7 @@ private void CalculateMoveableTiles()
     queue.Enqueue(currentPokemonPosition);
     visited.Add(currentPokemonPosition);
 
-    int moveCostPerTile = CalculateMoveCost(1, weight);
+    int moveCostPerTile = CalculateMoveCost(1, weight, c, k);
     int maxMoves = actionPoints / moveCostPerTile;
 
     int movesMade = 0;
@@ -541,6 +544,8 @@ private bool IsWithinMapBounds(Vector3 position)
             if (clickedPokemon != null)
             {
                 weight = clickedPokemon.weight; // Asigna el peso a la variable de clase
+                c = clickedPokemon.c;
+                k = clickedPokemon.k;
                 CalculateMoveableTiles();
                 areTilesVisible = true; // Actualiza el estado de visibilidad
                 lastClickedPosition = currentPokemonPosition; // Actualiza la última posición clicada
