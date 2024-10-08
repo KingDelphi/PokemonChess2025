@@ -15,7 +15,8 @@ GameObject:
   - component: {fileID: 1148584360422642532}
   - component: {fileID: 5131944338243765039}
   - component: {fileID: 5311896270595114162}
-  m_Layer: 0
+  - component: {fileID: -5293496181939320997}
+  m_Layer: 6
   m_Name: Eevee
   m_TagString: pokemon
   m_Icon: {fileID: 0}
@@ -192,14 +193,16 @@ MonoBehaviour:
   attackCatalog: {fileID: 0}
   isSelectedForAttack: 0
   isAttacking: 0
-  hp: 0
-  maxHP: 0
+  playerPokemon: 0
+  npcPokemon: 0
   attackSound: {fileID: 8300000, guid: 5261cad35aa7b4850bce4e3a0cdc6462, type: 3}
   damageSound: {fileID: 8300000, guid: 546607d8d3a3143d18c6a23d8691496d, type: 3}
   healSound: {fileID: 8300000, guid: a38d7ca0dbcc742528f304a11e1481a3, type: 3}
   levelUpSound: {fileID: 8300000, guid: 7a4e2ac528ea0401b930a6db6717b612, type: 3}
   evolveSound: {fileID: 8300000, guid: 9a2bbfb0786774ecc81ac521ad152555, type: 3}
   tauntSound: {fileID: 8300000, guid: bc93bcd5c4d3f4b45a2895c31c98dce9, type: 3}
+  hp: 0
+  maxHP: 0
 --- !u!114 &1148584360422642532
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -255,7 +258,7 @@ BoxCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
@@ -293,3 +296,99 @@ MonoBehaviour:
   tileSize: 1
   mapWidth: 7
   mapHeight: 7
+--- !u!82 &-5293496181939320997
+AudioSource:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7563041121663411961}
+  m_Enabled: 1
+  serializedVersion: 4
+  OutputAudioMixerGroup: {fileID: 0}
+  m_audioClip: {fileID: 0}
+  m_PlayOnAwake: 0
+  m_Volume: 1
+  m_Pitch: 1
+  Loop: 0
+  Mute: 0
+  Spatialize: 0
+  SpatializePostEffects: 0
+  Priority: 128
+  DopplerLevel: 1
+  MinDistance: 1
+  MaxDistance: 500
+  Pan2D: 0
+  rolloffMode: 0
+  BypassEffects: 0
+  BypassListenerEffects: 0
+  BypassReverbZones: 0
+  rolloffCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  panLevelCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  spreadCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  reverbZoneMixCustomCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4

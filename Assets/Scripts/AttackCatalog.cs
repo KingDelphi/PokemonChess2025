@@ -163,41 +163,7 @@ public class AttackCatalog : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitForUserClick(List<Vector3> attackPositions, PokemonBase attacker)
-{
-    // Esperar hasta que el usuario haga clic en una de las posiciones
-    while (true)
-    {
-        if (Input.GetMouseButtonDown(0)) // Clic izquierdo del mouse
-        {
-            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
-            if (hit.collider != null)
-            {
-                PokemonBase defender = hit.transform.GetComponent<PokemonBase>();
-                // Comprobar si el clic es en un Pokémon y no en el mismo atacante
-                if (defender != null && defender != attacker)
-                {
-                    // Comprobar si el clic está dentro de las posiciones de ataque
-                    foreach (var position in attackPositions)
-                    {
-                        if (Vector3.Distance(hit.transform.position, position) < 0.5f) // Comprobar si está dentro de un rango cercano
-                        {
-                            // Indicar que este Pokémon ha sido seleccionado para el ataque
-                            defender.isSelectedForAttack = true;
-
-                            // Ejecutar el ataque Tackle
-                            ApplyAttack(attacker, defender, GetAttackByName("Tackle"));
-                            this.CancelAttack(); // Cancela el modo de ataque
-                            yield break; // Salir del bucle
-                        }
-                    }
-                }
-            }
-        }
-
-        yield return null; // Esperar un cuadro antes de volver a comprobar
-    }
-}
+    
 
 // private TileHover GetTileAtPosition(Vector3 position)
 // {
@@ -427,24 +393,168 @@ public int CalculateDamage(Attack attack, PokemonBase attacker, PokemonBase defe
 
         // Instancia el prefab del tile en la posición de ataque
         GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
-        Debug.Log($"Instantiated tile at {position}");
+        //Debug.Log($"Instantiated tile at {position}");
 
         // Obtener el componente TileHover para cambiar el color del tile
         TileAttack tileAttack = tile.GetComponent<TileAttack>();
         if (tileAttack != null)
         {
-            Debug.Log("TileHover found, changing color to orange.");
-            //tileHover.ChangeColorToOrange(); // Cambiar el color del tile a naranja
+            //Debug.Log("TileAttack found, changing color to orange.");
         }
         else
         {
-            Debug.LogError("TileHover component not found on instantiated tile.");
+            Debug.LogError("TileAttack component not found on instantiated tile.");
         }
     }
 
     // Ahora, espera la interacción del usuario
     StartCoroutine(WaitForUserClick(attackPositions, attacker));
 }
+
+private IEnumerator WaitForUserClick(List<Vector3> attackPositions, PokemonBase attacker)
+{
+    Debug.Log("WaitForUserClick called.");
+    int pokemonLayerMask = LayerMask.GetMask("pokemon"); // Asegúrate de que "pokemon" sea el nombre exacto de la capa.
+
+    // Esperar hasta que el usuario haga clic en una de las posiciones
+    while (true)
+    {
+        if (Input.GetMouseButtonDown(0)) // Clic izquierdo del mouse
+        {
+            Debug.Log("Mouse button clicked.");
+            Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            mousePosition.z = 0; // Asegúrate de que la z sea 0 para la detección de colisiones.
+
+            RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero, Mathf.Infinity, pokemonLayerMask);
+            if (hit.collider != null) // Verifica que se haya detectado un collider
+            {
+                Debug.Log($"Hit detected: {hit.collider.name}");
+
+                // Usar hit.collider para acceder al GameObject
+                if (hit.collider.CompareTag("pokemon"))
+                {
+                    PokemonBase defender = hit.collider.GetComponent<PokemonBase>(); // Cambié hit.transform a hit.collider
+
+                    // Comprobar si el clic es en un Pokémon y no en el mismo atacante
+                    if (defender != null && defender != attacker)
+                    {
+                        Debug.Log("Defender found and it's not the attacker.");
+
+                        // Comprobar si el clic está dentro de las posiciones de ataque
+                        foreach (var position in attackPositions)
+                        {
+                            if (Vector3.Distance(hit.transform.position, position) < 0.5f) // Comprobar si está dentro de un rango cercano
+                            {
+                                Debug.Log("Playing attack sound.");
+                                attacker.Attack();
+
+                                // Indicar que este Pokémon ha sido seleccionado para el ataque
+                                defender.isSelectedForAttack = true;
+
+                                // Guardar las posiciones originales
+                                Vector3 originalAttackerPosition = attacker.transform.position;
+                                Vector3 originalDefenderPosition = defender.transform.position;
+
+                                Debug.Log("Moving attacker to defender position.");
+                                // Mover el atacante hacia el defensor
+                                yield return StartCoroutine(MovePokemon(attacker, position));
+
+                                Debug.Log("Pushing defender away.");
+                                // Empujar al defensor
+                                yield return StartCoroutine(PushPokemon(defender, originalAttackerPosition));
+
+                                Debug.Log("Returning attacker to original position.");
+                                // Regresar el atacante a su posición original
+                                yield return StartCoroutine(MovePokemon(attacker, originalAttackerPosition));
+
+                                Debug.Log("Returning defender to original position.");
+                                // Regresar el defensor a su posición original
+                                defender.transform.position = originalDefenderPosition;
+
+                                Debug.Log("Executing attack.");
+                                // Ejecutar el ataque Tackle
+                                ApplyAttack(attacker, defender, GetAttackByName("Tackle"));
+                                this.CancelAttack(); // Cancela el modo de ataque
+                                yield break; // Salir del bucle
+                            }
+                        }
+                        Debug.Log("Clicked position is not valid for attack.");
+                    }
+                    else
+                    {
+                        Debug.Log("Clicked on the same attacker or no defender found.");
+                    }
+                }
+                else
+                {
+                    Debug.Log("Hit object is not a Pokémon.");
+                }
+            }
+            else
+            {
+                Debug.Log("No collider hit.");
+            }
+        }
+
+        yield return null; // Esperar un cuadro antes de volver a comprobar
+    }
+}
+
+
+
+
+
+// Coroutine para mover un Pokémon a una posición objetivo
+private IEnumerator MovePokemon(PokemonBase pokemon, Vector3 targetPosition, float stopDistance = 0.5f)
+{
+    Debug.Log("MovePokemon called.");
+    float moveDuration = 0.5f; // Duración del movimiento
+    float elapsedTime = 0f;
+
+    Vector3 originalPosition = pokemon.transform.position;
+
+    // Calcular la distancia entre la posición original y la posición objetivo
+    float totalDistance = Vector3.Distance(originalPosition, targetPosition);
+
+    // Calcular la nueva posición donde el Pokémon debe detenerse (parcialmente hacia el objetivo)
+    Vector3 stopPosition = Vector3.Lerp(originalPosition, targetPosition, stopDistance / totalDistance);
+
+    while (elapsedTime < moveDuration)
+    {
+        // Mover el Pokémon hacia la posición donde debe detenerse
+        pokemon.transform.position = Vector3.Lerp(originalPosition, stopPosition, (elapsedTime / moveDuration));
+        elapsedTime += Time.deltaTime;
+        yield return null; // Esperar el siguiente frame
+    }
+
+    // Asegurarse de que el Pokémon llegue a la posición de detención
+    pokemon.transform.position = stopPosition;
+}
+
+
+// Coroutine para empujar un Pokémon en la dirección opuesta al ataque
+private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPosition)
+{
+    Debug.Log("PushPokemon called.");
+    float pushDuration = 0.3f; // Duración del empuje
+    float pushDistance = 0.3f; // Distancia a empujar
+    Vector3 originalPosition = defender.transform.position;
+
+    // Calcular la dirección opuesta al atacante
+    Vector3 pushDirection = (defender.transform.position - attackerOriginalPosition).normalized;
+
+    float elapsedTime = 0f;
+    while (elapsedTime < pushDuration)
+    {
+        defender.transform.position = Vector3.Lerp(originalPosition, originalPosition + pushDirection * pushDistance, (elapsedTime / pushDuration));
+        elapsedTime += Time.deltaTime;
+        yield return null; // Esperar el siguiente frame
+    }
+
+    // Asegurarse de que el defensor regrese a su posición original
+    defender.transform.position = originalPosition;
+}
+
 
 // Método que verifica si una posición está dentro de los límites del mapa
 private bool IsWithinMapBounds(Vector3 position)

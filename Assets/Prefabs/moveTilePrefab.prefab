@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 4854286114829405610}
   - component: {fileID: 8728684697779230120}
   - component: {fileID: 4846467462310536913}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: moveTilePrefab
   m_TagString: tile
   m_Icon: {fileID: 0}
@@ -145,5 +145,3 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   grayMaterial: {fileID: 2100000, guid: 0c92df0052b384884b96880c3ee68012, type: 2}
   blueMaterial: {fileID: 2100000, guid: feffdaf60b71442c5963b84f8c4b94d2, type: 2}
-  redMaterial: {fileID: 2100000, guid: 17221e986befd4a12b817b9d68e8fad6, type: 2}
-  orangeMaterial: {fileID: 2100000, guid: feeb4e3a6f0814099805ea710a0c3739, type: 2}

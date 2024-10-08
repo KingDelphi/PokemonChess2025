@@ -46,8 +46,13 @@ public class GameManager : MonoBehaviour
         // Asegúrate de que pokemonPrefab está asignado correctamente
             if (playerPokemonPrefab != null && npcPokemonPrefab != null)
             {
-                Instantiate(playerPokemonPrefab, new Vector3 (3.5f, 0.5f, -1), Quaternion.identity); 
-                Instantiate(npcPokemonPrefab, new Vector3 (3.5f, 5.5f, -1), Quaternion.identity);
+                // Instanciar Pokemon del jugador
+                PokemonBase playerPokemon = Instantiate(playerPokemonPrefab, new Vector3(3.5f, 0.5f, -1), Quaternion.identity);
+                playerPokemon.GetComponent<PokemonBase>().playerPokemon = true; // Activar el bool para el Pokémon del jugador
+
+                // Instanciar Pokemon del NPC
+                PokemonBase npcPokemon = Instantiate(npcPokemonPrefab, new Vector3(3.5f, 1.5f, -1), Quaternion.identity);
+                npcPokemon.GetComponent<PokemonBase>().npcPokemon = true; // Activar el bool para el Pokémon del NPC
             }
             else
             {

@@ -5,6 +5,9 @@ public class Eevee : PokemonBase
 {
     public override void Awake()
     {
+        attackCatalog = FindObjectOfType<AttackCatalog>();
+        audioSource = GetComponent<AudioSource>();
+        
         stats.level = 1;
         // Define Eevee's stats
         stats = new Stats
@@ -25,6 +28,14 @@ public class Eevee : PokemonBase
                 spd = 0
             }
         };
+
+        affinity = 50; // Valor inicial de afinidad (puede ser aleatorio o basado en condiciones)
+
+        // Inicialización y asignación de la forma inicial
+        forms = new List<PokemonForm>();
+        // Ejemplo: Agregar formas (deberías hacer esto con los datos específicos de tu Pokémon)
+        AddForms();
+        ChangeForm(0); // Cambia a la forma inicial
     }
     
     void Start()
@@ -110,7 +121,7 @@ public class Eevee : PokemonBase
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.T)) // Presionar la tecla T para atacar
+        if (Input.GetKeyDown(KeyCode.T) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
             AttackCatalog.Instance.Tackle(this); // Aquí this se refiere a la instancia de Eevee
         }

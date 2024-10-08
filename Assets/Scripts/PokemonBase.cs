@@ -43,6 +43,44 @@ public class PokemonBase : MonoBehaviour
     public AttackCatalog attackCatalog; // Asignar en el Inspector
     public bool isSelectedForAttack = false;
     public bool isAttacking = false;
+    public bool playerPokemon = false;
+    public bool npcPokemon = false;
+
+    public AudioSource audioSource;
+    public AudioClip attackSound; // Asegúrate de asignar este clip en el inspector
+    public AudioClip damageSound;
+    public AudioClip healSound;
+    public AudioClip levelUpSound;
+    public AudioClip evolveSound;
+    public AudioClip tauntSound;
+
+    private void PlaySound(AudioClip clip)
+{
+    // Verificar si el AudioSource está correctamente inicializado
+    if (audioSource == null)
+    {
+        Debug.LogError("AudioSource is null! Make sure it is attached to the GameObject.");
+    }
+
+    // Verificar si el clip no es nulo
+    if (clip == null)
+    {
+        Debug.LogError("AudioClip is null! Make sure it is assigned in the Inspector.");
+    }
+
+    // Verifica que ambos no sean nulos antes de reproducir el sonido
+    if (clip != null && audioSource != null) 
+    {
+        Debug.Log("Playing sound: " + clip.name); // Log para ver si se está llamando
+        audioSource.PlayOneShot(clip);
+    }
+    else
+    {
+        Debug.LogError("Audio clip or AudioSource is null!");
+    }
+}
+
+
 
 
 
@@ -79,6 +117,8 @@ public class PokemonBase : MonoBehaviour
     public virtual void Awake()
     {
         attackCatalog = FindObjectOfType<AttackCatalog>();
+        audioSource = GetComponent<AudioSource>(); // Asegúrate de tener un AudioSource en el GameObject
+
         stats.level = 1;
 
         if (stats.hp == 0) stats.hp = 100;  // Solo asigna si no ha sido configurado
@@ -100,8 +140,6 @@ public class PokemonBase : MonoBehaviour
 
     void Start()
     {        
-        audioSource = GetComponent<AudioSource>();
-
         AssignRandomNature(); // Asignar una naturaleza aleatoria al inicializar
         ApplyNature(); // Aplicar la naturaleza a las estadísticas
         AssignRandomIVs();
@@ -550,7 +588,7 @@ public virtual void UseZMove(Attack zMove)
 
 #region Pokemon Multiple Forms Management
 
-private void AddForms()
+public void AddForms()
 {
     // Ejemplo de cómo agregar formas, deberías hacerlo de acuerdo a tus datos
     forms.Add(new PokemonForm("Forma Normal", new Stats { hp = 100, atk = 50, def = 50, spAtk = 50, spDef = 50, spd = 50 }, new List<LearnedAttack>()));
@@ -667,21 +705,7 @@ public void UseItem()
 
 #region Audio & Animations Manager
 
-    private AudioSource audioSource;
-    public AudioClip attackSound;
-    public AudioClip damageSound;
-    public AudioClip healSound;
-    public AudioClip levelUpSound;
-    public AudioClip evolveSound;
-    public AudioClip tauntSound;
-
-    private void PlaySound(AudioClip clip)
-    {
-        if (clip != null)
-        {
-            audioSource.PlayOneShot(clip);
-        }
-    }
+    
 
 #endregion
 
