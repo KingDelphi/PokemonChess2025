@@ -195,6 +195,7 @@ MonoBehaviour:
   isAttacking: 0
   playerPokemon: 0
   npcPokemon: 0
+  audioSource: {fileID: 0}
   attackSound: {fileID: 8300000, guid: 5261cad35aa7b4850bce4e3a0cdc6462, type: 3}
   damageSound: {fileID: 8300000, guid: 546607d8d3a3143d18c6a23d8691496d, type: 3}
   healSound: {fileID: 8300000, guid: a38d7ca0dbcc742528f304a11e1481a3, type: 3}
@@ -296,6 +297,7 @@ MonoBehaviour:
   tileSize: 1
   mapWidth: 7
   mapHeight: 7
+  rainbowExplosionPrefab: {fileID: 100008, guid: 45a042ad00395204ca3f3561c3a05756, type: 3}
 --- !u!82 &-5293496181939320997
 AudioSource:
   m_ObjectHideFlags: 0

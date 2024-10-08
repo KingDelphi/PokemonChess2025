@@ -75,15 +75,11 @@ public class AttackCatalog : MonoBehaviour
     public int mapWidth = 7; // Ancho del mapa
     public int mapHeight = 7; // Alto del mapa
 
+    public GameObject rainbowExplosionPrefab;
+
     void Start()
         {
             instantiatedTiles = new Dictionary<Vector3, TileHover>(); // Inicializa la lista
-
-            // Asegúrate de que este código solo se aplica a los tiles
-            // foreach (var tile in instantiatedTiles.Values)
-            // {
-            //     Renderer tileRenderer = tile.GetComponent<Renderer>();
-            // }
         }
 
     public void InitializeAttacks()
@@ -163,26 +159,6 @@ public class AttackCatalog : MonoBehaviour
         }
     }
 
-    
-
-// private TileHover GetTileAtPosition(Vector3 position)
-// {
-//     // Asegúrate de que la posición esté dentro de los límites del mapa
-//     if (IsWithinMapBounds(position))
-//     {
-//         TileHover tile = instantiatedTiles[position];
-//         return tile;
-//     }
-
-//     Debug.Log("Position is out of map bounds."); // Mensaje si la posición está fuera de los límites del mapa
-//     return null;
-// }
-
-// public void TargetTileSelected(Vector3 tile)
-//     {
-//         TileHover tileHover = GetTileAtPosition(tile);
-//         tileHover.ChangeColorToRed();
-//     }
 
 public void CancelAttack()
     {
@@ -542,6 +518,13 @@ private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPo
 
     // Calcular la dirección opuesta al atacante
     Vector3 pushDirection = (defender.transform.position - attackerOriginalPosition).normalized;
+
+    // Instanciar el prefab
+    Vector3 rainbowExplosionPosition = (attackerOriginalPosition + defender.transform.position) / 2;
+    GameObject explosionInstance = Instantiate(rainbowExplosionPrefab, rainbowExplosionPosition, Quaternion.identity);
+
+    // Destruir el objeto después de 2 segundos (ajusta el tiempo según la duración de la animación)
+    Destroy(explosionInstance, 2f);
 
     float elapsedTime = 0f;
     while (elapsedTime < pushDuration)
