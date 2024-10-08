@@ -21,21 +21,21 @@ public class PokemonMovement : MonoBehaviour
 
     public Material originalMaterial;
     public GameObject tilePrefab;
-    List<GameObject> instantiatedTiles = new List<GameObject>(); // Lista para almacenar los tiles instanciados
-    private bool tilesHighlighted = false;
-    private bool tilesAreActive = false; // Estado inicial, sin tiles activos
-
+    Dictionary<Vector3, TileHover> instantiatedTiles = new Dictionary<Vector3, TileHover>(); // Lista para almacenar los tiles instanciados
     private Vector3 initialPosition;
-    private GameObject initialPositionTile; // Tile instanciado en la posición inicial de Eevee
     private Vector3 currentPokemonPosition;
     private bool areTilesVisible = false; // Para rastrear la visibilidad de los tiles
     private Vector3 lastClickedPosition;
+    private Vector3? lastHoveredTile = null;
+
+    public static PokemonMovement currentPokemon;
+
 
     public bool isMoving;
 
     void Start()
     {
-        instantiatedTiles = new List<GameObject>(); // Inicializa la lista
+        instantiatedTiles = new Dictionary<Vector3, TileHover>(); // Inicializa la lista
         StartCoroutine(InitializePokemonMovement());
         originalMaterial = tilePrefab.GetComponent<Renderer>().sharedMaterial; // Cambiado a sharedMaterial
     }
@@ -68,7 +68,7 @@ public class PokemonMovement : MonoBehaviour
         grayMaterial.color = new Color(0.6f, 0.6f, 0.6f); // Gris claro
 
         // Inicializa los tiles en la escena y agrégales a la lista
-        foreach (var tile in instantiatedTiles)
+        foreach (var tile in instantiatedTiles.Values)
         {
             Renderer tileRenderer = tile.GetComponent<Renderer>();
             if (tileRenderer != null)
@@ -80,63 +80,176 @@ public class PokemonMovement : MonoBehaviour
     }
 
     void Update()
-{
-    // Detecta el click del mouse
-    if (Input.GetMouseButtonDown(0)) 
     {
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = 0; // Asegura que Z sea 0
+        // Detecta la posición del mouse en cada frame
+    Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+    mousePos.z = 0; // Asegura que Z sea 0
+    RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
 
-        RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
-        if (hit.collider != null)
+    // // Verifica si el mouse está sobre un tile
+    // if (hit.collider != null && hit.collider.CompareTag("tile") && !hit.collider.CompareTag("pokemon"))
+    // {
+    //     Vector3 targetTile = hit.collider.transform.position;
+
+    //     // Si el tile es diferente al último tile hovereado
+    //     if (lastHoveredTile == null || targetTile != lastHoveredTile)
+    //     {
+    //         // Limpiar la trayectoria anterior si existía un último tile hovereado
+    //         if (lastHoveredTile != null)
+    //         {
+    //             ClearPathBlue(); // Función que limpia la trayectoria pintada
+    //         }
+
+    //         // Si el tile actual está en moveableTiles, calcular y pintar el camino
+    //         if (moveableTiles.Contains(targetTile))
+    //         {
+    //             Vector3 initialPosition = pokemon.transform.position; // Posición inicial del Pokémon
+                
+    //             // Calcula el camino desde la posición inicial al tile objetivo
+    //             List<Vector3> path = CalculatePath(initialPosition, targetTile); // Obtiene el camino
+                
+    //             // Verifica si se encontró un camino antes de pintar
+    //             if (path != null && path.Count > 0)
+    //             {
+    //                 PaintPathBlue(path); // Pinta la nueva trayectoria en azul
+    //             }
+    //             lastHoveredTile = targetTile; // Actualiza el último tile hovereado
+    //         }
+    //     }
+    // }
+    // else
+    // {
+    //     // Si el mouse no está sobre ningún tile, limpiar la trayectoria anterior
+    //     if (lastHoveredTile != null)
+    //     {
+    //         ClearPathBlue(); // Limpiar la trayectoria cuando el mouse sale de los tiles
+    //         lastHoveredTile = null;
+    //     }
+    // }
+
+
+
+        // Detecta el click del mouse
+        if (Input.GetMouseButtonDown(0)) 
         {
-            // Verifica si se ha hecho clic en el Pokémon
-            if (hit.collider.CompareTag("pokemon")) 
+            if (hit.collider != null)
             {
-                OnPokemonClick();
-            }
-            // Verifica si se ha hecho clic en un tile
-            else if (hit.collider.CompareTag("tile")) 
-            {
-                Vector3 targetTile = hit.collider.transform.position;
-
-                // Mover al Pokémon si el tile está en moveableTiles
-                if (moveableTiles.Contains(targetTile)) 
+                // Verifica si se ha hecho clic en el Pokémon
+                if (hit.collider.CompareTag("pokemon")) 
                 {
-                    // Determinar el número de movimientos (en casillas) requeridos
-                    Vector3 initialPosition = pokemon.transform.position; // Posición inicial del Pokémon
-                    int horizontalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.x) - Mathf.FloorToInt(initialPosition.x));
-                    int verticalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.y) - Mathf.FloorToInt(initialPosition.y));
-                    int totalMoves = horizontalMoves + verticalMoves; // Total de movimientos
+                    OnPokemonClick();
+                }
+                // Verifica si se ha hecho clic en un tile
+                else if (hit.collider.CompareTag("tile")) 
+                {
+                    Vector3 targetTile = hit.collider.transform.position;
 
-                    int moveCost = CalculateMoveCost(totalMoves, weight); // Calcular el costo del movimiento
-                    if (moveCost <= actionPoints) // Verificar si hay suficientes puntos de acción
+                    // Mover al Pokémon si el tile está en moveableTiles
+                    if (moveableTiles.Contains(targetTile)) 
                     {
-                        MoveToTile(targetTile); // Mover al Pokémon
-                        //actionPoints -= moveCost; // Resta el costo de movimiento de los puntos de acción
-                    }
-                    else
-                    {
-                        Debug.Log("No hay suficientes puntos de acción para mover.");
+                        // Determinar el número de movimientos (en casillas) requeridos
+                        Vector3 initialPosition = pokemon.transform.position; // Posición inicial del Pokémon
+                        int horizontalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.x) - Mathf.FloorToInt(initialPosition.x));
+                        int verticalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.y) - Mathf.FloorToInt(initialPosition.y));
+                        int totalMoves = horizontalMoves + verticalMoves; // Total de movimientos
+
+                        int moveCost = CalculateMoveCost(totalMoves, weight); // Calcular el costo del movimiento
+                        if (moveCost <= actionPoints) // Verificar si hay suficientes puntos de acción
+                        {
+                            MoveToTile(targetTile); // Mover al Pokémon
+                        }
+                        else
+                        {
+                            Debug.Log("No hay suficientes puntos de acción para mover.");
+                        }
                     }
                 }
             }
         }
     }
 
-    // Lógica para mostrar la trayectoria al hacer hover sobre un tile
-    if (Input.GetMouseButton(0))
+    public void TileEnter(Vector3 tile)
     {
-        Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        mousePos.z = 0; // Asegura que Z sea 0 para hover
-
-        RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
-        if (hit.collider != null)
+        ClearPathBlue();
+        List<Vector3> path = CalculatePath(currentPokemonPosition, tile);
+        foreach (Vector3 t in path)
         {
-            // Verifica si se ha hecho clic en un tile movible
-            if (hit.collider.CompareTag("tile") && moveableTiles.Contains(hit.collider.transform.position))
+            TileHover tileHover = GetTileAtPosition(t);
+            tileHover.ChangeColorToBlue();
+        }
+    }
+
+    public void TileExit(Vector3 tile)
+    {
+        ClearPathBlue();
+    }
+
+
+
+
+// Función para limpiar los tiles pintados de azul
+void ClearPathBlue()
+{
+    // Recorre todos los tiles y restablece el material original en los tiles pintados
+    foreach (Vector3 tilePos in moveableTiles)
+    {
+        TileHover tile = GetTileAtPosition(tilePos); 
+        tile.ChangeColorToGray(); // Cambia al material por defecto
+    }
+}
+
+
+// Función para pintar el camino en azul
+// void PaintPathBlue(List<Vector3> path)
+// {
+//     // Verifica si la lista de path no está vacía
+//     if (path == null || path.Count == 0)
+//     {
+//         Debug.Log("Path is null or empty, nothing to paint.");
+//         return;
+//     }
+
+//     Debug.Log($"Painting path with {path.Count} tiles."); // Muestra cuántos tiles se van a pintar
+
+//     // Guarda todos los tiles que se van a pintar
+//     List<GameObject> paintedTiles = new List<GameObject>();
+
+//     // Pinta cada tile en azul según el camino calculado
+//     foreach (Vector3 tile in path)
+//     {
+//         // Obtiene el objeto tile y cambia su material a azul
+//         GameObject tileObject = GetTileAtPosition(tile).gameObject;
+        
+//         if (tileObject != null)
+//         {
+//             Debug.Log($"Painting tile at position {tile} to blue."); // Mensaje de depuración para cada tile pintado
+//             paintedTiles.Add(tileObject); // Agrega el tile pintado a la lista
+//             tileObject.GetComponent<Renderer>().material = blueMaterial; // Cambia el material a azul
+//         }
+//         else
+//         {
+//             Debug.Log($"No tile found at position {tile}."); // Mensaje si no se encuentra el objeto tile
+//         }
+//     }
+// }
+
+
+
+void ResetTilesToOriginal()
+{
+    // Aquí puedes recorrer tu tileMap y restablecer todos los tiles a su material original
+    for (int x = 0; x < tileMap.GetLength(0); x++)
+    {
+        for (int y = 0; y < tileMap.GetLength(1); y++)
+        {
+            GameObject tileObject = tileMap[x, y];
+            if (tileObject != null)
             {
-                ShowTrajectory(hit.collider.transform.position); // Mostrar la trayectoria hacia el tile
+                Renderer tileRenderer = tileObject.GetComponent<Renderer>();
+                if (tileRenderer != null)
+                {
+                    tileRenderer.material = originalMaterial; // Restablece al material original
+                }
             }
         }
     }
@@ -144,28 +257,43 @@ public class PokemonMovement : MonoBehaviour
 
 
 
-
-    private void MoveToTile(Vector3 targetTile)
+// Resetea los materiales de los tiles a su color original
+private void ResetTrajectory()
 {
-    initialPosition = pokemon.transform.position;
+    foreach (var tile in instantiatedTiles.Values)
+    {
+        Renderer tileRenderer = tile.GetComponent<Renderer>();
+        if (tileRenderer != null)
+        {
+            // Cambiar el material de los tiles de vuelta a su estado original
+            tileRenderer.sharedMaterial = originalMaterial;
+        }
+    }
+}
 
-    // Calcular el camino completo (usando BFS o A*)
-    List<Vector3> path = CalculatePath(initialPosition, targetTile);
+
+
+
+
+    public void MoveToTile(Vector3 targetTilePosition)
+{
+    List<Vector3> path = CalculatePath(currentPokemonPosition, targetTilePosition);
 
     if (path == null || path.Count == 0)
     {
-        Debug.Log("No se pudo encontrar un camino.");
+        Debug.LogError("No se pudo calcular un camino válido.");
         return;
     }
 
     // Determinar el costo del movimiento
-    int totalMoves = path.Count - 1; // Restamos 1 porque la posición inicial no cuenta como movimiento
+    int totalMoves = path.Count; // Restamos 1 porque la posición inicial no cuenta como movimiento
     int moveCost = CalculateMoveCost(totalMoves, weight);
 
     if (actionPoints >= moveCost)
     {
         DestroyMoveableTiles();
-        StartCoroutine(MoveAlongPath(path, moveCost)); // Mueve a través del camino
+        StartCoroutine(MoveAlongPath(path)); // Mueve a través del camino
+        actionPoints -= moveCost;
     }
     else
     {
@@ -173,34 +301,40 @@ public class PokemonMovement : MonoBehaviour
     }
 }
 
+
 // Método para mover al Pokémon a lo largo del camino completo
-private IEnumerator MoveAlongPath(List<Vector3> path, int moveCost)
+private IEnumerator MoveAlongPath(List<Vector3> path)
 {
-    if (isMoving) yield break;
-
-    isMoving = true;
-
-    // Recorremos cada tile en la ruta calculada
-    for (int i = 1; i < path.Count; i++) // Comienza en 1 porque la primera posición es la actual
+    for (int i = 0; i < path.Count; i++)
     {
-        Vector3 nextTile = path[i];
-        while (Vector3.Distance(pokemon.transform.position, nextTile) > 0.1f)
+        Vector3 currentPosition = transform.position;
+        Vector3 nextPosition = path[i];
+
+        // Comprobar si el movimiento es diagonal antes de moverse
+        if (IsDiagonalMove(currentPosition, nextPosition))
         {
-            pokemon.transform.position = Vector3.MoveTowards(pokemon.transform.position, nextTile, moveSpeed * Time.deltaTime);
+            Debug.LogError("Intentando mover en diagonal, no permitido.");
+            yield break;  // Detener el movimiento si es diagonal
+        }
+
+        // Movimiento del Pokémon hacia la siguiente posición en el camino
+        while (Vector3.Distance(transform.position, nextPosition) > 0.01f)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, nextPosition, moveSpeed * Time.deltaTime);
             yield return null;
         }
 
-        pokemon.transform.position = nextTile; // Asegura que el Pokémon esté exactamente en el tile
+        transform.position = nextPosition;
+        yield return new WaitForSeconds(0.1f);  // Pequeña pausa entre movimientos
     }
-
-    actionPoints -= moveCost; // Resta el costo del movimiento de los puntos de acción
-    isMoving = false;
 }
+
+
 
 private List<Vector3> CalculatePath(Vector3 start, Vector3 target)
 {
     Queue<Vector3> queue = new Queue<Vector3>();
-    Dictionary<Vector3, Vector3> cameFrom = new Dictionary<Vector3, Vector3>(); // Para reconstruir el camino
+    Dictionary<Vector3, Vector3> cameFrom = new Dictionary<Vector3, Vector3>();
     HashSet<Vector3> visited = new HashSet<Vector3>();
 
     queue.Enqueue(start);
@@ -214,10 +348,12 @@ private List<Vector3> CalculatePath(Vector3 start, Vector3 target)
         if (currentTile == target)
         {
             // Si hemos llegado al objetivo, reconstruimos el camino
-            return ReconstructPath(cameFrom, start, target);
+            List<Vector3> path = ReconstructPath(cameFrom, start, target);
+            path.RemoveAt(0);
+            return path;
         }
 
-        // Exploramos los tiles adyacentes
+        // Solo agregar tiles en direcciones ortogonales
         foreach (Vector3 direction in new Vector3[] { Vector3.left, Vector3.right, Vector3.up, Vector3.down })
         {
             Vector3 neighborTile = currentTile + direction;
@@ -226,14 +362,28 @@ private List<Vector3> CalculatePath(Vector3 start, Vector3 target)
             {
                 queue.Enqueue(neighborTile);
                 visited.Add(neighborTile);
-                cameFrom[neighborTile] = currentTile; // Guardamos de dónde venimos
+                cameFrom[neighborTile] = currentTile;
             }
         }
     }
 
-    // Si no se encuentra un camino, devolvemos null
     return null;
 }
+
+private bool IsDiagonalMove(Vector3 from, Vector3 to)
+{
+    float deltaX = Mathf.Abs(to.x - from.x);
+    float deltaY = Mathf.Abs(to.y - from.y);
+
+    // Solo permitir movimiento en línea recta (horizontal o vertical), no en diagonal
+    return deltaX > 0 && deltaY > 0;
+}
+
+
+
+
+
+
 
 // Método para reconstruir el camino desde el objetivo hasta el inicio
 private List<Vector3> ReconstructPath(Dictionary<Vector3, Vector3> cameFrom, Vector3 start, Vector3 target)
@@ -256,139 +406,25 @@ private List<Vector3> ReconstructPath(Dictionary<Vector3, Vector3> cameFrom, Vec
 
 
 
-
-
-// Coroutine para mover al Pokémon
-private IEnumerator MovePokemon(Vector3 initialPosition, Vector3 targetTile, int moveCost)
-{
-    if (isMoving) yield break;
-
-    isMoving = true;
-
-    // Mover horizontalmente primero
-    if (targetTile.x != pokemon.transform.position.x)
-    {
-        Vector3 horizontalTarget = new Vector3(targetTile.x, pokemon.transform.position.y, pokemon.transform.position.z);
-        while (Vector3.Distance(pokemon.transform.position, horizontalTarget) > 0.1f)
-        {
-            pokemon.transform.position = Vector3.MoveTowards(pokemon.transform.position, horizontalTarget, moveSpeed * Time.deltaTime);
-            yield return null;
-        }
-    }
-
-    // Mover verticalmente después
-    if (targetTile.y != pokemon.transform.position.y)
-    {
-        Vector3 verticalTarget = new Vector3(pokemon.transform.position.x, targetTile.y, pokemon.transform.position.z);
-        while (Vector3.Distance(pokemon.transform.position, verticalTarget) > 0.1f)
-        {
-            pokemon.transform.position = Vector3.MoveTowards(pokemon.transform.position, verticalTarget, moveSpeed * Time.deltaTime);
-            yield return null;
-        }
-    }
-
-    pokemon.transform.position = targetTile;
-
-    actionPoints -= moveCost;
-    isMoving = false;
-}
-
-
-private IEnumerator MoveHorizontally(Vector3 targetTile)
-{
-    // Mover en la dirección horizontal
-    Vector3 horizontalTarget = new Vector3(targetTile.x, pokemon.transform.position.y, pokemon.transform.position.z);
-
-    while (Vector3.Distance(pokemon.transform.position, horizontalTarget) > 0.1f)
-    {
-        pokemon.transform.position = Vector3.MoveTowards(pokemon.transform.position, horizontalTarget, moveSpeed * Time.deltaTime);
-        yield return null;
-    }
-
-    // Ahora mover en la dirección vertical
-    while (Vector3.Distance(pokemon.transform.position, targetTile) > 0.1f)
-    {
-        pokemon.transform.position = Vector3.MoveTowards(pokemon.transform.position, targetTile, moveSpeed * Time.deltaTime);
-        yield return null;
-    }
-
-    pokemon.transform.position = targetTile; // Asegura que el Pokémon esté exactamente en el tile
-}
-
-private IEnumerator MoveVertically(Vector3 targetTile)
-{
-    // Mover en la dirección vertical
-    Vector3 verticalTarget = new Vector3(pokemon.transform.position.x, targetTile.y, pokemon.transform.position.z);
-
-    while (Vector3.Distance(pokemon.transform.position, verticalTarget) > 0.1f)
-    {
-        pokemon.transform.position = Vector3.MoveTowards(pokemon.transform.position, verticalTarget, moveSpeed * Time.deltaTime);
-        yield return null;
-    }
-
-    // Ahora mover en la dirección horizontal
-    while (Vector3.Distance(pokemon.transform.position, targetTile) > 0.1f)
-    {
-        pokemon.transform.position = Vector3.MoveTowards(pokemon.transform.position, targetTile, moveSpeed * Time.deltaTime);
-        yield return null;
-    }
-
-    pokemon.transform.position = targetTile; // Asegura que el Pokémon esté exactamente en el tile
-}
-
-
-    System.Collections.IEnumerator MoveTowards(Vector3 targetTile)
-    {
-        while (Vector3.Distance(pokemon.transform.position, targetTile) > 0.1f)
-        {
-            pokemon.transform.position = Vector3.MoveTowards(pokemon.transform.position, targetTile, moveSpeed * Time.deltaTime);
-            yield return null;
-        }
-        pokemon.transform.position = targetTile; // Asegura que el Pokémon esté exactamente en el tile
-    }
-
     // Método para calcular el costo de movimiento
     int CalculateMoveCost(int totalMoves, float weight)
     {
         return (int)(totalMoves * (5 * weight)); // Costo total de movimiento
     }
 
-
-
-    private void ShowTrajectory(Vector3 targetTile)
+    // Función para obtener un tile basado en su posición en el mapa
+private TileHover GetTileAtPosition(Vector3 position)
+{
+    // Asegúrate de que la posición esté dentro de los límites del mapa
+    if (IsWithinMapBounds(position))
     {
-        // Cambiar el material de los tiles en la trayectoria a azul
-        List<Vector3> path = CalculatePath(pokemon.transform.position, targetTile);
-
-        if (path != null && path.Count > 0)
-        {
-            foreach (var tilePosition in path)
-            {
-                // Asumiendo que los tiles están instanciados como GameObjects
-                GameObject tile = GetTileAtPosition(tilePosition);
-                if (tile != null)
-                {
-                    tile.GetComponent<Renderer>().sharedMaterial = blueMaterial; // Cambia a material azul
-                }
-            }
-        }
+        TileHover tile = instantiatedTiles[position];
+        return tile;
     }
 
-    private GameObject GetTileAtPosition(Vector3 position)
-    {
-        // Suponiendo que el tileMap es un arreglo 2D que tiene las referencias a los tiles instanciados
-        int x = Mathf.FloorToInt(position.x);
-        int y = Mathf.FloorToInt(position.y);
-
-        if (x >= 0 && x < mapWidth && y >= 0 && y < mapHeight)
-        {
-            return tileMap[x, y]; // Devuelve el GameObject correspondiente al tile
-        }
-
-        return null;
-    }
-
-
+    Debug.Log("Position is out of map bounds."); // Mensaje si la posición está fuera de los límites del mapa
+    return null;
+}
 
     // Lógica para calcular los tiles a los que se puede mover usando BFS
 private void CalculateMoveableTiles()
@@ -427,7 +463,8 @@ private void CalculateMoveableTiles()
                         queue.Enqueue(neighborTile);
 
                         GameObject tile = Instantiate(tilePrefab, neighborTile, Quaternion.identity);
-                        instantiatedTiles.Add(tile);
+                        tile.name = neighborTile.ToString();
+                        instantiatedTiles.Add(neighborTile, tile.GetComponent<TileHover>());
                         moveableTiles.Add(neighborTile);
                     }
                 }
@@ -470,24 +507,13 @@ private bool IsWithinMapBounds(Vector3 position)
 }
 
 
-    // Nuevo método para verificar si el tile está dentro de los límites
-    private bool IsTileInBounds(Vector3 position)
-    {
-        int x = Mathf.FloorToInt(position.x / tileSize);
-        int y = Mathf.FloorToInt(position.y / tileSize);
-
-        // Verifica que los índices estén dentro de los límites del mapa
-        return x >= 0 && x < mapWidth && y >= 0 && y < mapHeight;
-    }
-
-
     private void DestroyMoveableTiles()
     {
 
         // Destruir todos los tiles instanciados
-        foreach (GameObject tile in instantiatedTiles)
+        foreach (var tile in instantiatedTiles.Values)
         {
-            Destroy(tile);
+            Destroy(tile.gameObject);
         }
         instantiatedTiles.Clear();
         moveableTiles.Clear(); // Limpiar la lista de tiles movibles
@@ -495,6 +521,7 @@ private bool IsWithinMapBounds(Vector3 position)
 
     private void OnPokemonClick()
 {
+    currentPokemon = this;
     currentPokemonPosition = transform.position;
 
     // Comprobar si se hizo clic en la misma posición
@@ -529,28 +556,4 @@ private bool IsWithinMapBounds(Vector3 position)
         }
     }
 }
-
-void OnDrawGizmos()
-{
-    if (moveableTiles.Contains(lastClickedPosition))
-    {
-        Vector3 currentPosition = pokemon.transform.position;
-        Vector3 direction = lastClickedPosition - currentPosition;
-
-        // Mueve en X primero, luego en Y
-        Vector3 horizontalTarget = new Vector3(lastClickedPosition.x, currentPosition.y, currentPosition.z);
-        Gizmos.color = Color.red;
-
-        // Dibuja línea horizontal
-        Gizmos.DrawLine(currentPosition, horizontalTarget);
-
-        // Dibuja línea vertical
-        Gizmos.DrawLine(horizontalTarget, lastClickedPosition);
-    }
-}
-
-
-
-
-    // Métodos auxiliares omitidos por brevedad...
 }

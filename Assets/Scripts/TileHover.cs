@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TileHover : MonoBehaviour
 {
-    [Header("Materials")]
     public Material grayMaterial;   // Material gris original
     public Material blueMaterial;   // Material azul
     private Renderer tileRenderer;   // Referencia al Renderer del tile
@@ -12,25 +9,28 @@ public class TileHover : MonoBehaviour
     void Start()
     {
         tileRenderer = GetComponent<Renderer>(); // Obtener el Renderer del tile
-        if (tileRenderer != null)
-        {
-            tileRenderer.material = grayMaterial; // Inicializar con el material gris
-        }
+        tileRenderer.material = grayMaterial; // Inicializar con el material gris
     }
 
     private void OnMouseEnter() // Método que se llama cuando el mouse entra en el collider del tile
     {
-        if (tileRenderer != null)
-        {
-            tileRenderer.material = blueMaterial; // Cambiar a material azul
-        }
+        Debug.Log("TileHover.OnMouseEnter() called.");
+        PokemonMovement.currentPokemon.TileEnter(transform.position);
     }
 
     private void OnMouseExit() // Método que se llama cuando el mouse sale del collider del tile
     {
-        if (tileRenderer != null)
-        {
-            tileRenderer.material = grayMaterial; // Regresar a material gris
-        }
+        Debug.Log("TileHover.OnMouseExit() called.");
+        PokemonMovement.currentPokemon.TileExit(transform.position);
+    }
+
+    public void ChangeColorToBlue()
+    {
+        tileRenderer.material = blueMaterial;
+    }
+
+    public void ChangeColorToGray()
+    {
+        tileRenderer.material = grayMaterial;
     }
 }
