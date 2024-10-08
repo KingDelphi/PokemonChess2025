@@ -1,7 +1,7 @@
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
-{
+{    
     public GameObject tilePrefab; // Prefab del tile
     public GameObject oldBookcasePrefab; // Prefab del Old Bookcase
     public GameObject tableWithComputerPrefab; // Prefab de la Table with Computer
@@ -31,8 +31,18 @@ public class MapGenerator : MonoBehaviour
 
     private AudioSource audioSource;
 
+    public GameManager gameManager;
+
     void Start()
     {
+        gameManager = FindObjectOfType<GameManager>();
+
+        if (gameManager == null)
+        {
+            Debug.LogError("No se encontró un GameManager en la escena.");
+        }
+
+        
         mainCamera = Camera.main;
         ConfigureCamera();
         CreateGrayMaterial(); // Crear el material gris

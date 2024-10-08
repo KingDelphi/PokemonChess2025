@@ -32,6 +32,8 @@ public class PokemonMovement : MonoBehaviour
     private Vector3? lastHoveredTile = null;
 
     public static PokemonMovement currentPokemon;
+    private bool isClickProcessing = false;
+
 
 
     public bool isMoving;
@@ -83,93 +85,62 @@ public class PokemonMovement : MonoBehaviour
     }
 
     void Update()
-    {
-        // Detecta la posición del mouse en cada frame
+{
+    // Detecta la posición del mouse en cada frame
     Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
     mousePos.z = 0; // Asegura que Z sea 0
     RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
 
-    // // Verifica si el mouse está sobre un tile
-    // if (hit.collider != null && hit.collider.CompareTag("tile") && !hit.collider.CompareTag("pokemon"))
-    // {
-    //     Vector3 targetTile = hit.collider.transform.position;
-
-    //     // Si el tile es diferente al último tile hovereado
-    //     if (lastHoveredTile == null || targetTile != lastHoveredTile)
-    //     {
-    //         // Limpiar la trayectoria anterior si existía un último tile hovereado
-    //         if (lastHoveredTile != null)
-    //         {
-    //             ClearPathBlue(); // Función que limpia la trayectoria pintada
-    //         }
-
-    //         // Si el tile actual está en moveableTiles, calcular y pintar el camino
-    //         if (moveableTiles.Contains(targetTile))
-    //         {
-    //             Vector3 initialPosition = pokemon.transform.position; // Posición inicial del Pokémon
-                
-    //             // Calcula el camino desde la posición inicial al tile objetivo
-    //             List<Vector3> path = CalculatePath(initialPosition, targetTile); // Obtiene el camino
-                
-    //             // Verifica si se encontró un camino antes de pintar
-    //             if (path != null && path.Count > 0)
-    //             {
-    //                 PaintPathBlue(path); // Pinta la nueva trayectoria en azul
-    //             }
-    //             lastHoveredTile = targetTile; // Actualiza el último tile hovereado
-    //         }
-    //     }
-    // }
-    // else
-    // {
-    //     // Si el mouse no está sobre ningún tile, limpiar la trayectoria anterior
-    //     if (lastHoveredTile != null)
-    //     {
-    //         ClearPathBlue(); // Limpiar la trayectoria cuando el mouse sale de los tiles
-    //         lastHoveredTile = null;
-    //     }
-    // }
-
-
-
-        // Detecta el click del mouse
-        if (Input.GetMouseButtonDown(0)) 
+    // Detecta el click del mouse
+    if (Input.GetMouseButtonDown(0)) 
+    {
+        if (hit.collider != null)
         {
-            if (hit.collider != null)
+            // Verifica si se ha hecho clic en el Pokémon
+            if (hit.collider.CompareTag("pokemon") && hit.collider.GetComponent<PokemonMovement>() == this) 
             {
-                // Verifica si se ha hecho clic en el Pokémon
-                if (hit.collider.CompareTag("pokemon")) 
-                {
-                    OnPokemonClick();
-                }
-                // Verifica si se ha hecho clic en un tile
-                else if (hit.collider.CompareTag("tile")) 
-                {
-                    Vector3 targetTile = hit.collider.transform.position;
+                PokemonMovement clickedPokemon = hit.collider.GetComponent<PokemonMovement>();
 
-                    // Mover al Pokémon si el tile está en moveableTiles
-                    if (moveableTiles.Contains(targetTile)) 
+                // Ejecuta OnPokemonClick para el Pokémon clicado (no importa si es el mismo)
+                clickedPokemon.OnPokemonClick(); 
+
+                // Actualiza currentPokemon para llevar un registro
+                currentPokemon = clickedPokemon;
+            }
+            // Verifica si se ha hecho clic en un tile
+            else if (hit.collider.CompareTag("tile")) 
+            {
+                // El resto del código para manejar el clic en un tile permanece igual
+                currentPokemon = null; // Resetea el Pokémon actual
+
+                Vector3 targetTile = hit.collider.transform.position;
+
+                // Mover al Pokémon si el tile está en moveableTiles
+                if (moveableTiles.Contains(targetTile)) 
+                {
+                    // Determinar el número de movimientos (en casillas) requeridos
+                    Vector3 initialPosition = pokemon.transform.position; // Posición inicial del Pokémon
+                    int horizontalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.x) - Mathf.FloorToInt(initialPosition.x));
+                    int verticalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.y) - Mathf.FloorToInt(initialPosition.y));
+                    int totalMoves = horizontalMoves + verticalMoves; // Total de movimientos
+
+                    int moveCost = CalculateMoveCost(totalMoves, weight, c, k); // Calcular el costo del movimiento
+                    if (moveCost <= actionPoints) // Verificar si hay suficientes puntos de acción
                     {
-                        // Determinar el número de movimientos (en casillas) requeridos
-                        Vector3 initialPosition = pokemon.transform.position; // Posición inicial del Pokémon
-                        int horizontalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.x) - Mathf.FloorToInt(initialPosition.x));
-                        int verticalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.y) - Mathf.FloorToInt(initialPosition.y));
-                        int totalMoves = horizontalMoves + verticalMoves; // Total de movimientos
-
-                        int moveCost = CalculateMoveCost(totalMoves, weight, c, k); // Calcular el costo del movimiento
-                        if (moveCost <= actionPoints) // Verificar si hay suficientes puntos de acción
-                        {
-                            MoveToTile(targetTile); // Mover al Pokémon
-                        }
-                        else
-                        {
-                            Debug.Log("No hay suficientes puntos de acción para mover.");
-                        }
+                        MoveToTile(targetTile); // Mover al Pokémon
+                    }
+                    else
+                    {
+                        Debug.Log("No hay suficientes puntos de acción para mover.");
                     }
                 }
             }
         }
     }
+}
+
+
+
 
     public void TileEnter(Vector3 tile)
     {
@@ -202,39 +173,7 @@ void ClearPathBlue()
 }
 
 
-// Función para pintar el camino en azul
-// void PaintPathBlue(List<Vector3> path)
-// {
-//     // Verifica si la lista de path no está vacía
-//     if (path == null || path.Count == 0)
-//     {
-//         Debug.Log("Path is null or empty, nothing to paint.");
-//         return;
-//     }
 
-//     Debug.Log($"Painting path with {path.Count} tiles."); // Muestra cuántos tiles se van a pintar
-
-//     // Guarda todos los tiles que se van a pintar
-//     List<GameObject> paintedTiles = new List<GameObject>();
-
-//     // Pinta cada tile en azul según el camino calculado
-//     foreach (Vector3 tile in path)
-//     {
-//         // Obtiene el objeto tile y cambia su material a azul
-//         GameObject tileObject = GetTileAtPosition(tile).gameObject;
-        
-//         if (tileObject != null)
-//         {
-//             Debug.Log($"Painting tile at position {tile} to blue."); // Mensaje de depuración para cada tile pintado
-//             paintedTiles.Add(tileObject); // Agrega el tile pintado a la lista
-//             tileObject.GetComponent<Renderer>().material = blueMaterial; // Cambia el material a azul
-//         }
-//         else
-//         {
-//             Debug.Log($"No tile found at position {tile}."); // Mensaje si no se encuentra el objeto tile
-//         }
-//     }
-// }
 
 
 
@@ -412,6 +351,7 @@ private List<Vector3> ReconstructPath(Dictionary<Vector3, Vector3> cameFrom, Vec
     // Método para calcular el costo de movimiento
     int CalculateMoveCost(int totalMoves, float weight, float c, float k)
     {
+        Debug.Log("CalculateMoveCost called.");
         return (int)(totalMoves * (c + k * weight)); // Costo total de movimiento
     }
 
@@ -432,6 +372,7 @@ private TileHover GetTileAtPosition(Vector3 position)
     // Lógica para calcular los tiles a los que se puede mover usando BFS
 private void CalculateMoveableTiles()
 {
+    Debug.Log("CalculateMoveableTiles called.");
     moveableTiles.Clear();
     instantiatedTiles.Clear();
 
@@ -524,13 +465,15 @@ private bool IsWithinMapBounds(Vector3 position)
 
     private void OnPokemonClick()
 {
-    currentPokemon = this;
+    Debug.Log("OnPokemonClick called.");
+
+    // Obtén la posición actual del Pokémon
     currentPokemonPosition = transform.position;
 
-    // Comprobar si se hizo clic en la misma posición
+    // Comprobar si se hizo clic en el mismo Pokémon
     if (areTilesVisible && lastClickedPosition == currentPokemonPosition)
     {
-        // Si los tiles ya están visibles y se hizo clic en la misma posición, los destruimos
+        // Si los tiles ya están visibles y se hizo clic en el mismo Pokémon, los destruimos
         DestroyMoveableTiles();
         areTilesVisible = false; // Actualiza el estado de visibilidad
     }
@@ -539,20 +482,25 @@ private bool IsWithinMapBounds(Vector3 position)
         // Verifica si hay puntos de acción antes de calcular los tiles movibles
         if (actionPoints > 0)
         {
-            // Obtén el peso del Pokémon en el que se hizo clic
-            PokemonBase clickedPokemon = GetComponent<PokemonBase>();
-            if (clickedPokemon != null)
+            // Obtén el componente del Pokémon clicado y sus valores de c y k
+            PokemonBase pokemonBase = GetComponent<PokemonBase>();
+            if (pokemonBase != null)
             {
-                weight = clickedPokemon.weight; // Asigna el peso a la variable de clase
-                c = clickedPokemon.c;
-                k = clickedPokemon.k;
-                CalculateMoveableTiles();
+                // Usa los valores específicos de c y k de este Pokémon
+                weight = pokemonBase.weight; // Asigna el peso a la variable local de clase
+                c = pokemonBase.c; // Asigna c y úsalo solo para este cálculo
+                k = pokemonBase.k; // Asigna k y úsalo solo para este cálculo
+
+                // Ahora calcula los tiles movibles con los valores de este Pokémon
+                CalculateMoveableTiles();  // Ajusta CalculateMoveableTiles para recibir c y k como parámetros
+                
                 areTilesVisible = true; // Actualiza el estado de visibilidad
                 lastClickedPosition = currentPokemonPosition; // Actualiza la última posición clicada
+                currentPokemon = this; // Solo actualiza currentPokemon aquí
             }
             else
             {
-                Debug.LogError("No se pudo obtener el peso del Pokémon.");
+                Debug.LogError("No se pudo obtener el componente PokemonBase.");
             }
         }
         else
@@ -561,4 +509,5 @@ private bool IsWithinMapBounds(Vector3 position)
         }
     }
 }
+
 }

@@ -214,6 +214,112 @@ private void Evolve(string newForm)
 
 #endregion
 
+#region Stats Methods
+
+public int hp;
+public int maxHP;
+
+public void ApplyNatureModifiers(Nature nature)
+{
+    stats.atk = Mathf.FloorToInt(stats.atk * (1 + nature.attackModifier));
+    stats.def = Mathf.FloorToInt(stats.def * (1 + nature.defenseModifier));
+    stats.spAtk = Mathf.FloorToInt(stats.spAtk * (1 + nature.specialAttackModifier));
+    stats.spDef = Mathf.FloorToInt(stats.spDef * (1 + nature.specialDefenseModifier));
+    stats.spd = Mathf.FloorToInt(stats.spd * (1 + nature.speedModifier));
+}
+
+public void CalculateFinalStats(int level)
+{
+    stats.hp = (stats.maxHP + stats.hpIV + (stats.hpEV / 4)) * level / 100 + 10;
+    stats.atk = (stats.atk + stats.atkIV + (stats.atkEV / 4)) * level / 100 + 5;
+    stats.def = (stats.def + stats.defIV + (stats.defEV / 4)) * level / 100 + 5;
+    stats.spAtk = (stats.spAtk + stats.spAtkIV + (stats.spAtkEV / 4)) * level / 100 + 5;
+    stats.spDef = (stats.spDef + stats.spDefIV + (stats.spDefEV / 4)) * level / 100 + 5;
+    stats.spd = (stats.spd + stats.spdIV + (stats.spdEV / 4)) * level / 100 + 5;
+}
+
+#endregion
+
+#region Attack Management
+
+public int ModifyPriority(Attack attack)
+{
+    // Prioridad modificada por la habilidad "Prankster"
+    if (activeAbility == "Prankster" && attack.power == 0)  // Prankster aumenta la prioridad de movimientos sin poder de ataque
+    {
+        return attack.priority + 1;
+    }
+
+    // Prioridad modificada por "Gale Wings" (requiere que el ataque sea de tipo Volador y HP esté lleno)
+    if (activeAbility == "Gale Wings" && attack.type == "Flying" && stats.hp == stats.total)
+    {
+        return attack.priority + 1;
+    }
+
+    return attack.priority;  // No modificar si no aplica la habilidad
+}
+
+public void LearnAttack(Attack newAttack, int level)
+{
+    // Verifica si el Pokémon ya conoce el ataque
+    if (attackList.Exists(a => a.attack.name == newAttack.name))
+    {
+        Debug.Log($"{pokemonName} ya conoce {newAttack.name}.");
+        return;
+    }
+
+    // Agrega el nuevo ataque a la lista
+    attackList.Add(new LearnedAttack(newAttack, level));
+    Debug.Log($"{pokemonName} ha aprendido {newAttack.name}!");
+}
+
+public void LearnTM(TM tm)
+{
+    if (!KnowsAttackThatFulfillsCondition(a => a.name == tm.attack.name)) // Verificar si ya lo conoce
+    {
+        attackList.Add(new LearnedAttack(tm.attack, 0));
+        Debug.Log($"{pokemonName} learned {tm.attack.name} from TM {tm.tmName}!");
+    }
+    else
+    {
+        Debug.Log($"{pokemonName} already knows {tm.attack.name}.");
+    }
+}
+
+public void LearnEggMove(EggMove eggMove)
+{
+    if (!KnowsAttackThatFulfillsCondition(a => a.name == eggMove.attack.name)) // Verificar si ya lo conoce
+    {
+        attackList.Add(new LearnedAttack(eggMove.attack, 0)); // Crea un nuevo LearnedAttack a partir de eggMove.attack
+        Debug.Log($"{pokemonName} learned {eggMove.attack.name} as an egg move!");
+    }
+    else
+    {
+        Debug.Log($"{pokemonName} already knows {eggMove.attack.name}.");
+    }
+}
+
+public bool KnowsAttackThatFulfillsCondition(System.Func<Attack, bool> condition)
+{
+    foreach (LearnedAttack learnedAttack in attackList)
+    {
+        if (condition(learnedAttack.attack))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+// Method to check and apply evasión
+    public bool TryEvadeAttack()
+    {
+        float evasionCheck = Random.Range(0f, 100f);
+        return evasionCheck < evasion;
+    }
+
+#endregion
+
 #region Status Effect Management
 
 // Class for representing status effects with duration
@@ -330,121 +436,6 @@ public bool HasImmunityTo(StatusCondition condition)
 
     return false;
 }
-
-#endregion
-
-#region Interaction Methods
-
-    public virtual void DisplayInfo()
-    {
-        Debug.Log($"{pokemonName} (# {pokemonNumber}) - Types: {type1}/{type2}");
-    }
-
-    #endregion
-
-#region Stats Methods
-
-public int hp;
-public int maxHP;
-
-public void ApplyNatureModifiers(Nature nature)
-{
-    stats.atk = Mathf.FloorToInt(stats.atk * (1 + nature.attackModifier));
-    stats.def = Mathf.FloorToInt(stats.def * (1 + nature.defenseModifier));
-    stats.spAtk = Mathf.FloorToInt(stats.spAtk * (1 + nature.specialAttackModifier));
-    stats.spDef = Mathf.FloorToInt(stats.spDef * (1 + nature.specialDefenseModifier));
-    stats.spd = Mathf.FloorToInt(stats.spd * (1 + nature.speedModifier));
-}
-
-public void CalculateFinalStats(int level)
-{
-    stats.hp = (stats.maxHP + stats.hpIV + (stats.hpEV / 4)) * level / 100 + 10;
-    stats.atk = (stats.atk + stats.atkIV + (stats.atkEV / 4)) * level / 100 + 5;
-    stats.def = (stats.def + stats.defIV + (stats.defEV / 4)) * level / 100 + 5;
-    stats.spAtk = (stats.spAtk + stats.spAtkIV + (stats.spAtkEV / 4)) * level / 100 + 5;
-    stats.spDef = (stats.spDef + stats.spDefIV + (stats.spDefEV / 4)) * level / 100 + 5;
-    stats.spd = (stats.spd + stats.spdIV + (stats.spdEV / 4)) * level / 100 + 5;
-}
-
-#endregion
-
-#region Attack Management
-
-public int ModifyPriority(Attack attack)
-{
-    // Prioridad modificada por la habilidad "Prankster"
-    if (activeAbility == "Prankster" && attack.power == 0)  // Prankster aumenta la prioridad de movimientos sin poder de ataque
-    {
-        return attack.priority + 1;
-    }
-
-    // Prioridad modificada por "Gale Wings" (requiere que el ataque sea de tipo Volador y HP esté lleno)
-    if (activeAbility == "Gale Wings" && attack.type == "Flying" && stats.hp == stats.total)
-    {
-        return attack.priority + 1;
-    }
-
-    return attack.priority;  // No modificar si no aplica la habilidad
-}
-
-public void LearnAttack(Attack newAttack, int level)
-{
-    // Verifica si el Pokémon ya conoce el ataque
-    if (attackList.Exists(a => a.attack.name == newAttack.name))
-    {
-        Debug.Log($"{pokemonName} ya conoce {newAttack.name}.");
-        return;
-    }
-
-    // Agrega el nuevo ataque a la lista
-    attackList.Add(new LearnedAttack(newAttack, level));
-    Debug.Log($"{pokemonName} ha aprendido {newAttack.name}!");
-}
-
-public void LearnTM(TM tm)
-{
-    if (!KnowsAttackThatFulfillsCondition(a => a.name == tm.attack.name)) // Verificar si ya lo conoce
-    {
-        attackList.Add(new LearnedAttack(tm.attack, 0));
-        Debug.Log($"{pokemonName} learned {tm.attack.name} from TM {tm.tmName}!");
-    }
-    else
-    {
-        Debug.Log($"{pokemonName} already knows {tm.attack.name}.");
-    }
-}
-
-public void LearnEggMove(EggMove eggMove)
-{
-    if (!KnowsAttackThatFulfillsCondition(a => a.name == eggMove.attack.name)) // Verificar si ya lo conoce
-    {
-        attackList.Add(new LearnedAttack(eggMove.attack, 0)); // Crea un nuevo LearnedAttack a partir de eggMove.attack
-        Debug.Log($"{pokemonName} learned {eggMove.attack.name} as an egg move!");
-    }
-    else
-    {
-        Debug.Log($"{pokemonName} already knows {eggMove.attack.name}.");
-    }
-}
-
-public bool KnowsAttackThatFulfillsCondition(System.Func<Attack, bool> condition)
-{
-    foreach (LearnedAttack learnedAttack in attackList)
-    {
-        if (condition(learnedAttack.attack))
-        {
-            return true;
-        }
-    }
-    return false;
-}
-
-// Method to check and apply evasión
-    public bool TryEvadeAttack()
-    {
-        float evasionCheck = Random.Range(0f, 100f);
-        return evasionCheck < evasion;
-    }
 
 #endregion
 
@@ -688,7 +679,17 @@ public void UseItem()
 
 #endregion
 
+#region Interaction Methods
+
+    public virtual void DisplayInfo()
+    {
+        Debug.Log($"{pokemonName} (# {pokemonNumber}) - Types: {type1}/{type2}");
+    }
+
+    #endregion
+
 }
+
 
 #region Nested Classes
 

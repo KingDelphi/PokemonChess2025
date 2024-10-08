@@ -5,6 +5,7 @@ public class Eevee : PokemonBase
 {
     public override void Awake()
     {
+        stats.level = 1;
         // Define Eevee's stats
         stats = new Stats
         {
