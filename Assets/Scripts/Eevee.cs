@@ -108,6 +108,14 @@ public class Eevee : PokemonBase
         isGigantamaxed = false; // Bandera para el estado Gigantamax
     }
 
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.T)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.Tackle(this); // Aquí this se refiere a la instancia de Eevee
+        }
+    }
+
     private void AddEggMoves()
     {
         attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Curse"), 0)); // Movimientos por huevo

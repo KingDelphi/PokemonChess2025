@@ -40,6 +40,10 @@ public class PokemonBase : MonoBehaviour
     protected List<string> locations;
     protected bool isGigantamaxed = false;
     public int actionPoints;
+    public AttackCatalog attackCatalog; // Asignar en el Inspector
+    public bool isSelectedForAttack = false;
+
+
 
     // Lista de naturalezas
     public static List<Nature> natures = new List<Nature>
@@ -73,6 +77,7 @@ public class PokemonBase : MonoBehaviour
 
     public virtual void Awake()
     {
+        attackCatalog = FindObjectOfType<AttackCatalog>();
         stats.level = 1;
 
         if (stats.hp == 0) stats.hp = 100;  // Solo asigna si no ha sido configurado

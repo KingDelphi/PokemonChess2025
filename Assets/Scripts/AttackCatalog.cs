@@ -1,3 +1,4 @@
+using System.Collections; // Asegúrate de que esta línea está presente
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -65,7 +66,7 @@ public class AttackCatalog : MonoBehaviour
     public List<Attack> allAttacks;
     public List<TM> tmCatalog; // Lista para almacenar las TMs
     public List<EggMove> eggMoveCatalog;
-
+    public bool isSelectedForAttack;
 
     public void InitializeAttacks()
     {
@@ -108,111 +109,6 @@ public class AttackCatalog : MonoBehaviour
         };
     }
 
-    // Método para obtener un ataque por su nombre
-    public static Attack GetAttackByName(string name)
-    {
-        // Utiliza LINQ para buscar más eficientemente si es posible
-        return Instance.allAttacks.Find(attack => attack.name == name);
-    }
-
-    private static AttackCatalog _instance;
-    public static AttackCatalog Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<AttackCatalog>();
-            }
-            return _instance;
-        }
-    }
-
-    // Método para aprender TM
-    public void TeachTM(PokemonBase pokemon, string tmName)
-    {
-        TM tm = tmCatalog.Find(t => t.tmName == tmName);
-        if (tm != null)
-        {
-            pokemon.LearnTM(tm);
-        }
-        else
-        {
-            Debug.Log($"TM {tmName} not found.");
-        }
-    }
-}
-
-public class BattleManager
-{
-    // Estructura para almacenar información de combate
-    public class CombatTurn
-    {
-        public PokemonBase attacker;
-        public PokemonBase defender;
-        public Attack attack;
-        public int speed;
-        public int priority;
-
-        public CombatTurn(PokemonBase attacker, PokemonBase defender, Attack attack)
-        {
-            this.attacker = attacker;
-            this.defender = defender;
-            this.attack = attack;
-            this.priority = attacker.ModifyPriority(attack); // Considera la prioridad del ataque
-            this.speed = attacker.GetEffectiveSpeed();
-        }
-    }
-
-    // Método para ejecutar el turno
-    public void ExecuteTurn(PokemonBase pokemon1, PokemonBase pokemon2, Attack attack1, Attack attack2)
-    {
-        CombatTurn turn1 = new CombatTurn(pokemon1, pokemon2, attack1);
-        CombatTurn turn2 = new CombatTurn(pokemon2, pokemon1, attack2);
-
-        // Comparar la prioridad primero
-        CombatTurn firstTurn, secondTurn;
-        if (turn1.priority > turn2.priority)
-        {
-            firstTurn = turn1;
-            secondTurn = turn2;
-        }
-        else if (turn2.priority > turn1.priority)
-        {
-            firstTurn = turn2;
-            secondTurn = turn1;
-        }
-        else
-        {
-            // Si la prioridad es igual, decidir por velocidad
-            if (turn1.speed > turn2.speed)
-            {
-                firstTurn = turn1;
-                secondTurn = turn2;
-            }
-            else if (turn2.speed > turn1.speed)
-            {
-                firstTurn = turn2;
-                secondTurn = turn1;
-            }
-            else
-            {
-                // Si la velocidad es igual, elegir aleatoriamente
-                firstTurn = Random.Range(0, 2) == 0 ? turn1 : turn2;
-                secondTurn = firstTurn == turn1 ? turn2 : turn1;
-            }
-        }
-
-        // Ejecutar el primer turno
-        ApplyAttack(firstTurn.attacker, firstTurn.defender, firstTurn.attack);
-
-        // Comprobar si el defensor sigue vivo antes de ejecutar el segundo turno
-        if (firstTurn.defender.stats.hp > 0)
-        {
-            ApplyAttack(secondTurn.attacker, secondTurn.defender, secondTurn.attack);
-        }
-    }
-
     public void ApplyAttack(PokemonBase attacker, PokemonBase defender, Attack attack)
     {
         // Lógica para aplicar daño basada en la categoría del ataque
@@ -248,8 +144,100 @@ public class BattleManager
         }
     }
 
-    // Método en PokemonBase que calcula el daño basado en la transformación
-    public int CalculateDamage(Attack attack, PokemonBase attacker, PokemonBase defender)
+    private IEnumerator WaitForUserClick(List<Vector3> attackPositions, PokemonBase attacker)
+{
+    // Esperar hasta que el usuario haga clic en una de las posiciones
+    while (true)
+    {
+        if (Input.GetMouseButtonDown(0)) // Clic izquierdo del mouse
+        {
+            RaycastHit2D hit = Physics2D.Raycast(Camera.main.ScreenToWorldPoint(Input.mousePosition), Vector2.zero);
+            if (hit.collider != null)
+            {
+                PokemonBase defender = hit.transform.GetComponent<PokemonBase>();
+                // Comprobar si el clic es en un Pokémon y no en el mismo atacante
+                if (defender != null && defender != attacker)
+                {
+                    // Comprobar si el clic está dentro de las posiciones de ataque
+                    foreach (var position in attackPositions)
+                    {
+                        if (Vector3.Distance(hit.transform.position, position) < 0.5f) // Comprobar si está dentro de un rango cercano
+                        {
+                            // Indicar que este Pokémon ha sido seleccionado para el ataque
+                            defender.isSelectedForAttack = true;
+
+                            // Ejecutar el ataque Tackle
+                            ApplyAttack(attacker, defender, GetAttackByName("Tackle"));
+                            this.CancelAttack(); // Cancela el modo de ataque
+                            yield break; // Salir del bucle
+                        }
+                    }
+                }
+            }
+        }
+
+        yield return null; // Esperar un cuadro antes de volver a comprobar
+    }
+}
+
+public void CancelAttack()
+    {
+        // Restablecer el estado del Pokémon
+        isSelectedForAttack = false; // Asegúrate de que el Pokémon no esté seleccionado para el ataque
+
+        // Si tienes alguna lógica específica que necesites cancelar o restablecer, puedes agregarla aquí
+        // Por ejemplo, detener animaciones de ataque o restablecer la posición del cursor
+
+        Debug.Log($"{this.name} ha cancelado su ataque.");
+    }
+
+
+private float GetTypeEffectiveness(string attackType, string defenderType)
+    {
+        // Tabla de efectividad de tipos
+        Dictionary<string, Dictionary<string, float>> effectivenessTable = new Dictionary<string, Dictionary<string, float>>
+        {
+            { "Fire", new Dictionary<string, float>
+                {
+                    { "Grass", 2.0f }, // Doble daño
+                    { "Water", 0.5f }, // Mitad de daño
+                    { "Fire", 1.0f },  // Daño normal
+                    { "Rock", 0.5f }   // Mitad de daño
+                }
+            },
+            { "Grass", new Dictionary<string, float>
+                {
+                    { "Water", 2.0f }, // Doble daño
+                    { "Fire", 0.5f },  // Mitad de daño
+                    { "Grass", 1.0f },  // Daño normal
+                    { "Rock", 2.0f }    // Doble daño
+                }
+            },
+            { "Water", new Dictionary<string, float>
+                {
+                    { "Fire", 2.0f },  // Doble daño
+                    { "Grass", 0.5f },  // Mitad de daño
+                    { "Water", 1.0f },  // Daño normal
+                    { "Electric", 0.5f } // Mitad de daño
+                }
+            },
+            // Agregar más tipos aquí según sea necesario
+        };
+
+        // Comprobar si el tipo de ataque está en la tabla
+        if (effectivenessTable.ContainsKey(attackType))
+        {
+            // Comprobar si el tipo defensor está en la tabla de efectividad del tipo atacante
+            if (effectivenessTable[attackType].ContainsKey(defenderType))
+            {
+                return effectivenessTable[attackType][defenderType]; // Retorna la efectividad
+            }
+        }
+
+        return 1.0f; // Daño normal si no hay interacción específica
+    }
+
+public int CalculateDamage(Attack attack, PokemonBase attacker, PokemonBase defender)
     {
         int damage = 0;
 
@@ -269,20 +257,6 @@ public class BattleManager
         }
 
         return damage;
-    }
-
-    private int CalculateDynamaxDamage(Attack attack, PokemonBase defender)
-    {
-        // Lógica para calcular daño Dinamax (aumentar el poder del ataque, etc.)
-        int baseDamage = attack.power * 2; // Ejemplo de aumento de daño
-        return baseDamage;
-    }
-
-    private int CalculateMegaEvolveDamage(Attack attack, PokemonBase defender)
-    {
-        // Lógica para calcular daño de Mega Evolución
-        int baseDamage = attack.power + 30; // Ejemplo de aumento de daño
-        return baseDamage;
     }
 
     private int CalculateNormalDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
@@ -350,52 +324,6 @@ public class BattleManager
         return Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier);
     }
 
-
-    private float GetTypeEffectiveness(string attackType, string defenderType)
-    {
-        // Tabla de efectividad de tipos
-        Dictionary<string, Dictionary<string, float>> effectivenessTable = new Dictionary<string, Dictionary<string, float>>
-        {
-            { "Fire", new Dictionary<string, float>
-                {
-                    { "Grass", 2.0f }, // Doble daño
-                    { "Water", 0.5f }, // Mitad de daño
-                    { "Fire", 1.0f },  // Daño normal
-                    { "Rock", 0.5f }   // Mitad de daño
-                }
-            },
-            { "Grass", new Dictionary<string, float>
-                {
-                    { "Water", 2.0f }, // Doble daño
-                    { "Fire", 0.5f },  // Mitad de daño
-                    { "Grass", 1.0f },  // Daño normal
-                    { "Rock", 2.0f }    // Doble daño
-                }
-            },
-            { "Water", new Dictionary<string, float>
-                {
-                    { "Fire", 2.0f },  // Doble daño
-                    { "Grass", 0.5f },  // Mitad de daño
-                    { "Water", 1.0f },  // Daño normal
-                    { "Electric", 0.5f } // Mitad de daño
-                }
-            },
-            // Agregar más tipos aquí según sea necesario
-        };
-
-        // Comprobar si el tipo de ataque está en la tabla
-        if (effectivenessTable.ContainsKey(attackType))
-        {
-            // Comprobar si el tipo defensor está en la tabla de efectividad del tipo atacante
-            if (effectivenessTable[attackType].ContainsKey(defenderType))
-            {
-                return effectivenessTable[attackType][defenderType]; // Retorna la efectividad
-            }
-        }
-
-        return 1.0f; // Daño normal si no hay interacción específica
-    }
-
     private void ApplyStatusEffect(PokemonBase defender, Attack attack)
     {
         if (attack.statusEffect != PokemonBase.StatusCondition.None)
@@ -412,4 +340,152 @@ public class BattleManager
             }
         }
     }
+
+    private int CalculateDynamaxDamage(Attack attack, PokemonBase defender)
+    {
+        // Lógica para calcular daño Dinamax (aumentar el poder del ataque, etc.)
+        int baseDamage = attack.power * 2; // Ejemplo de aumento de daño
+        return baseDamage;
+    }
+
+    private int CalculateMegaEvolveDamage(Attack attack, PokemonBase defender)
+    {
+        // Lógica para calcular daño de Mega Evolución
+        int baseDamage = attack.power + 30; // Ejemplo de aumento de daño
+        return baseDamage;
+    }
+
+
+    public void Tackle(PokemonBase attacker)
+    {
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0)  // Abajo
+        };
+
+        // Dibujar los rangos de ataque (esto se puede mejorar con un método de visualización)
+        foreach (var pos in attackPositions)
+        {
+            // Aquí puedes usar Gizmos o un método de visualización adecuado
+            Debug.DrawLine(attackerPosition, pos, Color.green, 2.0f); // Dibuja una línea verde para mostrar el rango
+        }
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker));
+    }
+
+    // Método para obtener un ataque por su nombre
+    public static Attack GetAttackByName(string name)
+    {
+        // Utiliza LINQ para buscar más eficientemente si es posible
+        return Instance.allAttacks.Find(attack => attack.name == name);
+    }
+
+    private static AttackCatalog _instance;
+    public static AttackCatalog Instance
+    {
+        get
+        {
+            if (_instance == null)
+            {
+                _instance = FindObjectOfType<AttackCatalog>();
+            }
+            return _instance;
+        }
+    }
+
+    // Método para aprender TM
+    public void TeachTM(PokemonBase pokemon, string tmName)
+    {
+        TM tm = tmCatalog.Find(t => t.tmName == tmName);
+        if (tm != null)
+        {
+            pokemon.LearnTM(tm);
+        }
+        else
+        {
+            Debug.Log($"TM {tmName} not found.");
+        }
+    }
+}
+
+public class BattleManager
+{
+    // Estructura para almacenar información de combate
+    public class CombatTurn
+    {
+        public PokemonBase attacker;
+        public PokemonBase defender;
+        public Attack attack;
+        public int speed;
+        public int priority;
+
+        public CombatTurn(PokemonBase attacker, PokemonBase defender, Attack attack)
+        {
+            this.attacker = attacker;
+            this.defender = defender;
+            this.attack = attack;
+            this.priority = attacker.ModifyPriority(attack); // Considera la prioridad del ataque
+            this.speed = attacker.GetEffectiveSpeed();
+        }
+    }
+
+    
+
+    // Método para ejecutar el turno
+    // public void ExecuteTurn(PokemonBase pokemon1, PokemonBase pokemon2, Attack attack1, Attack attack2)
+    // {
+    //     CombatTurn turn1 = new CombatTurn(pokemon1, pokemon2, attack1);
+    //     CombatTurn turn2 = new CombatTurn(pokemon2, pokemon1, attack2);
+
+    //     // Comparar la prioridad primero
+    //     CombatTurn firstTurn, secondTurn;
+    //     if (turn1.priority > turn2.priority)
+    //     {
+    //         firstTurn = turn1;
+    //         secondTurn = turn2;
+    //     }
+    //     else if (turn2.priority > turn1.priority)
+    //     {
+    //         firstTurn = turn2;
+    //         secondTurn = turn1;
+    //     }
+    //     else
+    //     {
+    //         // Si la prioridad es igual, decidir por velocidad
+    //         if (turn1.speed > turn2.speed)
+    //         {
+    //             firstTurn = turn1;
+    //             secondTurn = turn2;
+    //         }
+    //         else if (turn2.speed > turn1.speed)
+    //         {
+    //             firstTurn = turn2;
+    //             secondTurn = turn1;
+    //         }
+    //         else
+    //         {
+    //             // Si la velocidad es igual, elegir aleatoriamente
+    //             firstTurn = Random.Range(0, 2) == 0 ? turn1 : turn2;
+    //             secondTurn = firstTurn == turn1 ? turn2 : turn1;
+    //         }
+    //     }
+
+    //     // Ejecutar el primer turno
+    //     ApplyAttack(firstTurn.attacker, firstTurn.defender, firstTurn.attack);
+
+    //     // Comprobar si el defensor sigue vivo antes de ejecutar el segundo turno
+    //     if (firstTurn.defender.stats.hp > 0)
+    //     {
+    //         ApplyAttack(secondTurn.attacker, secondTurn.defender, secondTurn.attack);
+    //     }
+    // }
+
+    // Método en PokemonBase que calcula el daño basado en la transformación
 }

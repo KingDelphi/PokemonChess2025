@@ -351,7 +351,6 @@ private List<Vector3> ReconstructPath(Dictionary<Vector3, Vector3> cameFrom, Vec
     // Método para calcular el costo de movimiento
     int CalculateMoveCost(int totalMoves, float weight, float c, float k)
     {
-        Debug.Log("CalculateMoveCost called.");
         return (int)(totalMoves * (c + k * weight)); // Costo total de movimiento
     }
 
@@ -372,7 +371,6 @@ private TileHover GetTileAtPosition(Vector3 position)
     // Lógica para calcular los tiles a los que se puede mover usando BFS
 private void CalculateMoveableTiles()
 {
-    Debug.Log("CalculateMoveableTiles called.");
     moveableTiles.Clear();
     instantiatedTiles.Clear();
 
@@ -465,7 +463,11 @@ private bool IsWithinMapBounds(Vector3 position)
 
     private void OnPokemonClick()
 {
-    Debug.Log("OnPokemonClick called.");
+    PokemonBase pokemon = gameObject.GetComponent<PokemonBase>();
+
+    if(!pokemon.isSelectedForAttack)
+    {
+        Debug.Log("OnPokemonClick called.");
 
     // Obtén la posición actual del Pokémon
     currentPokemonPosition = transform.position;
@@ -508,6 +510,12 @@ private bool IsWithinMapBounds(Vector3 position)
             Debug.Log("No hay puntos de acción disponibles para mover.");
         }
     }
+    } else 
+    {
+        Debug.Log($"{pokemon.name} ya ha sido seleccionado para el ataque.");
+
+    }
+    
 }
 
 }

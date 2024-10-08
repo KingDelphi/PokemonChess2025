@@ -59,13 +59,11 @@ public class GameManager : MonoBehaviour
     {
         if (isPlayerTurn)
         {
-            Debug.Log("Es el turno del jugador.");
             // Aquí puedes activar la lógica del turno del jugador
             // Ejemplo: permitir que el jugador seleccione un Pokémon y realice una acción
         }
         else
         {
-            Debug.Log("Es el turno del enemigo.");
             // Aquí puedes activar la lógica del turno del enemigo
             // Ejemplo: IA del enemigo para seleccionar un Pokémon y realizar una acción
         }

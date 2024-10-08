@@ -14,13 +14,11 @@ public class TileHover : MonoBehaviour
 
     private void OnMouseEnter() // Método que se llama cuando el mouse entra en el collider del tile
     {
-        Debug.Log("TileHover.OnMouseEnter() called.");
         PokemonMovement.currentPokemon.TileEnter(transform.position);
     }
 
     private void OnMouseExit() // Método que se llama cuando el mouse sale del collider del tile
     {
-        Debug.Log("TileHover.OnMouseExit() called.");
         PokemonMovement.currentPokemon.TileExit(transform.position);
     }
 
