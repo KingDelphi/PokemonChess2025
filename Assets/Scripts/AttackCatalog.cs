@@ -413,9 +413,6 @@ private IEnumerator WaitForUserClick(List<Vector3> attackPositions, PokemonBase 
                             {
                                 DestroyAttackTiles();
 
-                                Debug.Log("Playing attack sound.");
-                                attacker.Attack();
-
                                 // Indicar que este Pokémon ha sido seleccionado para el ataque
                                 defender.isSelectedForAttack = true;
 
@@ -442,6 +439,13 @@ private IEnumerator WaitForUserClick(List<Vector3> attackPositions, PokemonBase 
                                 Debug.Log("Executing attack.");
                                 // Ejecutar el ataque Tackle
                                 ApplyAttack(attacker, defender, GetAttackByName("Tackle"));
+
+                                Debug.Log("Playing attack sound.");
+                                attacker.Attack();
+
+                                Debug.Log("Playing defend sound.");
+                                defender.Defend(damage);
+
                                 this.CancelAttack(); // Cancela el modo de ataque
                                 yield break; // Salir del bucle
                             }
@@ -515,9 +519,6 @@ private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPo
     // Instanciar el prefab
     Vector3 rainbowExplosionPosition = (attackerOriginalPosition + defender.transform.position) / 2;
     GameObject explosionInstance = Instantiate(rainbowExplosionPrefab, rainbowExplosionPosition, Quaternion.identity);
-
-    Debug.Log("Playing defend sound.");
-    defender.Defend(damage);
 
     // Destruir el objeto después de 2 segundos (ajusta el tiempo según la duración de la animación)
     Destroy(explosionInstance, 2f);
