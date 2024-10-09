@@ -202,6 +202,7 @@ MonoBehaviour:
   levelUpSound: {fileID: 8300000, guid: 7a4e2ac528ea0401b930a6db6717b612, type: 3}
   evolveSound: {fileID: 8300000, guid: 9a2bbfb0786774ecc81ac521ad152555, type: 3}
   tauntSound: {fileID: 8300000, guid: bc93bcd5c4d3f4b45a2895c31c98dce9, type: 3}
+  damageTextPrefab: {fileID: 544152150889130869, guid: da2d3970ec3474c04a21e85ee120a276, type: 3}
   hp: 0
   maxHP: 0
 --- !u!114 &1148584360422642532

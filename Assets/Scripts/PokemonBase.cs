@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
+using TMPro;
+
 
 public class PokemonBase : MonoBehaviour
 {
@@ -53,6 +56,9 @@ public class PokemonBase : MonoBehaviour
     public AudioClip levelUpSound;
     public AudioClip evolveSound;
     public AudioClip tauntSound;
+
+    public GameObject damageTextPrefab; // Prefab del texto de daño, asignado en el Inspector
+
 
     private void PlaySound(AudioClip clip)
 {
@@ -622,12 +628,14 @@ public void Attack()
     {
         // Lógica de ataque
         PlaySound(attackSound);
+        ShowDamageText(0);
     }
 
-    public void ReceiveDamage(int damage)
+    public void Defend(int damage)
     {
-        hp -= damage;
+        //hp -= damage;
         PlaySound(damageSound);
+        ShowDamageText(damage);
         // Aquí puedes agregar la lógica para mostrar el daño en pantalla, etc.
     }
 
@@ -642,6 +650,51 @@ public void Attack()
         // Lógica al hacer clic en el personaje
         PlaySound(tauntSound); // Ejemplo de sonido al hacer clic
     }
+
+    private void ShowDamageText(int damage)
+{
+    // Instanciar el prefab del texto de daño sobre el Pokémon
+    GameObject textObject = Instantiate(damageTextPrefab, transform.position + new Vector3(0, .05f, 0), Quaternion.identity);
+
+    // Obtener el componente TextMeshPro del objeto instanciado
+    TextMeshPro textMesh = textObject.GetComponent<TextMeshPro>();
+
+    // Asegurarte de que el componente TextMeshPro no sea nulo
+    if (textMesh != null)
+    {
+        textMesh.text = damage.ToString(); // Asignar el texto del daño
+        StartCoroutine(AnimateDamageText(textObject)); // Iniciar la animación
+    }
+    else
+    {
+        Debug.LogError("No se encontró el componente TextMeshPro en el prefab de daño.");
+    }
+}
+
+private IEnumerator AnimateDamageText(GameObject textObject)
+{
+    float duration = 1.5f; // Duración de la animación
+    Vector3 originalPosition = textObject.transform.position;
+    Vector3 targetPosition = originalPosition + new Vector3(0, .05f, 0); // Mover hacia arriba
+
+    float elapsedTime = 0f;
+    while (elapsedTime < duration)
+    {
+        // Mover el texto hacia arriba
+        textObject.transform.position = Vector3.Lerp(originalPosition, targetPosition, elapsedTime / duration);
+
+        // Escalar el texto (agrandarlo)
+        textObject.transform.localScale = Vector3.Lerp(Vector3.one, Vector3.one * 1.5f, elapsedTime / duration);
+
+        elapsedTime += Time.deltaTime;
+        yield return null; // Esperar al siguiente frame
+    }
+
+    // Después de la animación, destruir el texto
+    Destroy(textObject);
+}
+
+
 #endregion
 
 #region Affinity Management

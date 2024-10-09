@@ -69,7 +69,7 @@ public class AttackCatalog : MonoBehaviour
     public bool isSelectedForAttack;
     public bool isAttacking;
     public GameObject attackTilePrefab; // Prefab del tile a instanciar
-    Dictionary<Vector3, TileHover> instantiatedTiles = new Dictionary<Vector3, TileHover>(); // Lista para almacenar los tiles instanciados
+    Dictionary<Vector3, TileAttack> instantiatedTiles = new Dictionary<Vector3, TileAttack>(); // Lista para almacenar los tiles instanciados
     public Material grayMaterial;
     public float tileSize = 1f; // Tamaño del tile
     public int mapWidth = 7; // Ancho del mapa
@@ -77,9 +77,11 @@ public class AttackCatalog : MonoBehaviour
 
     public GameObject rainbowExplosionPrefab;
 
+    public int damage = 0;
+
     void Start()
         {
-            instantiatedTiles = new Dictionary<Vector3, TileHover>(); // Inicializa la lista
+            instantiatedTiles = new Dictionary<Vector3, TileAttack>(); // Inicializa la lista
         }
 
     public void InitializeAttacks()
@@ -127,7 +129,6 @@ public class AttackCatalog : MonoBehaviour
     public void ApplyAttack(PokemonBase attacker, PokemonBase defender, Attack attack)
     {
         // Lógica para aplicar daño basada en la categoría del ataque
-        int damage = 0;
 
         // Utilizar el método de cálculo de daño que considera las transformaciones
         damage = CalculateDamage(attack, attacker, defender);
@@ -159,7 +160,6 @@ public class AttackCatalog : MonoBehaviour
         }
     }
 
-
 public void CancelAttack()
     {
         // Restablecer el estado del Pokémon
@@ -170,7 +170,6 @@ public void CancelAttack()
 
         Debug.Log($"{this.name} ha cancelado su ataque.");
     }
-
 
 private float GetTypeEffectiveness(string attackType, string defenderType)
     {
@@ -335,7 +334,6 @@ public int CalculateDamage(Attack attack, PokemonBase attacker, PokemonBase defe
         return baseDamage;
     }
 
-
     public void Tackle(PokemonBase attacker)
 {
     Debug.Log("Tackle called.");
@@ -369,18 +367,10 @@ public int CalculateDamage(Attack attack, PokemonBase attacker, PokemonBase defe
 
         // Instancia el prefab del tile en la posición de ataque
         GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
-        //Debug.Log($"Instantiated tile at {position}");
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
 
         // Obtener el componente TileHover para cambiar el color del tile
         TileAttack tileAttack = tile.GetComponent<TileAttack>();
-        if (tileAttack != null)
-        {
-            //Debug.Log("TileAttack found, changing color to orange.");
-        }
-        else
-        {
-            Debug.LogError("TileAttack component not found on instantiated tile.");
-        }
     }
 
     // Ahora, espera la interacción del usuario
@@ -421,6 +411,8 @@ private IEnumerator WaitForUserClick(List<Vector3> attackPositions, PokemonBase 
                         {
                             if (Vector3.Distance(hit.transform.position, position) < 0.5f) // Comprobar si está dentro de un rango cercano
                             {
+                                DestroyAttackTiles();
+
                                 Debug.Log("Playing attack sound.");
                                 attacker.Attack();
 
@@ -455,20 +447,28 @@ private IEnumerator WaitForUserClick(List<Vector3> attackPositions, PokemonBase 
                             }
                         }
                         Debug.Log("Clicked position is not valid for attack.");
+                        DestroyAttackTiles(); // Destruir los tiles si no se hizo clic en un Pokémon
+                        yield break; // Salir del bucle
                     }
                     else
                     {
                         Debug.Log("Clicked on the same attacker or no defender found.");
+                        DestroyAttackTiles(); // Destruir los tiles si no se hizo clic en un Pokémon
+                        yield break; // Salir del bucle
                     }
                 }
                 else
                 {
                     Debug.Log("Hit object is not a Pokémon.");
+                    DestroyAttackTiles(); // Destruir los tiles si no se hizo clic en un Pokémon
+                    yield break; // Salir del bucle
                 }
             }
             else
             {
                 Debug.Log("No collider hit.");
+                DestroyAttackTiles(); // Destruir los tiles si no se hizo clic en un Pokémon
+                yield break; // Salir del bucle
             }
         }
 
@@ -476,11 +476,6 @@ private IEnumerator WaitForUserClick(List<Vector3> attackPositions, PokemonBase 
     }
 }
 
-
-
-
-
-// Coroutine para mover un Pokémon a una posición objetivo
 private IEnumerator MovePokemon(PokemonBase pokemon, Vector3 targetPosition, float stopDistance = 0.5f)
 {
     Debug.Log("MovePokemon called.");
@@ -507,8 +502,6 @@ private IEnumerator MovePokemon(PokemonBase pokemon, Vector3 targetPosition, flo
     pokemon.transform.position = stopPosition;
 }
 
-
-// Coroutine para empujar un Pokémon en la dirección opuesta al ataque
 private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPosition)
 {
     Debug.Log("PushPokemon called.");
@@ -522,6 +515,9 @@ private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPo
     // Instanciar el prefab
     Vector3 rainbowExplosionPosition = (attackerOriginalPosition + defender.transform.position) / 2;
     GameObject explosionInstance = Instantiate(rainbowExplosionPrefab, rainbowExplosionPosition, Quaternion.identity);
+
+    Debug.Log("Playing defend sound.");
+    defender.Defend(damage);
 
     // Destruir el objeto después de 2 segundos (ajusta el tiempo según la duración de la animación)
     Destroy(explosionInstance, 2f);
@@ -538,8 +534,6 @@ private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPo
     defender.transform.position = originalPosition;
 }
 
-
-// Método que verifica si una posición está dentro de los límites del mapa
 private bool IsWithinMapBounds(Vector3 position)
 {
     // Convertir la posición a enteros para acceder al índice del arreglo
@@ -564,6 +558,15 @@ private bool IsTileBlocked(Vector3 position)
     return false; // No hay objetos bloqueando
 }
 
+private void DestroyAttackTiles()
+    {
+        // Destruir todos los tiles instanciados
+        foreach (var tile in instantiatedTiles.Values)
+        {
+            Destroy(tile.gameObject);
+        }
+        instantiatedTiles.Clear();
+    }
 
 
 
@@ -571,8 +574,6 @@ private bool IsTileBlocked(Vector3 position)
 
 
 
-
-    // Método para obtener un ataque por su nombre
     public static Attack GetAttackByName(string name)
     {
         // Utiliza LINQ para buscar más eficientemente si es posible
@@ -592,7 +593,6 @@ private bool IsTileBlocked(Vector3 position)
         }
     }
 
-    // Método para aprender TM
     public void TeachTM(PokemonBase pokemon, string tmName)
     {
         TM tm = tmCatalog.Find(t => t.tmName == tmName);
