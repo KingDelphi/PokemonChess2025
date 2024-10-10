@@ -12,6 +12,9 @@ public class GameManager : MonoBehaviour
     public PokemonBase playerPokemonPrefab;
     public PokemonBase npcPokemonPrefab;
     public Vector3 position;
+    public TrainerBase playerTrainerPrefab;
+    public TrainerBase npcTrainerPrefab;
+
 
     private void Awake()
     {
@@ -37,10 +40,30 @@ public class GameManager : MonoBehaviour
     {
         // Inicializar Pokémon y otras configuraciones del juego
         // Ejemplo: Instanciar Pokémon en el tablero
+        SpawnTrainers();
         SpawnPokemons();
         StartTurn();
     }
 
+    private void SpawnTrainers()
+    {
+        // Asegúrate de que pokemonPrefab está asignado correctamente
+            if (playerTrainerPrefab != null && npcTrainerPrefab != null)
+            {
+                // Instanciar Pokemon del jugador
+                TrainerBase playerTrainer = Instantiate(playerTrainerPrefab, new Vector3(4.5f, 0.5f, -1), Quaternion.identity);
+                playerTrainer.GetComponent<TrainerBase>().playerTrainer = true; // Activar el bool para el Pokémon del jugador
+
+                // Instanciar Pokemon del NPC
+                TrainerBase npcTrainer = Instantiate(npcTrainerPrefab, new Vector3(2.5f, 3.5f, -1), Quaternion.identity);
+                npcTrainer.GetComponent<TrainerBase>().npcTrainer = true; // Activar el bool para el Pokémon del NPC
+            }
+            else
+            {
+                Debug.LogError("¡No se ha asignado el prefab del Entrenador!");
+            }    
+    }
+    
     private void SpawnPokemons()
     {
         // Asegúrate de que pokemonPrefab está asignado correctamente

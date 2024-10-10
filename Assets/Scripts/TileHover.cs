@@ -19,12 +19,27 @@ public class TileHover : MonoBehaviour
 
     private void OnMouseEnter() // Método que se llama cuando el mouse entra en el collider del tile
     {
-        PokemonMovement.currentPokemon.TileEnter(transform.position);
+        if (PokemonMovement.currentPokemon != null) // Si hay un Pokémon seleccionado
+        {
+            PokemonMovement.currentPokemon.TileEnter(transform.position);
+        }
+        else if (TrainerBase.currentTrainer != null) // Si hay un Trainer seleccionado
+        {
+            TrainerBase.currentTrainer.TileEnter(transform.position);
+        }
     }
+
 
     private void OnMouseExit() // Método que se llama cuando el mouse sale del collider del tile
     {
-        PokemonMovement.currentPokemon.TileExit(transform.position);
+        if (PokemonMovement.currentPokemon != null) // Si hay un Pokémon seleccionado
+        {
+            PokemonMovement.currentPokemon.TileExit(transform.position);
+        }
+        else if (TrainerBase.currentTrainer != null) // Si hay un Trainer seleccionado
+        {
+            TrainerBase.currentTrainer.TileExit(transform.position);
+        }
     }
 
     public void ChangeColorToBlue()

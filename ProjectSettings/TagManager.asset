@@ -8,6 +8,8 @@ TagManager:
   - pokemon
   - tile
   - walkable
+  - pokeball
+  - trainer
   layers:
   - Default
   - TransparentFX

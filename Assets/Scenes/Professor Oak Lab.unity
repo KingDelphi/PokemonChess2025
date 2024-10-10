@@ -387,7 +387,7 @@ GameObject:
   - component: {fileID: 161149720}
   m_Layer: 0
   m_Name: pokeball (7)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -489,7 +489,7 @@ GameObject:
   - component: {fileID: 163452716}
   m_Layer: 0
   m_Name: pokeball (12)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -674,7 +674,7 @@ GameObject:
   - component: {fileID: 258516077}
   - component: {fileID: 258516076}
   m_Layer: 0
-  m_Name: pokemonNameTMP
+  m_Name: unitNameTMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -912,16 +912,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   trainerNameTMP: {fileID: 530509598}
-  pokemonPanel: {fileID: 639757305}
+  imagePanel: {fileID: 639757305}
   attackTypePanel: {fileID: 1665371588}
   moveTypePanel: {fileID: 535710016}
   attackNameTMP: {fileID: 475092013}
   powerTMP: {fileID: 452605194}
   accuracyTMP: {fileID: 440182658}
   descriptionTMP: {fileID: 2140069608}
-  pokemonNameTMP: {fileID: 472551556}
-  pokemonNatureTMP: {fileID: 1942681690}
-  pokemonStatsValuesTMP: {fileID: 970569830}
+  unitNameTMP: {fileID: 472551556}
+  unitNatureTMP: {fileID: 1942681690}
+  unitStatsValuesTMP: {fileID: 970569830}
 --- !u!1 &285090831
 GameObject:
   m_ObjectHideFlags: 0
@@ -1370,7 +1370,7 @@ GameObject:
   - component: {fileID: 472551557}
   - component: {fileID: 472551556}
   m_Layer: 0
-  m_Name: pokemonNameTMP
+  m_Name: unitNameTMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1723,7 +1723,7 @@ GameObject:
   - component: {fileID: 516063879}
   m_Layer: 0
   m_Name: pokeball (11)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2266,7 +2266,7 @@ GameObject:
   - component: {fileID: 605247388}
   m_Layer: 0
   m_Name: pokeball (8)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2450,7 +2450,7 @@ GameObject:
   - component: {fileID: 639757306}
   - component: {fileID: 639757307}
   m_Layer: 0
-  m_Name: pokemonPanel
+  m_Name: imagePanel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2541,7 +2541,7 @@ GameObject:
   - component: {fileID: 682054667}
   m_Layer: 0
   m_Name: pokeball (4)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2649,7 +2649,7 @@ GameObject:
   - component: {fileID: 759832510}
   m_Layer: 0
   m_Name: pokeball (9)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2885,7 +2885,7 @@ GameObject:
   - component: {fileID: 780450551}
   m_Layer: 0
   m_Name: pokeball (5)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3009,6 +3009,8 @@ MonoBehaviour:
   playerPokemonPrefab: {fileID: -5235967078421513330, guid: d35ef899a49fb49b8bed687bb3d66c82, type: 3}
   npcPokemonPrefab: {fileID: -5235967078421513330, guid: d35ef899a49fb49b8bed687bb3d66c82, type: 3}
   position: {x: 0, y: 0, z: 0}
+  playerTrainerPrefab: {fileID: -4939437955753239687, guid: 7ea24ca1ee49a4d0f8285d2b14717d52, type: 3}
+  npcTrainerPrefab: {fileID: 3836998991359685345, guid: 9357af6260be54788987a658eb6ad451, type: 3}
 --- !u!4 &785334246
 Transform:
   m_ObjectHideFlags: 0
@@ -3344,7 +3346,7 @@ GameObject:
   - component: {fileID: 843443353}
   - component: {fileID: 843443352}
   m_Layer: 0
-  m_Name: pokemonNatureTMP
+  m_Name: unitNatureTMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3479,7 +3481,7 @@ GameObject:
   - component: {fileID: 894102830}
   m_Layer: 0
   m_Name: pokeball (6)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3748,7 +3750,7 @@ GameObject:
   - component: {fileID: 970569831}
   - component: {fileID: 970569830}
   m_Layer: 0
-  m_Name: pokemonStatsValuesTMP
+  m_Name: unitStatsValuesTMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4326,7 +4328,7 @@ GameObject:
   - component: {fileID: 1286492955}
   m_Layer: 0
   m_Name: pokeball (3)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -4569,7 +4571,7 @@ GameObject:
   - component: {fileID: 1369668000}
   - component: {fileID: 1369667999}
   m_Layer: 0
-  m_Name: pokemonStatsTMP
+  m_Name: unitStatsTMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5716,7 +5718,7 @@ GameObject:
   - component: {fileID: 1740837603}
   m_Layer: 0
   m_Name: pokeball (2)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -5824,7 +5826,7 @@ GameObject:
   - component: {fileID: 1813727225}
   m_Layer: 0
   m_Name: pokeball (1)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -6256,7 +6258,7 @@ GameObject:
   - component: {fileID: 1942681691}
   - component: {fileID: 1942681690}
   m_Layer: 0
-  m_Name: pokemonNatureTMP
+  m_Name: unitNatureTMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6474,7 +6476,7 @@ GameObject:
   - component: {fileID: 1982409757}
   - component: {fileID: 1982409756}
   m_Layer: 0
-  m_Name: pokemonStatsValuesTMP
+  m_Name: unitStatsValuesTMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6625,7 +6627,7 @@ GameObject:
   - component: {fileID: 1990053385}
   - component: {fileID: 1990053384}
   m_Layer: 0
-  m_Name: pokemonStatsTMP
+  m_Name: unitStatsTMP
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -7097,7 +7099,7 @@ GameObject:
   - component: {fileID: 2076843937}
   m_Layer: 0
   m_Name: pokeball (10)
-  m_TagString: Untagged
+  m_TagString: pokeball
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

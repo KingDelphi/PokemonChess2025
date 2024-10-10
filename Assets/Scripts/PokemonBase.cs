@@ -63,6 +63,8 @@ public class PokemonBase : MonoBehaviour
     public GameObject damageTextPrefab; // Prefab del texto de daño, asignado en el Inspector
     public Sprite pokedexImage; // Imagen estática del Pokémon para el Pokédex
 
+    public bool isInPokeball;
+
     private void PlaySound(AudioClip clip)
     {
         // Verificar si el AudioSource está correctamente inicializado
@@ -142,9 +144,20 @@ public class PokemonBase : MonoBehaviour
         DisplayNatureInfo(); // Mostrar información de la naturaleza
     }
 
-    void Start()
-    {        
-        
+    public void Start()
+    {
+        Transform parent = transform.parent;
+
+        // Comprueba si el Pokémon es hijo de una Pokéball
+        if (parent != null && parent.CompareTag("pokeball"))
+        {
+            isInPokeball = true;
+            actionPoints = 0; // Asignamos 0 puntos de acción para bloquear el movimiento
+        }
+        else
+        {
+            isInPokeball = false;
+        }
     }
 
 #region Nature Methods

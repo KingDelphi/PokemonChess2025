@@ -73,7 +73,7 @@ public class Charmander : PokemonBase
     
     void Start()
     {
-        
+        base.Start();
 
         // Asignar ataques
         attackList = new List<LearnedAttack>();

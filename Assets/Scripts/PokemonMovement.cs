@@ -469,68 +469,74 @@ private bool IsWithinMapBounds(Vector3 position)
 {
     PokemonBase pokemon = gameObject.GetComponent<PokemonBase>();
 
+    // Verifica si el Pokémon está en la Pokéball
+    bool isInPokeball = pokemon.isInPokeball;
+
+    // Si el Pokémon está en la Pokéball, sus puntos de acción serán 0
+    if (isInPokeball)
+    {
+        pokemon.actionPoints = 0;
+    }
+
     if (pokemon != null && pokedexUIController != null)
-        {
-            // Llama al método UpdatePokedex en la instancia del controlador del Pokédex
-            pokedexUIController.UpdatePokedex(pokemon);
-        }
-        else
-        {
-            Debug.LogError("No se pudo encontrar el componente PokemonBase o PokedexUIController.");
-        }
-
-
-    if(!pokemon.isSelectedForAttack)
     {
-        Debug.Log("OnPokemonClick called.");
-
-    // Obtén la posición actual del Pokémon
-    currentPokemonPosition = transform.position;
-
-    // Comprobar si se hizo clic en el mismo Pokémon
-    if (areTilesVisible && lastClickedPosition == currentPokemonPosition)
-    {
-        // Si los tiles ya están visibles y se hizo clic en el mismo Pokémon, los destruimos
-        DestroyMoveableTiles();
-        areTilesVisible = false; // Actualiza el estado de visibilidad
+        // Llama al método UpdatePokedex en la instancia del controlador del Pokédex
+        pokedexUIController.UpdatePokedex(pokemon);
     }
     else
     {
-        // Verifica si hay puntos de acción antes de calcular los tiles movibles
-        if (actionPoints > 0)
-        {
-            // Obtén el componente del Pokémon clicado y sus valores de c y k
-            PokemonBase pokemonBase = GetComponent<PokemonBase>();
-            if (pokemonBase != null)
-            {
-                // Usa los valores específicos de c y k de este Pokémon
-                weight = pokemonBase.weight; // Asigna el peso a la variable local de clase
-                c = pokemonBase.c; // Asigna c y úsalo solo para este cálculo
-                k = pokemonBase.k; // Asigna k y úsalo solo para este cálculo
+        Debug.LogError("No se pudo encontrar el componente PokemonBase o PokedexUIController.");
+    }
 
-                // Ahora calcula los tiles movibles con los valores de este Pokémon
-                CalculateMoveableTiles();  // Ajusta CalculateMoveableTiles para recibir c y k como parámetros
-                
-                areTilesVisible = true; // Actualiza el estado de visibilidad
-                lastClickedPosition = currentPokemonPosition; // Actualiza la última posición clicada
-                currentPokemon = this; // Solo actualiza currentPokemon aquí
-            }
-            else
-            {
-                Debug.LogError("No se pudo obtener el componente PokemonBase.");
-            }
+    if (!pokemon.isSelectedForAttack)
+    {
+        // Obtén la posición actual del Pokémon
+        currentPokemonPosition = transform.position;
+
+        // Comprobar si se hizo clic en el mismo Pokémon
+        if (areTilesVisible && lastClickedPosition == currentPokemonPosition)
+        {
+            // Si los tiles ya están visibles y se hizo clic en el mismo Pokémon, los destruimos
+            DestroyMoveableTiles();
+            areTilesVisible = false; // Actualiza el estado de visibilidad
         }
         else
         {
-            Debug.Log("No hay puntos de acción disponibles para mover.");
+            // Verifica si hay puntos de acción antes de calcular los tiles movibles
+            if (pokemon.actionPoints > 0) // Verifica los action points del Pokémon
+            {
+                // Obtén el componente del Pokémon clicado y sus valores de c y k
+                PokemonBase pokemonBase = GetComponent<PokemonBase>();
+                if (pokemonBase != null)
+                {
+                    // Usa los valores específicos de c y k de este Pokémon
+                    weight = pokemonBase.weight; // Asigna el peso a la variable local de clase
+                    c = pokemonBase.c; // Asigna c y úsalo solo para este cálculo
+                    k = pokemonBase.k; // Asigna k y úsalo solo para este cálculo
+
+                    // Ahora calcula los tiles movibles con los valores de este Pokémon
+                    CalculateMoveableTiles();  // Ajusta CalculateMoveableTiles para recibir c y k como parámetros
+                
+                    areTilesVisible = true; // Actualiza el estado de visibilidad
+                    lastClickedPosition = currentPokemonPosition; // Actualiza la última posición clicada
+                    currentPokemon = this; // Solo actualiza currentPokemon aquí
+                }
+                else
+                {
+                    Debug.LogError("No se pudo obtener el componente PokemonBase.");
+                }
+            }
+            else
+            {
+                Debug.Log("No hay puntos de acción disponibles para mover.");
+            }
         }
     }
-    } else 
+    else 
     {
         Debug.Log($"{pokemon.name} ya ha sido seleccionado para el ataque.");
-
     }
-    
 }
+
 
 }

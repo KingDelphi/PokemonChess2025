@@ -82,7 +82,7 @@ public class Eevee : PokemonBase
     
     void Start()
     {
-        
+        base.Start();
 
         // Asignar ataques a Eevee
         attackList = new List<LearnedAttack>();
