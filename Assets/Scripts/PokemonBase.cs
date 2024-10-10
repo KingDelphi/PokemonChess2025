@@ -8,6 +8,7 @@ public class PokemonBase : MonoBehaviour
 {
     public int pokemonNumber;       // Pokémon number
     public string pokemonName;      // Pokémon name
+    public Nature pokemonNature;
     public string type1;            // First type of the Pokémon
     public string type2;            // Second type (can be empty if only one type)
     public float height;            // Height of the Pokémon
@@ -19,8 +20,10 @@ public class PokemonBase : MonoBehaviour
     public int catchRate;           // Catch rate
     public int expYield;            // Experience yielded when defeated
     public string growthRate;       // Growth rate
-    public string eggGroup;         // Egg group
+    public string eggGroup1;         // Egg group
+    public string eggGroup2;
     public float genderRatio;       // Gender ratio (e.g., 0.5 for 50% male, 50% female)
+    public Gender gender;
     public int eggCycles;           // Egg cycles required for hatching
     public Stats stats;             // Stats object with the Pokémon's stats
     public List<LearnedAttack> attackList; // List of the Pokémon's attacks
@@ -58,67 +61,66 @@ public class PokemonBase : MonoBehaviour
     public AudioClip tauntSound;
 
     public GameObject damageTextPrefab; // Prefab del texto de daño, asignado en el Inspector
-
+    public Sprite pokedexImage; // Imagen estática del Pokémon para el Pokédex
 
     private void PlaySound(AudioClip clip)
-{
-    // Verificar si el AudioSource está correctamente inicializado
-    if (audioSource == null)
     {
-        Debug.LogError("AudioSource is null! Make sure it is attached to the GameObject.");
+        // Verificar si el AudioSource está correctamente inicializado
+        if (audioSource == null)
+        {
+            Debug.LogError("AudioSource is null! Make sure it is attached to the GameObject.");
+        }
+
+        // Verificar si el clip no es nulo
+        if (clip == null)
+        {
+            Debug.LogError("AudioClip is null! Make sure it is assigned in the Inspector.");
+        }
+
+        // Verifica que ambos no sean nulos antes de reproducir el sonido
+        if (clip != null && audioSource != null) 
+        {
+            Debug.Log("Playing sound: " + clip.name); // Log para ver si se está llamando
+            audioSource.PlayOneShot(clip);
+        }
+        else
+        {
+            Debug.LogError("Audio clip or AudioSource is null!");
+        }
     }
 
-    // Verificar si el clip no es nulo
-    if (clip == null)
+    public enum Gender
     {
-        Debug.LogError("AudioClip is null! Make sure it is assigned in the Inspector.");
+        Male,
+        Female,
+        Genderless // Si quieres incluir la opción de Pokémon sin género
     }
 
-    // Verifica que ambos no sean nulos antes de reproducir el sonido
-    if (clip != null && audioSource != null) 
+    public void DetermineGender()
     {
-        Debug.Log("Playing sound: " + clip.name); // Log para ver si se está llamando
-        audioSource.PlayOneShot(clip);
+        // Verificar si el género es genderless
+        if (genderRatio < 0)
+        {
+            gender = Gender.Genderless;
+            return;
+        }
+
+        // Generar un número aleatorio entre 0 y 1
+        float randomValue = Random.Range(0f, 1f);
+
+        // Comparar el valor aleatorio con el genderRatio para determinar el género
+        if (randomValue <= genderRatio)
+        {
+            gender = Gender.Male; // Es masculino
+        }
+        else
+        {
+            gender = Gender.Female; // Es femenino
+        }
+
+        Debug.Log($"{this.name} is {gender}");
     }
-    else
-    {
-        Debug.LogError("Audio clip or AudioSource is null!");
-    }
-}
 
-
-
-
-
-    // Lista de naturalezas
-    public static List<Nature> natures = new List<Nature>
-    {
-        new Nature("Adamant", 0.10f, 0f, -0.10f, 0f, 0f),  // Aumenta Ataque, disminuye Ataque Especial
-        new Nature("Bashful", 0f, 0f, 0f, 0f, 0f),         // Neutra
-        new Nature("Bold", 0f, 0.10f, 0f, 0f, -0.10f),     // Aumenta Defensa, disminuye Velocidad
-        new Nature("Brave", 0.10f, 0f, 0f, 0f, -0.10f),    // Aumenta Ataque, disminuye Velocidad
-        new Nature("Calm", 0f, 0f, 0f, 0.10f, -0.10f),     // Aumenta Defensa Especial, disminuye Velocidad
-        new Nature("Careful", 0f, 0f, -0.10f, 0.10f, 0f),  // Aumenta Defensa Especial, disminuye Ataque Especial
-        new Nature("Docile", 0f, 0f, 0f, 0f, 0f),          // Neutra
-        new Nature("Gentle", 0f, -0.10f, 0f, 0.10f, 0f),   // Aumenta Defensa Especial, disminuye Defensa
-        new Nature("Hardy", 0f, 0f, 0f, 0f, 0f),           // Neutra
-        new Nature("Hasty", 0f, -0.10f, 0f, 0f, 0.10f),    // Aumenta Velocidad, disminuye Defensa
-        new Nature("Impish", 0f, 0.10f, -0.10f, 0f, 0f),   // Aumenta Defensa, disminuye Ataque Especial
-        new Nature("Jolly", 0f, 0f, -0.10f, 0f, 0.10f),     // Aumenta Velocidad, disminuye Ataque Especial
-        new Nature("Lax", 0f, 0.10f, 0f, -0.10f, 0f),      // Aumenta Defensa, disminuye Defensa Especial
-        new Nature("Lonely", 0.10f, -0.10f, 0f, 0f, 0f),   // Aumenta Ataque, disminuye Defensa
-        new Nature("Mild", 0f, -0.10f, 0.10f, 0f, 0f),     // Aumenta Ataque Especial, disminuye Defensa
-        new Nature("Modest", -0.10f, 0f, 0.10f, 0f, 0f),   // Aumenta Ataque Especial, disminuye Ataque
-        new Nature("Naive", 0f, 0f, -0.10f, 0.10f, 0f),    // Aumenta Defensa Especial, disminuye Velocidad
-        new Nature("Naughty", 0.10f, 0f, -0.10f, 0f, 0f),  // Aumenta Ataque, disminuye Defensa Especial
-        new Nature("Quiet", 0f, 0f, 0.10f, 0f, -0.10f),     // Aumenta Ataque Especial, disminuye Velocidad
-        new Nature("Quirky", 0f, 0f, 0f, 0f, 0f),          // Neutra
-        new Nature("Rash", 0f, 0f, 0.10f, -0.10f, 0f),     // Aumenta Ataque Especial, disminuye Defensa Especial
-        new Nature("Relaxed", 0f, 0.10f, 0f, 0f, -0.10f),   // Aumenta Defensa, disminuye Velocidad
-        new Nature("Sassy", 0f, 0f, 0f, 0.10f, -0.10f),     // Aumenta Defensa Especial, disminuye Velocidad
-        new Nature("Serious", 0f, 0f, 0f, 0f, 0f),         // Neutra
-        new Nature("Timid", 0f, -0.10f, 0f, 0f, 0.10f),    // Aumenta Velocidad, disminuye Ataque
-    };
 
     public virtual void Awake()
     {
@@ -127,38 +129,31 @@ public class PokemonBase : MonoBehaviour
 
         stats.level = 1;
 
-        if (stats.hp == 0) stats.hp = 100;  // Solo asigna si no ha sido configurado
-        if (stats.atk == 0) stats.atk = 50;
-        if (stats.def == 0) stats.def = 50;
-        if (stats.spAtk == 0) stats.spAtk = 50;
-        if (stats.spDef == 0) stats.spDef = 50;
-        if (stats.spd == 0) stats.spd = 50;
-
         affinity = 50; // Valor inicial de afinidad (puede ser aleatorio o basado en condiciones)
 
         // Inicialización y asignación de la forma inicial
         forms = new List<PokemonForm>();
         // Ejemplo: Agregar formas (deberías hacer esto con los datos específicos de tu Pokémon)
-        AddForms();
-        ChangeForm(0); // Cambia a la forma inicial
-
-    }
-
-    void Start()
-    {        
+        
+        DetermineGender();
         AssignRandomNature(); // Asignar una naturaleza aleatoria al inicializar
         ApplyNature(); // Aplicar la naturaleza a las estadísticas
         AssignRandomIVs();
         DisplayNatureInfo(); // Mostrar información de la naturaleza
     }
 
- #region Nature Methods
+    void Start()
+    {        
+        
+    }
+
+#region Nature Methods
 
 // Método para asignar una naturaleza aleatoria
 public void AssignRandomNature()
 {
-    int index = Random.Range(0, natures.Count);
-    nature = natures[index];
+    int index = Random.Range(0, Nature.natures.Count);
+    pokemonNature = Nature.natures[index];
 }
 
 public void ApplyNature()
@@ -166,20 +161,25 @@ public void ApplyNature()
     if (nature != null)
     {
         ApplyNatureModifiers(nature);
-        Debug.Log($"{pokemonName} has applied the {nature.name} nature modifiers!");
+        Debug.Log($"{this.pokemonName} has applied the {pokemonNature.name} nature modifiers!");
+    }
+    else
+    {
+        Debug.LogWarning($"{this.pokemonName} has no nature assigned!"); // Avísame si la naturaleza es null
     }
 }
 
+
 public void DisplayNatureInfo()
 {
-    Debug.Log($"Nature: {nature.name}, Attack Modifier: {nature.attackModifier}, Defense Modifier: {nature.defenseModifier}, Special Attack Modifier: {nature.specialAttackModifier}, Special Defense Modifier: {nature.specialDefenseModifier}, Speed Modifier: {nature.speedModifier}");
+    Debug.Log($"Nature: {pokemonNature.name}, Attack Modifier: {pokemonNature.attackModifier}, Defense Modifier: {pokemonNature.defenseModifier}, Special Attack Modifier: {pokemonNature.specialAttackModifier}, Special Defense Modifier: {pokemonNature.specialDefenseModifier}, Speed Modifier: {pokemonNature.speedModifier}");
 }
 
 public string GetNatureInfo()
 {
-    return $"Nature: {nature.name}, Attack Mod: {nature.attackModifier}, Defense Mod: {nature.defenseModifier}, " +
-            $"Special Attack Mod: {nature.specialAttackModifier}, Special Defense Mod: {nature.specialDefenseModifier}, " +
-            $"Speed Mod: {nature.speedModifier}";
+    return $"Nature: {pokemonNature.name}, Attack Mod: {pokemonNature.attackModifier}, Defense Mod: {pokemonNature.defenseModifier}, " +
+            $"Special Attack Mod: {pokemonNature.specialAttackModifier}, Special Defense Mod: {pokemonNature.specialDefenseModifier}, " +
+            $"Speed Mod: {pokemonNature.speedModifier}";
 }
 
 #endregion
@@ -268,6 +268,13 @@ private void Evolve(string newForm)
 
 public int hp;
 public int maxHP;
+
+// Método para obtener las estadísticas en formato de texto
+    public string GetStatsString()
+    {
+        // Devuelve las estadísticas como una cadena separada por comas
+        return $"{stats.hp}\n\n{stats.atk}\n\n{stats.def}\n\n{stats.spAtk}\n\n{stats.spDef}\n\n{stats.spd}\n";
+    }
 
 public void ApplyNatureModifiers(Nature nature)
 {
@@ -597,8 +604,8 @@ public virtual void UseZMove(Attack zMove)
 public void AddForms()
 {
     // Ejemplo de cómo agregar formas, deberías hacerlo de acuerdo a tus datos
-    forms.Add(new PokemonForm("Forma Normal", new Stats { hp = 100, atk = 50, def = 50, spAtk = 50, spDef = 50, spd = 50 }, new List<LearnedAttack>()));
-    forms.Add(new PokemonForm("Forma Alternativa", new Stats { hp = 90, atk = 60, def = 40, spAtk = 60, spDef = 50, spd = 70 }, new List<LearnedAttack>()));
+    forms.Add(new PokemonForm("Forma Normal", new Stats(), new List<LearnedAttack>()));
+    forms.Add(new PokemonForm("Forma Alternativa", new Stats(), new List<LearnedAttack>()));
 }
 
 public void ChangeForm(int newFormIndex)
@@ -694,7 +701,6 @@ private IEnumerator AnimateDamageText(GameObject textObject)
     Destroy(textObject);
 }
 
-
 #endregion
 
 #region Affinity Management
@@ -756,12 +762,6 @@ public void UseItem()
 
 #endregion
 
-#region Audio & Animations Manager
-
-    
-
-#endregion
-
 #region Interaction Methods
 
     public virtual void DisplayInfo()
@@ -770,9 +770,6 @@ public void UseItem()
     }
 
     #endregion
-
-}
-
 
 #region Nested Classes
 
@@ -873,25 +870,55 @@ public void UseItem()
     }
 
 // Estructura para las naturalezas
-[System.Serializable]
-public class Nature
-{
-    public string name;        // Nombre de la naturaleza
-    public float attackModifier; // Modificador de ataque
-    public float defenseModifier; // Modificador de defensa
-    public float specialAttackModifier; // Modificador de ataque especial
-    public float specialDefenseModifier; // Modificador de defensa especial
-    public float speedModifier; // Modificador de velocidad
-
-    public Nature(string name, float attackMod, float defenseMod, float spAtkMod, float spDefMod, float speedMod)
+    [System.Serializable]
+    public class Nature
     {
-        this.name = name;
-        this.attackModifier = attackMod;
-        this.defenseModifier = defenseMod;
-        this.specialAttackModifier = spAtkMod;
-        this.specialDefenseModifier = spDefMod;
-        this.speedModifier = speedMod;
+        public string name;        // Nombre de la naturaleza
+        public float attackModifier; // Modificador de ataque
+        public float defenseModifier; // Modificador de defensa
+        public float specialAttackModifier; // Modificador de ataque especial
+        public float specialDefenseModifier; // Modificador de defensa especial
+        public float speedModifier; // Modificador de velocidad
+
+        public Nature(string name, float attackMod, float defenseMod, float spAtkMod, float spDefMod, float speedMod)
+        {
+            this.name = name;
+            this.attackModifier = attackMod;
+            this.defenseModifier = defenseMod;
+            this.specialAttackModifier = spAtkMod;
+            this.specialDefenseModifier = spDefMod;
+            this.speedModifier = speedMod;
+        }
+
+        // Lista de naturalezas
+        public static List<Nature> natures = new List<Nature>
+        {
+            new Nature("Adamant", 0.10f, 0f, -0.10f, 0f, 0f),  // Aumenta Ataque, disminuye Ataque Especial
+            new Nature("Bashful", 0f, 0f, 0f, 0f, 0f),         // Neutra
+            new Nature("Bold", 0f, 0.10f, 0f, 0f, -0.10f),     // Aumenta Defensa, disminuye Velocidad
+            new Nature("Brave", 0.10f, 0f, 0f, 0f, -0.10f),    // Aumenta Ataque, disminuye Velocidad
+            new Nature("Calm", 0f, 0f, 0f, 0.10f, -0.10f),     // Aumenta Defensa Especial, disminuye Velocidad
+            new Nature("Careful", 0f, 0f, -0.10f, 0.10f, 0f),  // Aumenta Defensa Especial, disminuye Ataque Especial
+            new Nature("Docile", 0f, 0f, 0f, 0f, 0f),          // Neutra
+            new Nature("Gentle", 0f, -0.10f, 0f, 0.10f, 0f),   // Aumenta Defensa Especial, disminuye Defensa
+            new Nature("Hardy", 0f, 0f, 0f, 0f, 0f),           // Neutra
+            new Nature("Hasty", 0f, -0.10f, 0f, 0f, 0.10f),    // Aumenta Velocidad, disminuye Defensa
+            new Nature("Impish", 0f, 0.10f, -0.10f, 0f, 0f),   // Aumenta Defensa, disminuye Ataque Especial
+            new Nature("Jolly", 0f, 0f, -0.10f, 0f, 0.10f),     // Aumenta Velocidad, disminuye Ataque Especial
+            new Nature("Lax", 0f, 0.10f, 0f, -0.10f, 0f),      // Aumenta Defensa, disminuye Defensa Especial
+            new Nature("Lonely", 0.10f, -0.10f, 0f, 0f, 0f),   // Aumenta Ataque, disminuye Defensa
+            new Nature("Mild", 0f, -0.10f, 0.10f, 0f, 0f),     // Aumenta Ataque Especial, disminuye Defensa
+            new Nature("Modest", -0.10f, 0f, 0.10f, 0f, 0f),   // Aumenta Ataque Especial, disminuye Ataque
+            new Nature("Naive", 0f, 0f, -0.10f, 0.10f, 0f),    // Aumenta Defensa Especial, disminuye Velocidad
+            new Nature("Naughty", 0.10f, 0f, -0.10f, 0f, 0f),  // Aumenta Ataque, disminuye Defensa Especial
+            new Nature("Quiet", 0f, 0f, 0.10f, 0f, -0.10f),     // Aumenta Ataque Especial, disminuye Velocidad
+            new Nature("Quirky", 0f, 0f, 0f, 0f, 0f),          // Neutra
+            new Nature("Rash", 0f, 0f, 0.10f, -0.10f, 0f),     // Aumenta Ataque Especial, disminuye Defensa Especial
+            new Nature("Relaxed", 0f, 0.10f, 0f, 0f, -0.10f),   // Aumenta Defensa, disminuye Velocidad
+            new Nature("Sassy", 0f, 0f, 0f, 0.10f, -0.10f),     // Aumenta Defensa Especial, disminuye Velocidad
+            new Nature("Serious", 0f, 0f, 0f, 0f, 0f),         // Neutra
+            new Nature("Timid", 0f, -0.10f, 0f, 0f, 0.10f),    // Aumenta Velocidad, disminuye Ataque
+        };
     }
 }
-
 #endregion

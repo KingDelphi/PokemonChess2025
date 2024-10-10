@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5131944338243765039}
   - component: {fileID: 5311896270595114162}
   - component: {fileID: -5293496181939320997}
-  - component: {fileID: -8339991178569781268}
+  - component: {fileID: 2692694684673332733}
   m_Layer: 6
   m_Name: Ivysaur
   m_TagString: pokemon
@@ -302,7 +302,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &-8339991178569781268
+--- !u!114 &2692694684673332733
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -311,11 +311,18 @@ MonoBehaviour:
   m_GameObject: {fileID: 7563041121663411961}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8269c657014724c77a94ed919eed4149, type: 3}
+  m_Script: {fileID: 11500000, guid: 0a63020a3a5ba43f0a5f29b33ba5f150, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   pokemonNumber: 0
   pokemonName: 
+  pokemonNature:
+    name: 
+    attackModifier: 0
+    defenseModifier: 0
+    specialAttackModifier: 0
+    specialDefenseModifier: 0
+    speedModifier: 0
   type1: 
   type2: 
   height: 0
@@ -327,7 +334,8 @@ MonoBehaviour:
   catchRate: 0
   expYield: 0
   growthRate: 
-  eggGroup: 
+  eggGroup1: 
+  eggGroup2: 
   genderRatio: 0
   eggCycles: 0
   stats:
@@ -394,5 +402,6 @@ MonoBehaviour:
   evolveSound: {fileID: 0}
   tauntSound: {fileID: 0}
   damageTextPrefab: {fileID: 0}
+  pokedexImage: {fileID: 21300000, guid: 27331406e6b7b4442a32907735c56703, type: 3}
   hp: 0
   maxHP: 0

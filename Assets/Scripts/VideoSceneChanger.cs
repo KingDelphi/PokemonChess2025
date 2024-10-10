@@ -12,8 +12,23 @@ public class VideoSceneChanger : MonoBehaviour
         videoPlayer.loopPointReached += OnVideoEnd; // Se llama cuando el video termina.
     }
 
+    void Update()
+    {
+        // Detecta si el usuario ha hecho clic con el ratón o ha presionado una tecla.
+        if (Input.anyKeyDown)
+        {
+            ChangeScene();
+        }
+    }
+
     void OnVideoEnd(VideoPlayer vp)
     {
-        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); // Cambia a la siguiente escena.
+        ChangeScene(); // Cambia a la siguiente escena cuando el video termina.
+    }
+
+    void ChangeScene()
+    {
+        // Cambia a la siguiente escena en la lista de escenas.
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
 }

@@ -34,12 +34,16 @@ public class PokemonMovement : MonoBehaviour
     public static PokemonMovement currentPokemon;
     private bool isClickProcessing = false;
 
+    private PokedexUIController pokedexUIController;
+
+
 
 
     public bool isMoving;
 
     void Start()
     {
+        pokedexUIController = FindObjectOfType<PokedexUIController>();
         instantiatedTiles = new Dictionary<Vector3, TileHover>(); // Inicializa la lista
         StartCoroutine(InitializePokemonMovement());
         originalMaterial = tilePrefab.GetComponent<Renderer>().sharedMaterial; // Cambiado a sharedMaterial
@@ -464,6 +468,17 @@ private bool IsWithinMapBounds(Vector3 position)
     private void OnPokemonClick()
 {
     PokemonBase pokemon = gameObject.GetComponent<PokemonBase>();
+
+    if (pokemon != null && pokedexUIController != null)
+        {
+            // Llama al método UpdatePokedex en la instancia del controlador del Pokédex
+            pokedexUIController.UpdatePokedex(pokemon);
+        }
+        else
+        {
+            Debug.LogError("No se pudo encontrar el componente PokemonBase o PokedexUIController.");
+        }
+
 
     if(!pokemon.isSelectedForAttack)
     {
