@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 
 public class Bulbasaur : PokemonBase
-{
+{   
     public override void Awake()
     {
         attackCatalog = FindObjectOfType<AttackCatalog>();

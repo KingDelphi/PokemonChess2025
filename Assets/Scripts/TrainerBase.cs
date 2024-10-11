@@ -32,6 +32,9 @@ public class TrainerBase : MonoBehaviour
     private bool areTilesVisible = false;
     private Vector3 lastClickedPosition;
 
+    public int currentExperience;
+    public int experienceToNextLevel = 100;
+
     void Awake()
     {
         stats.level = 1;
@@ -44,6 +47,24 @@ public class TrainerBase : MonoBehaviour
             spDef = 50,
             spd = 50
         };
+    }
+
+    // Método para subir de nivel
+    public void OnLevelUp()
+    {
+        stats.level++;
+        stats.currentExperience = 0; // Resetea la experiencia al subir de nivel
+        // O puedes implementar la lógica para aumentar la experiencia a un nuevo nivel
+    }
+
+    // Método para agregar experiencia
+    public void AddExperience(int amount)
+    {
+        stats.currentExperience += amount;
+        while (stats.currentExperience >= experienceToNextLevel)
+        {
+            OnLevelUp(); // Llama a LevelUp si alcanza el umbral
+        }
     }
 
 
@@ -128,6 +149,9 @@ public class TrainerBase : MonoBehaviour
         Debug.LogError("No se pudo encontrar el componente TrainerBase o PokedexUIController.");
     }
 
+    // Acceder a currentPokemon estático en la clase PokemonMovement
+    PokemonMovement.currentPokemon = null;  // Acceso directo a la variable estática
+
     // Obtén la posición actual del Trainer
     currentTrainerPosition = transform.position;
 
@@ -147,6 +171,8 @@ public class TrainerBase : MonoBehaviour
         currentTrainer = this; // Actualiza currentTrainer
     }
 }
+
+
 
 
     // Función que calcula los tiles movibles para el entrenador
@@ -213,7 +239,7 @@ public class TrainerBase : MonoBehaviour
         Collider2D[] colliders = Physics2D.OverlapBoxAll(position, new Vector2(tileSize, tileSize), 0);
         foreach (Collider2D collider in colliders)
         {
-            if (collider.CompareTag("object")) // Cambiar el tag según corresponda
+            if (collider.CompareTag("object") || collider.CompareTag("pokemon") || collider.CompareTag("trainer")) // Cambiar el tag según corresponda
             {
                 return true; // Hay un objeto bloqueando el tile
             }
@@ -450,6 +476,7 @@ public void TileExit(Vector3 tile)
     public struct Stats
     {
         public int level;
+        public int currentExperience;
 
         public int maxHP;
         public int hp;

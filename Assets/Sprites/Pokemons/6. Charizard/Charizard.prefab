@@ -180,7 +180,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.9, y: 0.9}
   m_EdgeRadius: 0
 --- !u!114 &5311896270595114162
 MonoBehaviour:
@@ -314,8 +314,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8269c657014724c77a94ed919eed4149, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  evolutionPrefab: {fileID: 0}
   pokemonNumber: 0
   pokemonName: 
+  pokemonNature:
+    name: 
+    attackModifier: 0
+    defenseModifier: 0
+    specialAttackModifier: 0
+    specialDefenseModifier: 0
+    speedModifier: 0
   type1: 
   type2: 
   height: 0
@@ -327,11 +335,14 @@ MonoBehaviour:
   catchRate: 0
   expYield: 0
   growthRate: 
-  eggGroup: 
+  eggGroup1: 
+  eggGroup2: 
   genderRatio: 0
+  gender: 0
   eggCycles: 0
   stats:
     level: 0
+    currentExperience: 0
     maxHP: 0
     hp: 0
     atk: 0
@@ -394,5 +405,10 @@ MonoBehaviour:
   evolveSound: {fileID: 0}
   tauntSound: {fileID: 0}
   damageTextPrefab: {fileID: 0}
+  pokedexImage: {fileID: 0}
+  isInPokeball: 0
+  currentExperience: 0
+  experienceToNextLevel: 100
+  blinkMaterial: {fileID: 0}
   hp: 0
   maxHP: 0

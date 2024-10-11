@@ -29,7 +29,7 @@ public class MapGenerator : MonoBehaviour
 
     public AudioClip backgroundMusic;
 
-    private AudioSource audioSource;
+    public AudioSource audioSource;
 
     public GameManager gameManager;
 

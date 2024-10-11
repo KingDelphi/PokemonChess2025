@@ -123,6 +123,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e778b902811354f119550659895b843c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  evolutionPrefab: {fileID: 0}
   pokemonNumber: 0
   pokemonName: 
   pokemonNature:
@@ -146,9 +147,11 @@ MonoBehaviour:
   eggGroup1: 
   eggGroup2: 
   genderRatio: 0
+  gender: 0
   eggCycles: 0
   stats:
     level: 0
+    currentExperience: 0
     maxHP: 0
     hp: 0
     atk: 0
@@ -207,11 +210,15 @@ MonoBehaviour:
   attackSound: {fileID: 8300000, guid: 5261cad35aa7b4850bce4e3a0cdc6462, type: 3}
   damageSound: {fileID: 8300000, guid: 546607d8d3a3143d18c6a23d8691496d, type: 3}
   healSound: {fileID: 8300000, guid: a38d7ca0dbcc742528f304a11e1481a3, type: 3}
-  levelUpSound: {fileID: 8300000, guid: 7a4e2ac528ea0401b930a6db6717b612, type: 3}
+  levelUpSound: {fileID: 8300000, guid: 22c5e21eded334f2984a6fd3e385c8c9, type: 3}
   evolveSound: {fileID: 8300000, guid: 9a2bbfb0786774ecc81ac521ad152555, type: 3}
   tauntSound: {fileID: 8300000, guid: bc93bcd5c4d3f4b45a2895c31c98dce9, type: 3}
   damageTextPrefab: {fileID: 544152150889130869, guid: da2d3970ec3474c04a21e85ee120a276, type: 3}
   pokedexImage: {fileID: 21300000, guid: 27f7b18dce594495ab0017fc1e0006d4, type: 3}
+  isInPokeball: 0
+  currentExperience: 0
+  experienceToNextLevel: 100
+  blinkMaterial: {fileID: 0}
   hp: 0
   maxHP: 0
 --- !u!114 &1148584360422642532
@@ -283,7 +290,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.9, y: 0.9}
   m_EdgeRadius: 0
 --- !u!114 &5311896270595114162
 MonoBehaviour:

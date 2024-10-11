@@ -6,6 +6,7 @@ using TMPro;
 
 public class PokemonBase : MonoBehaviour
 {
+    [SerializeField] private GameObject evolutionPrefab; // Asegúrate de que esté asignado en el inspector
     public int pokemonNumber;       // Pokémon number
     public string pokemonName;      // Pokémon name
     public Nature pokemonNature;
@@ -65,6 +66,25 @@ public class PokemonBase : MonoBehaviour
 
     public bool isInPokeball;
 
+    public int currentExperience;
+    public int experienceToNextLevel = 100;
+    private SpriteRenderer spriteRenderer; // Referencia al SpriteRenderer
+    public Material blinkMaterial; // Material que usará el parpadeo
+
+    public GameManager gameManager;
+
+
+
+    // Método para agregar experiencia
+    public void AddExperience(int amount)
+    {
+        stats.currentExperience += amount;
+        while (stats.currentExperience >= experienceToNextLevel)
+        {
+            OnLevelUp(); // Llama a LevelUp si alcanza el umbral
+        }
+    }
+    
     private void PlaySound(AudioClip clip)
     {
         // Verificar si el AudioSource está correctamente inicializado
@@ -145,7 +165,13 @@ public class PokemonBase : MonoBehaviour
     }
 
     public void Start()
-    {
+    {   
+        spriteRenderer = GetComponent<SpriteRenderer>(); // Asegúrate de que esto no sea nulo
+        if (spriteRenderer == null)
+        {
+            Debug.LogError("SpriteRenderer no encontrado en el objeto.");
+        }
+        
         Transform parent = transform.parent;
 
         // Comprueba si el Pokémon es hijo de una Pokéball
@@ -246,9 +272,10 @@ private void LimitEVs()
 
 #region Level/Evolution Methods
 
-void OnLevelUp()
+public void OnLevelUp()
 {
     stats.level++;
+    CheckEvolution(stats.level); // Comprueba si evoluciona al alcanzar el nivel actual
     CalculateFinalStats(stats.level);
     ApplyNature();  // Aplicar nuevamente los efectos de la naturaleza tras el nivel
     PlaySound(levelUpSound);
@@ -269,11 +296,123 @@ public void CheckEvolution(int currentLevel, string heldItem = null)
 private void Evolve(string newForm)
 {
     Debug.Log($"{pokemonName} is evolving into {newForm}!");
-    pokemonName = newForm;  // Change the Pokémon's name to its new form
     PlaySound(evolveSound);
 
-    // Aquí podrías añadir lógica adicional, como cambiar estadísticas o aprender nuevos ataques.
+    // Silenciar la música de fondo del MapGenerator
+    GameObject gameManager = GameObject.Find("GameManager");
+    if (gameManager != null)
+    {
+        MapGenerator mapGenerator = gameManager.GetComponent<MapGenerator>();
+        if (mapGenerator != null && mapGenerator.audioSource != null)
+        {
+            mapGenerator.audioSource.Pause(); // Pausar la música de fondo (AudioSource)
+        }
+    }
+
+    // Inicia la coroutine para la evolución con el parpadeo
+    StartCoroutine(EvolveWithBlinking(newForm));
 }
+
+private IEnumerator EvolveWithBlinking(string newForm)
+{
+    // Crea un GameObject temporal para reproducir el sonido
+    GameObject soundPlayer = new GameObject("EvolutionSoundPlayer");
+    AudioSource audioSource = soundPlayer.AddComponent<AudioSource>();
+
+    // Configura el AudioSource para que use evolveSound
+    audioSource.clip = evolveSound;
+    audioSource.Play(); // Inicia la reproducción del sonido
+
+    // Inicia el parpadeo
+    float evolveDuration = evolveSound.length; // Duración total del sonido
+    StartCoroutine(BlinkForDuration(evolveDuration)); // Inicia el parpadeo por la duración del sonido
+
+    // Espera hasta que llegue el segundo 20
+    float waitTimeForEvolution = 18f; // Tiempo en segundos en el que ocurrirá la evolución
+    yield return new WaitForSeconds(waitTimeForEvolution);
+
+    // Instanciar el nuevo prefab en la posición actual del Pokémon en el segundo 20
+    GameObject newPokemon = Instantiate(evolutionPrefab, transform.position, transform.rotation);
+
+    // Destruir el objeto actual de Bulbasaur
+    Destroy(gameObject); // Destruir el Pokémon actual
+
+    // Esperar a que termine el sonido antes de destruir el reproductor de sonido
+    yield return new WaitForSeconds(evolveDuration - waitTimeForEvolution);
+
+    // Destruir el objeto temporal de sonido cuando termine
+    Destroy(soundPlayer);
+
+    // Reanudar la música de fondo del MapGenerator
+    if (gameManager != null)
+    {
+        MapGenerator mapGenerator = gameManager.GetComponent<MapGenerator>();
+        if (mapGenerator != null && mapGenerator.audioSource != null)
+        {
+            mapGenerator.audioSource.UnPause(); // Reanudar la música de fondo (AudioSource)
+        }
+    }
+}
+
+
+
+
+
+
+
+private IEnumerator BlinkForDuration(float duration)
+{
+    float blinkInterval = 0.5f;  // Duración de cada ciclo de opacidad
+    float elapsedTime = 0f;
+
+    // Obtiene el color original del sprite
+    Color originalColor = spriteRenderer.color;
+    
+    while (elapsedTime < duration)
+    {
+        // Tiempo inicial para el ciclo de bajar la opacidad
+        float cycleTime = 0f;
+
+        // Fase de disminución del alpha (opacidad)
+        while (cycleTime < blinkInterval / 2)
+        {
+            cycleTime += Time.deltaTime;
+            float lerpFactor = cycleTime / (blinkInterval / 2);  // Proporción del tiempo transcurrido
+            originalColor.a = Mathf.Lerp(1f, 0.2f, lerpFactor);  // Disminuir la opacidad de 1 a 0.2 de manera fluida
+            spriteRenderer.color = originalColor;
+            yield return null;  // Esperar al siguiente frame
+        }
+
+        // Reinicia el tiempo del ciclo para la siguiente fase
+        cycleTime = 0f;
+
+        // Fase de aumento del alpha (opacidad)
+        while (cycleTime < blinkInterval / 2)
+        {
+            cycleTime += Time.deltaTime;
+            float lerpFactor = cycleTime / (blinkInterval / 2);  // Proporción del tiempo transcurrido
+            originalColor.a = Mathf.Lerp(0.2f, 1f, lerpFactor);  // Aumentar la opacidad de 0.2 a 1 de manera fluida
+            spriteRenderer.color = originalColor;
+            yield return null;  // Esperar al siguiente frame
+        }
+
+        // Incrementar el tiempo total
+        elapsedTime += blinkInterval;
+    }
+
+    // Asegúrate de restaurar la opacidad original al final
+    originalColor.a = 1f;
+    spriteRenderer.color = originalColor;
+}
+
+
+
+
+
+
+
+
+
 
 #endregion
 
@@ -806,6 +945,7 @@ public void UseItem()
     public struct Stats
     {
         public int level;
+        public int currentExperience;
 
         public int maxHP;
         public int hp;

@@ -123,6 +123,7 @@ MonoBehaviour:
   trainerName: Youngster
   stats:
     level: 0
+    currentExperience: 0
     maxHP: 0
     hp: 0
     atk: 0
@@ -155,6 +156,8 @@ MonoBehaviour:
   mapHeight: 7
   moveSpeed: 1
   trainerImage: {fileID: 0}
+  currentExperience: 0
+  experienceToNextLevel: 100
 --- !u!61 &-5621449295585868591
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -198,5 +201,5 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.9, y: 0.9}
   m_EdgeRadius: 0

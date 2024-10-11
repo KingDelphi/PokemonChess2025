@@ -431,7 +431,7 @@ private bool IsTileBlocked(Vector3 position)
     Collider2D[] colliders = Physics2D.OverlapBoxAll(position, new Vector2(tileSize, tileSize), 0);
     foreach (Collider2D collider in colliders)
     {
-        if (collider.CompareTag("object")) // Cambiar el tag según corresponda
+        if (collider.CompareTag("object") || collider.CompareTag("pokemon") || collider.CompareTag("trainer")) // Cambiar el tag según corresponda
         {
             return true; // Hay un objeto bloqueando el tile
         }

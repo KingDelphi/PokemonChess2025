@@ -180,7 +180,7 @@ BoxCollider2D:
     adaptiveTiling: 0
   m_AutoTiling: 0
   serializedVersion: 2
-  m_Size: {x: 1, y: 1}
+  m_Size: {x: 0.9, y: 0.9}
   m_EdgeRadius: 0
 --- !u!114 &5311896270595114162
 MonoBehaviour:
@@ -314,6 +314,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4a94eda2675b64041b68d6ebce325522, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  evolutionPrefab: {fileID: 7563041121663411961, guid: 8b5ff4ab3641a4e03a2aabe42522e791, type: 3}
   pokemonNumber: 0
   pokemonName: 
   pokemonNature:
@@ -337,9 +338,11 @@ MonoBehaviour:
   eggGroup1: 
   eggGroup2: 
   genderRatio: 0
+  gender: 0
   eggCycles: 0
   stats:
     level: 0
+    currentExperience: 0
     maxHP: 0
     hp: 0
     atk: 0
@@ -398,10 +401,14 @@ MonoBehaviour:
   attackSound: {fileID: 0}
   damageSound: {fileID: 0}
   healSound: {fileID: 0}
-  levelUpSound: {fileID: 0}
-  evolveSound: {fileID: 0}
+  levelUpSound: {fileID: 8300000, guid: 22c5e21eded334f2984a6fd3e385c8c9, type: 3}
+  evolveSound: {fileID: 8300000, guid: b5acd5aff80434d95a4b219b209ff307, type: 3}
   tauntSound: {fileID: 0}
   damageTextPrefab: {fileID: 0}
   pokedexImage: {fileID: 21300000, guid: febf39f7bdeff408ba85c85a2b8cc365, type: 3}
+  isInPokeball: 0
+  currentExperience: 0
+  experienceToNextLevel: 100
+  blinkMaterial: {fileID: 2100000, guid: 14842897c6a584b3ba6009f9d21250ea, type: 2}
   hp: 0
   maxHP: 0
