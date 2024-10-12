@@ -131,6 +131,11 @@ public class Eevee : PokemonBase
         {
             AttackCatalog.Instance.Tackle(this); // Aquí this se refiere a la instancia de Eevee
         }
+
+        if (Input.GetKeyDown(KeyCode.V) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.VineWhip(this); // Aquí this se refiere a la instancia de Eevee
+        }
     }
 
     private void AddEggMoves()
