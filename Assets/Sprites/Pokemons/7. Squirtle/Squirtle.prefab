@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5131944338243765039}
   - component: {fileID: 5311896270595114162}
   - component: {fileID: -5293496181939320997}
-  - component: {fileID: 9116793738257166687}
+  - component: {fileID: 452783083149137585}
   m_Layer: 6
   m_Name: Squirtle
   m_TagString: pokemon
@@ -302,7 +302,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &9116793738257166687
+--- !u!114 &452783083149137585
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -311,10 +311,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7563041121663411961}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8269c657014724c77a94ed919eed4149, type: 3}
+  m_Script: {fileID: 11500000, guid: be604d015f1b9448688707540905e01b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  evolutionPrefab: {fileID: 0}
+  evolutionPrefab: {fileID: 7563041121663411961, guid: 72df37db3d8b54f2ea83cfa2ee93dfdd, type: 3}
   pokemonNumber: 0
   pokemonName: 
   pokemonNature:
@@ -404,11 +404,12 @@ MonoBehaviour:
   levelUpSound: {fileID: 0}
   evolveSound: {fileID: 0}
   tauntSound: {fileID: 0}
-  damageTextPrefab: {fileID: 0}
-  pokedexImage: {fileID: 0}
+  damageTextPrefab: {fileID: 544152150889130869, guid: da2d3970ec3474c04a21e85ee120a276, type: 3}
+  pokedexImage: {fileID: 21300000, guid: ada48ba3e2d974064942e9ac35cdd3f1, type: 3}
   isInPokeball: 0
   currentExperience: 0
   experienceToNextLevel: 100
   blinkMaterial: {fileID: 0}
+  gameManager: {fileID: 0}
   hp: 0
   maxHP: 0

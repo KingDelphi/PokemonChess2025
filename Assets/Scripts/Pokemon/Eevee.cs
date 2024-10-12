@@ -38,7 +38,7 @@ public class Eevee : PokemonBase
         weight = 6.5f; // en kilogramos
         c = 5;
         k = 2;
-        description = "Eevee is a special Pokémon with the ability to evolve into multiple different forms.";
+        description = "Its genetic code is irregular. It may mutate if it is exposed to radiation from element stones.";
         abilities = new string[] { "Run Away", "Adaptability", "Anticipation" };
         catchRate = 45;
         expYield = 65;
@@ -234,6 +234,6 @@ public class Eevee : PokemonBase
     public override void DisplayInfo()
     {
         base.DisplayInfo();
-        Debug.Log($"Eevee Stats: HP {stats.hp}, ATK {stats.atk}, DEF {stats.def}, SP.ATK {stats.spAtk}, SP.DEF {stats.spDef}, SPD {stats.spd}");
+        Debug.Log($"Stats: HP {stats.hp}, ATK {stats.atk}, DEF {stats.def}, SP.ATK {stats.spAtk}, SP.DEF {stats.spDef}, SPD {stats.spd}");
     }
 }

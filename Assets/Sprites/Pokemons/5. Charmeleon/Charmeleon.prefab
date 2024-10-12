@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5131944338243765039}
   - component: {fileID: 5311896270595114162}
   - component: {fileID: -5293496181939320997}
-  - component: {fileID: 6930204569257582712}
+  - component: {fileID: 2975695734699548949}
   m_Layer: 6
   m_Name: Charmeleon
   m_TagString: pokemon
@@ -302,7 +302,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &6930204569257582712
+--- !u!114 &2975695734699548949
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -311,10 +311,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7563041121663411961}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8269c657014724c77a94ed919eed4149, type: 3}
+  m_Script: {fileID: 11500000, guid: 41b95733da0994d27b4d1adfb857fe86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  evolutionPrefab: {fileID: 0}
+  evolutionPrefab: {fileID: 7563041121663411961, guid: 2cdcb019001ce42afa8c1d28cdf236ac, type: 3}
   pokemonNumber: 0
   pokemonName: 
   pokemonNature:
@@ -404,11 +404,12 @@ MonoBehaviour:
   levelUpSound: {fileID: 0}
   evolveSound: {fileID: 0}
   tauntSound: {fileID: 0}
-  damageTextPrefab: {fileID: 0}
-  pokedexImage: {fileID: 0}
+  damageTextPrefab: {fileID: 544152150889130869, guid: da2d3970ec3474c04a21e85ee120a276, type: 3}
+  pokedexImage: {fileID: 21300000, guid: 752b5d20b8f4a4a2abcd4cd1692ae9e9, type: 3}
   isInPokeball: 0
   currentExperience: 0
   experienceToNextLevel: 100
   blinkMaterial: {fileID: 0}
+  gameManager: {fileID: 0}
   hp: 0
   maxHP: 0

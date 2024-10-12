@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 5131944338243765039}
   - component: {fileID: 5311896270595114162}
   - component: {fileID: -5293496181939320997}
-  - component: {fileID: 1261006696939558100}
+  - component: {fileID: 8210703584607499674}
   m_Layer: 6
   m_Name: Wartortle
   m_TagString: pokemon
@@ -302,7 +302,7 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1261006696939558100
+--- !u!114 &8210703584607499674
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -311,10 +311,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 7563041121663411961}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8269c657014724c77a94ed919eed4149, type: 3}
+  m_Script: {fileID: 11500000, guid: 2cae858abb54f43058481c04d9945b95, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  evolutionPrefab: {fileID: 0}
+  evolutionPrefab: {fileID: 7563041121663411961, guid: 199d27e8e596e4ff692812ad816e2553, type: 3}
   pokemonNumber: 0
   pokemonName: 
   pokemonNature:
@@ -404,11 +404,12 @@ MonoBehaviour:
   levelUpSound: {fileID: 0}
   evolveSound: {fileID: 0}
   tauntSound: {fileID: 0}
-  damageTextPrefab: {fileID: 0}
-  pokedexImage: {fileID: 0}
+  damageTextPrefab: {fileID: 544152150889130869, guid: da2d3970ec3474c04a21e85ee120a276, type: 3}
+  pokedexImage: {fileID: 21300000, guid: aed940c5f7e5549e99326879e5fddc5f, type: 3}
   isInPokeball: 0
   currentExperience: 0
   experienceToNextLevel: 100
   blinkMaterial: {fileID: 0}
+  gameManager: {fileID: 0}
   hp: 0
   maxHP: 0

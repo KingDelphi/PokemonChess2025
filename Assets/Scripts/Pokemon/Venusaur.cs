@@ -43,7 +43,7 @@ public class Venusaur : PokemonBase
         expYield = 236;
         growthRate = "Medium Slow";
         eggGroup1 = "Grass";
-        eggGroup1 = "Monster";
+        eggGroup2 = "Monster";
         genderRatio = 0.875f; // 87.5% male, 12.5% female
         eggCycles = 20;
         actionPoints = GetComponent<Venusaur>().stats.spd; // Asegúrate de que esto esté correcto
@@ -211,7 +211,7 @@ private string GetMegaEvolutionName(string megaStone)
     switch (megaStone)
     {
         case "Venusaurite":
-            return "Mega Venusaur ";
+            return "Mega Venusaur";
         default:
             return "Unknown Mega Evolution";
     }
@@ -249,6 +249,6 @@ public void UseMegaEvolution()
     public override void DisplayInfo()
     {
         base.DisplayInfo();
-        Debug.Log($"Eevee Stats: HP {stats.hp}, ATK {stats.atk}, DEF {stats.def}, SP.ATK {stats.spAtk}, SP.DEF {stats.spDef}, SPD {stats.spd}");
+        Debug.Log($"Stats: HP {stats.hp}, ATK {stats.atk}, DEF {stats.def}, SP.ATK {stats.spAtk}, SP.DEF {stats.spDef}, SPD {stats.spd}");
     }
 }

@@ -43,7 +43,7 @@ public class Ivysaur : PokemonBase
         expYield = 142;
         growthRate = "Medium Slow";
         eggGroup1 = "Grass";
-        eggGroup1 = "Monster";
+        eggGroup2 = "Monster";
         genderRatio = 0.875f; // 87.5% male, 12.5% female
         eggCycles = 20;
         actionPoints = GetComponent<Ivysaur>().stats.spd; // Asegúrate de que esto esté correcto
@@ -179,6 +179,6 @@ public class Ivysaur : PokemonBase
     public override void DisplayInfo()
     {
         base.DisplayInfo();
-        Debug.Log($"Eevee Stats: HP {stats.hp}, ATK {stats.atk}, DEF {stats.def}, SP.ATK {stats.spAtk}, SP.DEF {stats.spDef}, SPD {stats.spd}");
+        Debug.Log($"Stats: HP {stats.hp}, ATK {stats.atk}, DEF {stats.def}, SP.ATK {stats.spAtk}, SP.DEF {stats.spDef}, SPD {stats.spd}");
     }
 }

@@ -3055,6 +3055,7 @@ MonoBehaviour:
   mapHeight: 7
   tileSize: 1
   backgroundMusic: {fileID: 8300000, guid: c78bf2274b6ee4f6e8ed165c656d3f22, type: 3}
+  audioSource: {fileID: 0}
   gameManager: {fileID: 785334245}
 --- !u!114 &785334248
 MonoBehaviour:

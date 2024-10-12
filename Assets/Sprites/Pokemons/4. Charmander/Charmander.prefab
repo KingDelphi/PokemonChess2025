@@ -404,11 +404,12 @@ MonoBehaviour:
   levelUpSound: {fileID: 8300000, guid: 22c5e21eded334f2984a6fd3e385c8c9, type: 3}
   evolveSound: {fileID: 8300000, guid: b5acd5aff80434d95a4b219b209ff307, type: 3}
   tauntSound: {fileID: 0}
-  damageTextPrefab: {fileID: 0}
+  damageTextPrefab: {fileID: 544152150889130869, guid: da2d3970ec3474c04a21e85ee120a276, type: 3}
   pokedexImage: {fileID: 21300000, guid: e954bd27d6e104e4a8ba16bf3b8a28e9, type: 3}
   isInPokeball: 0
   currentExperience: 0
   experienceToNextLevel: 100
   blinkMaterial: {fileID: 0}
+  gameManager: {fileID: 0}
   hp: 0
   maxHP: 0
