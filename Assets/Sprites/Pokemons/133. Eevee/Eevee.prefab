@@ -320,6 +320,7 @@ MonoBehaviour:
   scratchPrefab: {fileID: 100012, guid: 2773c6c2c174c334890f7ce3d5f3d936, type: 3}
   emberPrefab: {fileID: 100006, guid: 36a2b613f82ac4076a32df318551cc2a, type: 3}
   waterGunPrefab: {fileID: 100006, guid: 6737b1ebe7b0e484488e64f30422a7f1, type: 3}
+  nuzzlePrefab: {fileID: 100008, guid: 9c001e713c3ebd34b9a93ba39ccdb2c7, type: 3}
   damage: 0
 --- !u!82 &-5293496181939320997
 AudioSource:
