@@ -14,6 +14,7 @@ public enum AttackCategory
 public class Attack
 {
     public string name;
+    public bool makesContact;
     public string type;
     public int power;
     public int accuracy;
@@ -22,11 +23,13 @@ public class Attack
     public PokemonBase.StatusCondition statusEffect;  // Estado alterado que puede causar el ataque
     public float statusEffectChance;      // Probabilidad de causar el estado alterado (0-100%)
     public AttackCategory category; // Nueva propiedad para la categoría
+    
 
     // Constructor modificado para incluir la categoría
-    public Attack(string name, string type, int power, int accuracy, string description, AttackCategory category, PokemonBase.StatusCondition statusEffect = PokemonBase.StatusCondition.None, float statusEffectChance = 0, int priority = 0)
+    public Attack(string name, bool makesContact, string type, int power, int accuracy, string description, AttackCategory category, PokemonBase.StatusCondition statusEffect = PokemonBase.StatusCondition.None, float statusEffectChance = 0, int priority = 0)
     {
         this.name = name;
+        this.makesContact = makesContact;
         this.type = type;
         this.power = power;
         this.accuracy = accuracy;
@@ -77,6 +80,9 @@ public class AttackCatalog : MonoBehaviour
 
     public GameObject tacklePrefab;
     public GameObject vineWhipPrefab;
+    public GameObject scratchPrefab;
+    public GameObject emberPrefab;
+    public GameObject waterGunPrefab;
 
     public int damage = 0;
 
@@ -91,22 +97,27 @@ public class AttackCatalog : MonoBehaviour
         allAttacks = new List<Attack>
         {
             // Ejemplos de ataques básicos sin estado alterado
-            new Attack("Tackle", "Normal", 40, 100, "A basic physical attack.", AttackCategory.Physical), // Prioridad normal
-            new Attack("Vine Whip", "Grass", 45, 100, "A grass-type whip attack.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Tackle", true, "Normal", 40, 100, "A basic physical attack.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Vine Whip", true, "Grass", 45, 100, "A grass-type whip attack.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Scratch", true, "Normal", 40, 100, "A basic physical attack.", AttackCategory.Physical),
+            new Attack("Ember", false, "Fire", 40, 100, "A basic fire attack.", AttackCategory.Special),
+            new Attack("Dragon Claw", true, "Dragon", 80, 100, "A basic dragon scratch attack.", AttackCategory.Physical),
+            new Attack("Water Gun", false, "Water", 40, 100, "A basic water attack.", AttackCategory.Special),
+
 
             // Ejemplos de ataques con efectos de estado alterado
-            new Attack("Thunderbolt", "Electric", 90, 100, "A strong electric attack that may cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 10f), // Prioridad normal
-            new Attack("Flamethrower", "Fire", 90, 100, "A fiery attack that may cause burns.", AttackCategory.Special, PokemonBase.StatusCondition.Burn, 10f), // Prioridad normal
-            new Attack("Ice Beam", "Ice", 90, 100, "A freezing beam that may cause freezing.", AttackCategory.Special, PokemonBase.StatusCondition.Freeze, 10f), // Prioridad normal
-            new Attack("Poison Fang", "Poison", 50, 100, "A fang attack that may poison the target.", AttackCategory.Physical, PokemonBase.StatusCondition.Poison, 30f), // Prioridad normal
+            new Attack("Thunderbolt", false, "Electric", 90, 100, "A strong electric attack that may cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 10f), // Prioridad normal
+            new Attack("Flamethrower", false, "Fire", 90, 100, "A fiery attack that may cause burns.", AttackCategory.Special, PokemonBase.StatusCondition.Burn, 10f), // Prioridad normal
+            new Attack("Ice Beam", false, "Ice", 90, 100, "A freezing beam that may cause freezing.", AttackCategory.Special, PokemonBase.StatusCondition.Freeze, 10f), // Prioridad normal
+            new Attack("Poison Fang", false, "Poison", 50, 100, "A fang attack that may poison the target.", AttackCategory.Physical, PokemonBase.StatusCondition.Poison, 30f), // Prioridad normal
 
             // Ataques de alta prioridad
-            new Attack("Quick Attack", "Normal", 40, 100, "A fast attack that strikes first.", AttackCategory.Physical, PokemonBase.StatusCondition.None, 0, 1), // Alta prioridad
-            new Attack("Extreme Speed", "Normal", 80, 100, "An extremely fast attack.", AttackCategory.Physical, PokemonBase.StatusCondition.None, 0, 2), // Alta prioridad
+            new Attack("Quick Attack", false, "Normal", 40, 100, "A fast attack that strikes first.", AttackCategory.Physical, PokemonBase.StatusCondition.None, 0, 1), // Alta prioridad
+            new Attack("Extreme Speed", false, "Normal", 80, 100, "An extremely fast attack.", AttackCategory.Physical, PokemonBase.StatusCondition.None, 0, 2), // Alta prioridad
 
             // Ejemplos de ataques adicionales
-            new Attack("Thunder Wave", "Electric", 0, 90, "A jolt of electricity that paralyzes the opponent.", AttackCategory.Status, PokemonBase.StatusCondition.Paralysis, 100f), // Prioridad normal
-            new Attack("Will-O-Wisp", "Fire", 0, 85, "Engulfs the opponent in a damaging fire, causing a burn.", AttackCategory.Status, PokemonBase.StatusCondition.Burn, 85f) // Prioridad normal
+            new Attack("Thunder Wave", false, "Electric", 0, 90, "A jolt of electricity that paralyzes the opponent.", AttackCategory.Status, PokemonBase.StatusCondition.Paralysis, 100f), // Prioridad normal
+            new Attack("Will-O-Wisp", false, "Fire", 0, 85, "Engulfs the opponent in a damaging fire, causing a burn.", AttackCategory.Status, PokemonBase.StatusCondition.Burn, 85f) // Prioridad normal
         };
 
         // Inicializar el catálogo de TMs
@@ -378,17 +389,24 @@ public class AttackCatalog : MonoBehaviour
                                     Vector3 originalAttackerPosition = attacker.transform.position;
                                     Vector3 originalDefenderPosition = defender.transform.position;
 
-                                    Debug.Log("Moving attacker to defender position.");
-                                    // Mover el atacante hacia el defensor
-                                    yield return StartCoroutine(MovePokemon(attacker, position));
+                                    if(GetAttackByName(attackName).makesContact == true)
+                                    {
+                                        Debug.Log("Moving attacker to defender position.");
+                                        // Mover el atacante hacia el defensor
+                                        yield return StartCoroutine(MovePokemon(attacker, position));
+                                
+                                        
+
+                                        Debug.Log("Returning attacker to original position.");
+                                        // Regresar el atacante a su posición original
+                                        yield return StartCoroutine(MovePokemon(attacker, originalAttackerPosition));
+
+                                        
+                                    }
 
                                     Debug.Log("Pushing defender away.");
                                     // Empujar al defensor
                                     yield return StartCoroutine(PushPokemon(defender, originalAttackerPosition, attackPrefab));
-
-                                    Debug.Log("Returning attacker to original position.");
-                                    // Regresar el atacante a su posición original
-                                    yield return StartCoroutine(MovePokemon(attacker, originalAttackerPosition));
 
                                     Debug.Log("Returning defender to original position.");
                                     // Regresar el defensor a su posición original
@@ -399,7 +417,7 @@ public class AttackCatalog : MonoBehaviour
                                     ApplyAttack(attacker, defender, GetAttackByName(attackName));
 
                                     Debug.Log("Playing attack sound.");
-                                    attacker.Attack();
+                                    attacker.Attack(GetAttackByName(attackName));
 
                                     Debug.Log("Playing defend sound.");
                                     defender.Defend(damage);
@@ -560,7 +578,6 @@ public class AttackCatalog : MonoBehaviour
     }
 
 #region Tackle
-
 public void Tackle(PokemonBase attacker)
     {
         Debug.Log("Tackle called.");
@@ -607,7 +624,6 @@ public void Tackle(PokemonBase attacker)
 #endregion
 
 #region Vine Whip
-
 public void VineWhip(PokemonBase attacker)
     {
         Debug.Log("Vine Whip called.");
@@ -653,6 +669,189 @@ public void VineWhip(PokemonBase attacker)
 
 #endregion
 
+#region Scratch
+public void Scratch(PokemonBase attacker)
+    {
+        Debug.Log("Scratch called.");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Scratch", scratchPrefab));
+    }
+
+#endregion
+
+#region Ember
+public void Ember(PokemonBase attacker)
+    {
+        Debug.Log("Ember called.");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Ember", emberPrefab));
+    }
+
+#endregion
+
+#region Dragon Claw
+public void DragonClaw(PokemonBase attacker)
+    {
+        Debug.Log("Dragon Claw called.");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Dragon Claw", scratchPrefab));
+    }
+
+#endregion
+
+#region Water Gun
+public void WaterGun(PokemonBase attacker)
+    {
+        Debug.Log("Water Gun called.");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Water Gun", waterGunPrefab));
+    }
+
+#endregion
 }
 
 public class BattleManager

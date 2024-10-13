@@ -783,11 +783,14 @@ private void ApplyFormStats(PokemonForm form)
 
 #region In-match Actions Manager (Attack, ReceiveDamage, Heal, OnCharacterClick)
 
-public void Attack()
+public void Attack(Attack attack)
     {
         // Lógica de ataque
         PlaySound(attackSound);
-        ShowDamageText(0);
+        if (attack.makesContact)
+        {
+            ShowDamageText(0);
+        }
     }
 
     public void Defend(int damage)

@@ -136,6 +136,27 @@ public class Eevee : PokemonBase
         {
             AttackCatalog.Instance.VineWhip(this); // Aquí this se refiere a la instancia de Eevee
         }
+
+        if (Input.GetKeyDown(KeyCode.S) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.Scratch(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.M) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.Ember(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.D) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.DragonClaw(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.W) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.WaterGun(this); // Aquí this se refiere a la instancia de Eevee
+        }
+        
     }
 
     private void AddEggMoves()
