@@ -182,8 +182,6 @@ public class AttackCatalog : MonoBehaviour
 
         // Si tienes alguna lógica específica que necesites cancelar o restablecer, puedes agregarla aquí
         // Por ejemplo, detener animaciones de ataque o restablecer la posición del cursor
-
-        Debug.Log($"{this.name} ha cancelado su ataque.");
     }
 
     private float GetTypeEffectiveness(string attackType, string defenderType)
@@ -274,6 +272,13 @@ public class AttackCatalog : MonoBehaviour
 
     private int CalculatePhysicalDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
     {
+        float contactMultiplier = 0;
+
+        if(attack.makesContact == true)
+        {
+            contactMultiplier = (attacker.mass * attacker.agility) / (defender.mass * attacker.agility);
+        }
+        
         // Lógica para calcular el daño físico con tipo, crítico y STAB
         float effectivenessAgainstType1 = GetTypeEffectiveness(attack.type, defender.type1); // Tipo del ataque contra tipo1 del defensor
         float effectivenessAgainstType2 = GetTypeEffectiveness(attack.type, defender.type2); // Tipo del ataque contra tipo2 del defensor
@@ -292,7 +297,7 @@ public class AttackCatalog : MonoBehaviour
         // Calcular daño crítico
         int criticalHitDamage = (Random.Range(0, 100) < 20) ? (int)(baseDamage * 1.5f * affinityMultiplier) : (int)(baseDamage * affinityMultiplier); // 20% de chance de golpe crítico
 
-        return Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier);
+        return Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier * contactMultiplier / 3);
     }
 
     private int CalculateSpecialDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
@@ -315,7 +320,7 @@ public class AttackCatalog : MonoBehaviour
         // Calcular daño crítico
         int criticalHitDamage = (Random.Range(0, 100) < 20) ? (int)(baseDamage * 1.5f * affinityMultiplier) : (int)(baseDamage * affinityMultiplier); // 20% de chance de golpe crítico
 
-        return Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier);
+        return Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier / 3);
     }
 
     private void ApplyStatusEffect(PokemonBase defender, Attack attack)
@@ -351,7 +356,7 @@ public class AttackCatalog : MonoBehaviour
 
     private IEnumerator WaitForUserClick(List<Vector3> attackPositions, PokemonBase attacker, string attackName, GameObject attackPrefab)
     {
-        Debug.Log("WaitForUserClick called.");
+        //Debug.Log($"{attacker.pokemonName} is waiting for a target to attack with {attackName}...");
         int pokemonLayerMask = LayerMask.GetMask("pokemon"); // Asegúrate de que "pokemon" sea el nombre exacto de la capa.
 
         // Esperar hasta que el usuario haga clic en una de las posiciones
@@ -359,14 +364,12 @@ public class AttackCatalog : MonoBehaviour
         {
             if (Input.GetMouseButtonDown(0)) // Clic izquierdo del mouse
             {
-                Debug.Log("Mouse button clicked.");
                 Vector3 mousePosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                 mousePosition.z = 0; // Asegúrate de que la z sea 0 para la detección de colisiones.
 
                 RaycastHit2D hit = Physics2D.Raycast(mousePosition, Vector2.zero, Mathf.Infinity, pokemonLayerMask);
                 if (hit.collider != null) // Verifica que se haya detectado un collider
                 {
-                    Debug.Log($"Hit detected: {hit.collider.name}");
 
                     // Usar hit.collider para acceder al GameObject
                     if (hit.collider.CompareTag("pokemon"))
@@ -376,8 +379,6 @@ public class AttackCatalog : MonoBehaviour
                         // Comprobar si el clic es en un Pokémon y no en el mismo atacante
                         if (defender != null && defender != attacker)
                         {
-                            Debug.Log("Defender found and it's not the attacker.");
-
                             // Comprobar si el clic está dentro de las posiciones de ataque
                             foreach (var position in attackPositions)
                             {
@@ -394,62 +395,47 @@ public class AttackCatalog : MonoBehaviour
 
                                     if(GetAttackByName(attackName).makesContact == true)
                                     {
-                                        Debug.Log("Moving attacker to defender position.");
                                         // Mover el atacante hacia el defensor
                                         yield return StartCoroutine(MovePokemon(attacker, position));
                                 
-                                        
-
-                                        Debug.Log("Returning attacker to original position.");
                                         // Regresar el atacante a su posición original
                                         yield return StartCoroutine(MovePokemon(attacker, originalAttackerPosition));
-
-                                        
                                     }
 
-                                    Debug.Log("Pushing defender away.");
                                     // Empujar al defensor
                                     yield return StartCoroutine(PushPokemon(defender, originalAttackerPosition, attackPrefab));
-
-                                    Debug.Log("Returning defender to original position.");
+                                    
                                     // Regresar el defensor a su posición original
                                     defender.transform.position = originalDefenderPosition;
-
-                                    Debug.Log("Executing attack.");
+                                    
                                     // Ejecutar el ataque
                                     ApplyAttack(attacker, defender, GetAttackByName(attackName));
-
-                                    Debug.Log("Playing attack sound.");
+                                    
                                     attacker.Attack(GetAttackByName(attackName));
-
-                                    Debug.Log("Playing defend sound.");
+                                    
                                     defender.Defend(damage);
 
                                     this.CancelAttack(); // Cancela el modo de ataque
                                     yield break; // Salir del bucle
                                 }
-                            }
-                            Debug.Log("Clicked position is not valid for attack.");
+                            }                            
                             DestroyAttackTiles(); // Destruir los tiles si no se hizo clic en un Pokémon
                             yield break; // Salir del bucle
                         }
                         else
                         {
-                            Debug.Log("Clicked on the same attacker or no defender found.");
                             DestroyAttackTiles(); // Destruir los tiles si no se hizo clic en un Pokémon
                             yield break; // Salir del bucle
                         }
                     }
                     else
                     {
-                        Debug.Log("Hit object is not a Pokémon.");
                         DestroyAttackTiles(); // Destruir los tiles si no se hizo clic en un Pokémon
                         yield break; // Salir del bucle
                     }
                 }
                 else
                 {
-                    Debug.Log("No collider hit.");
                     DestroyAttackTiles(); // Destruir los tiles si no se hizo clic en un Pokémon
                     yield break; // Salir del bucle
                 }
@@ -461,7 +447,6 @@ public class AttackCatalog : MonoBehaviour
 
     private IEnumerator MovePokemon(PokemonBase pokemon, Vector3 targetPosition, float stopDistance = 0.75f)
     {
-        Debug.Log("MovePokemon called.");
         float moveDuration = 0.5f; // Duración del movimiento
         float elapsedTime = 0f;
 
@@ -487,7 +472,6 @@ public class AttackCatalog : MonoBehaviour
 
     private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPosition, GameObject attackPrefab)
     {
-        Debug.Log("PushPokemon called.");
         float pushDuration = 0.3f; // Duración del empuje
         float pushDistance = 0.3f; // Distancia a empujar
         Vector3 originalPosition = defender.transform.position;
@@ -583,7 +567,7 @@ public class AttackCatalog : MonoBehaviour
 #region Tackle
 public void Tackle(PokemonBase attacker)
     {
-        Debug.Log("Tackle called.");
+        Debug.Log($"{attacker.pokemonName} use Tackle!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)
@@ -633,7 +617,7 @@ public void Tackle(PokemonBase attacker)
 #region Vine Whip
 public void VineWhip(PokemonBase attacker)
     {
-        Debug.Log("Vine Whip called.");
+        Debug.Log($"{attacker.pokemonName} use Vine Whip!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)
@@ -687,7 +671,7 @@ public void VineWhip(PokemonBase attacker)
 #region Scratch
 public void Scratch(PokemonBase attacker)
     {
-        Debug.Log("Scratch called.");
+        Debug.Log($"{attacker.pokemonName} use Scratch!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)
@@ -733,7 +717,7 @@ public void Scratch(PokemonBase attacker)
 #region Ember
 public void Ember(PokemonBase attacker)
     {
-        Debug.Log("Ember called.");
+        Debug.Log($"{attacker.pokemonName} use Ember!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)
@@ -783,7 +767,7 @@ public void Ember(PokemonBase attacker)
 #region Dragon Claw
 public void DragonClaw(PokemonBase attacker)
     {
-        Debug.Log("Dragon Claw called.");
+        Debug.Log($"{attacker.pokemonName} use Dragon Claw!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)
@@ -833,7 +817,7 @@ public void DragonClaw(PokemonBase attacker)
 #region Water Gun
 public void WaterGun(PokemonBase attacker)
     {
-        Debug.Log("Water Gun called.");
+        Debug.Log($"{attacker.pokemonName} use Water Gun!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)
@@ -883,7 +867,7 @@ public void WaterGun(PokemonBase attacker)
 #region Heat Wave
 public void HeatWave(PokemonBase attacker)
     {
-        Debug.Log("Heat Wave called.");
+        Debug.Log($"{attacker.pokemonName} use Heat Wave!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)
@@ -933,7 +917,7 @@ public void HeatWave(PokemonBase attacker)
 #region Nuzzle
 public void Nuzzle(PokemonBase attacker)
     {
-        Debug.Log("Nuzzle called.");
+        Debug.Log($"{attacker.pokemonName} use Nuzzle!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)
@@ -983,7 +967,7 @@ public void Nuzzle(PokemonBase attacker)
 #region Thunder Shock
 public void ThunderShock(PokemonBase attacker)
     {
-        Debug.Log("Thunder Shock called.");
+        Debug.Log($"{attacker.pokemonName} use Thunder Shock!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)
@@ -1047,7 +1031,7 @@ public void ThunderShock(PokemonBase attacker)
 #region Discharge
 public void Discharge(PokemonBase attacker)
     {
-        Debug.Log("Discharge called.");
+        Debug.Log($"{attacker.pokemonName} use Discharge!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)
@@ -1111,7 +1095,7 @@ public void Discharge(PokemonBase attacker)
 #region Spark
 public void Spark(PokemonBase attacker)
     {
-        Debug.Log("Spark called.");
+        Debug.Log($"{attacker.pokemonName} use Spark!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)
@@ -1161,7 +1145,7 @@ public void Spark(PokemonBase attacker)
 #region Thunder Bolt
 public void ThunderBolt(PokemonBase attacker)
     {
-        Debug.Log("Thunder Bolt called.");
+        Debug.Log($"{attacker.pokemonName} use Thunder Bolt!");
         Vector3 attackerPosition = attacker.transform.position;
 
         // Definir los rangos de alcance (cuadrados alrededor del atacante)

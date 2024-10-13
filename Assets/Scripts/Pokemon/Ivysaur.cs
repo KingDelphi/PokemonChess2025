@@ -65,9 +65,11 @@ public class Ivysaur : PokemonBase
         forms = new List<PokemonForm>();
         // Ejemplo: Agregar formas (deberías hacer esto con los datos específicos de tu Pokémon)
         DetermineGender();
+        DetermineMass();
         AssignRandomNature(); // Asignar una naturaleza aleatoria al inicializar
         ApplyNature(); // Aplicar la naturaleza a las estadísticas
         AssignRandomIVs();
+        DetermineAgility();
         DisplayNatureInfo(); // Mostrar información de la naturaleza
     }
     

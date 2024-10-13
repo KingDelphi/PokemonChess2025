@@ -122,7 +122,7 @@ public class TrainerBase : MonoBehaviour
                     }
                     else
                     {
-                        Debug.Log("El tile seleccionado está fuera del rango de movimiento.");
+                        //Debug.Log("El tile seleccionado está fuera del rango de movimiento.");
                     }
                 }
             }

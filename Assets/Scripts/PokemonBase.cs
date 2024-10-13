@@ -14,6 +14,8 @@ public class PokemonBase : MonoBehaviour
     public string type2;            // Second type (can be empty if only one type)
     public float height;            // Height of the Pokémon
     public float weight;            // Weight of the Pokémon
+    public float mass;
+    public float agility;
     public int c; // aprox. 5
     public int k; // aprox. 2, puede bajar hasta 0.5 (Caso de Zapdos), o hasta 0.05 (Caso de Snorlax)
     public string description;
@@ -102,7 +104,7 @@ public class PokemonBase : MonoBehaviour
         // Verifica que ambos no sean nulos antes de reproducir el sonido
         if (clip != null && audioSource != null) 
         {
-            Debug.Log("Playing sound: " + clip.name); // Log para ver si se está llamando
+            //Debug.Log("Playing sound: " + clip.name); // Log para ver si se está llamando
             audioSource.PlayOneShot(clip);
         }
         else
@@ -140,7 +142,7 @@ public class PokemonBase : MonoBehaviour
             gender = Gender.Female; // Es femenino
         }
 
-        Debug.Log($"{this.name} is {gender}");
+        //Debug.Log($"{this.name} is {gender}");
     }
 
 
@@ -158,9 +160,11 @@ public class PokemonBase : MonoBehaviour
         // Ejemplo: Agregar formas (deberías hacer esto con los datos específicos de tu Pokémon)
         
         DetermineGender();
+        DetermineMass();
+        AssignRandomIVs();
         AssignRandomNature(); // Asignar una naturaleza aleatoria al inicializar
         ApplyNature(); // Aplicar la naturaleza a las estadísticas
-        AssignRandomIVs();
+        DetermineAgility();
         DisplayNatureInfo(); // Mostrar información de la naturaleza
     }
 
@@ -186,6 +190,20 @@ public class PokemonBase : MonoBehaviour
         }
     }
 
+#region Mass & Agility Methods
+
+public void DetermineMass()
+{
+    mass = height * weight;
+}
+
+public void DetermineAgility()
+{
+    agility = (height / mass * stats.spd);
+}
+
+#endregion
+
 #region Nature Methods
 
 // Método para asignar una naturaleza aleatoria
@@ -200,7 +218,7 @@ public void ApplyNature()
     if (nature != null)
     {
         ApplyNatureModifiers(nature);
-        Debug.Log($"{this.pokemonName} has applied the {pokemonNature.name} nature modifiers!");
+        //Debug.Log($"{this.pokemonName} has applied the {pokemonNature.name} nature modifiers!");
     }
     else
     {
@@ -211,7 +229,8 @@ public void ApplyNature()
 
 public void DisplayNatureInfo()
 {
-    Debug.Log($"Nature: {pokemonNature.name}, Attack Modifier: {pokemonNature.attackModifier}, Defense Modifier: {pokemonNature.defenseModifier}, Special Attack Modifier: {pokemonNature.specialAttackModifier}, Special Defense Modifier: {pokemonNature.specialDefenseModifier}, Speed Modifier: {pokemonNature.speedModifier}");
+    Debug.Log($"Has encontrado un: {pokemonNature.name} {this.pokemonName}, ATK Modifier: {pokemonNature.attackModifier}, DEF Modifier: {pokemonNature.defenseModifier}, SPATK Modifier: {pokemonNature.specialAttackModifier}, SPDEF Modifier: {pokemonNature.specialDefenseModifier}, SPD Modifier: {pokemonNature.speedModifier}");
+    Debug.Log($"IVs de {pokemonName}: HP {stats.hpIV}, ATK {stats.atkIV}, DEF {stats.defIV}, SP. ATK {stats.spAtkIV}, SP. DEF {stats.spDefIV}, SPD {stats.spdIV}");
 }
 
 public string GetNatureInfo()
@@ -233,8 +252,6 @@ public void AssignRandomIVs()
     stats.spAtkIV = Random.Range(0, 32);
     stats.spDefIV = Random.Range(0, 32);
     stats.spdIV = Random.Range(0, 32);
-
-    Debug.Log($"IVs asignados a {pokemonName}: HP {stats.hpIV}, ATK {stats.atkIV}, DEF {stats.defIV}, SP. ATK {stats.spAtkIV}, SP. DEF {stats.spDefIV}, SPD {stats.spdIV}");
 }
 
 public void GainEVs(PokemonBase defeatedPokemon)
