@@ -79,10 +79,10 @@ public class GameManager : MonoBehaviour
                 playerPokemon.GetComponent<PokemonBase>().playerPokemon = true; // Activar el bool para el Pokémon del jugador
 
                 // Instanciar Pokemon del NPC
-                PokemonBase npc1Pokemon = Instantiate(npc1PokemonPrefab, new Vector3(2.5f, 3.5f, -1), Quaternion.identity);
+                PokemonBase npc1Pokemon = Instantiate(npc1PokemonPrefab, new Vector3(2.5f, 1.5f, -1), Quaternion.identity);
                 npc1Pokemon.GetComponent<PokemonBase>().npcPokemon = true; // Activar el bool para el Pokémon del NPC
 
-                PokemonBase npc2Pokemon = Instantiate(npc2PokemonPrefab, new Vector3(3.5f, 5.5f, -1), Quaternion.identity);
+                PokemonBase npc2Pokemon = Instantiate(npc2PokemonPrefab, new Vector3(5.5f, 4.5f, -1), Quaternion.identity);
                 npc2Pokemon.GetComponent<PokemonBase>().npcPokemon = true; // Activar el bool para el Pokémon del NPC
 
                 PokemonBase npc3Pokemon = Instantiate(npc3PokemonPrefab, new Vector3(2.5f, 5.5f, -1), Quaternion.identity);

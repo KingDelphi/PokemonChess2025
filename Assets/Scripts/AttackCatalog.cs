@@ -141,25 +141,23 @@ public class AttackCatalog : MonoBehaviour
         };
     }
 
-    public void ApplyAttack(PokemonBase attacker, PokemonBase defender, Attack attack)
+    public bool ApplyAttack(PokemonBase attacker, PokemonBase defender, Attack attack)
+{
+    bool isCriticalHit = false;
+
+    // Calcular el daño
+    (isCriticalHit, damage) = CalculateDamage(attack, attacker, defender);
+
+    // Aplicar daño
+    defender.stats.hp -= damage;
+    Debug.Log($"{attacker.pokemonName} dealt {damage} damage to {defender.pokemonName} using {attack.name}!");
+
+    if (isCriticalHit)
     {
-        // Lógica para aplicar daño basada en la categoría del ataque
+        Debug.Log("It's a critical hit!");
+    }
 
-        // Utilizar el método de cálculo de daño que considera las transformaciones
-        damage = CalculateDamage(attack, attacker, defender);
-
-        // Aplicar daño al defensor
-        defender.stats.hp -= damage;
-        Debug.Log($"{attacker.pokemonName} dealt {damage} damage to {defender.pokemonName} using {attack.name}!");
-
-        // Verificar evasión
-        if (defender.TryEvadeAttack())
-        {
-            Debug.Log($"{defender.pokemonName} evaded the attack!");
-            return;
-        }
-
-        // Aplicar estado alterado con probabilidad
+     // Aplicar estado alterado con probabilidad
         if (attack.statusEffect != PokemonBase.StatusCondition.None)
         {
             float randomChance = Random.Range(0f, 100f);
@@ -173,7 +171,10 @@ public class AttackCatalog : MonoBehaviour
                 Debug.Log($"{defender.pokemonName} resisted the {attack.statusEffect} from {attack.name}.");
             }
         }
-    }
+
+    return isCriticalHit; // Retorna solo el valor booleano
+}
+
 
     public void CancelAttack()
     {
@@ -229,9 +230,10 @@ public class AttackCatalog : MonoBehaviour
         return 1.0f; // Daño normal si no hay interacción específica
     }
 
-    public int CalculateDamage(Attack attack, PokemonBase attacker, PokemonBase defender)
+    public (bool, int) CalculateDamage(Attack attack, PokemonBase attacker, PokemonBase defender)
     {
         int damage = 0;
+        bool isCriticalHit = false;
 
         // Aquí se puede ajustar el daño basado en la transformación
         if (attacker.currentTransformation == PokemonBase.TransformationType.Dynamax)
@@ -245,34 +247,36 @@ public class AttackCatalog : MonoBehaviour
         else
         {
             // Lógica normal de daño
-            damage = CalculateNormalDamage(attacker, defender, attack);
+            (isCriticalHit, damage) = CalculateNormalDamage(attacker, defender, attack);
         }
 
-        return damage;
+        return (isCriticalHit, damage);
     }
 
-    private int CalculateNormalDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
+    private (bool, int) CalculateNormalDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
     {
         // Implementación original de daño
-        // Aquí puedes reutilizar la lógica de daño físico y especial según sea necesario
         int damage = 0;
+        bool isCriticalHit = false;
 
-        // Ejemplo simple para llamar a los métodos de daño físico o especial
+        // Llamar a los métodos de daño físico o especial según la categoría del ataque
         if (attack.category == AttackCategory.Physical)
         {
-            damage = CalculatePhysicalDamage(attacker, defender, attack);
+            // Desestructurar el retorno de CalculatePhysicalDamage para obtener si es crítico y el daño
+            (isCriticalHit, damage) = CalculatePhysicalDamage(attacker, defender, attack);
         }
         else if (attack.category == AttackCategory.Special)
         {
-            damage = CalculateSpecialDamage(attacker, defender, attack);
+            // Asumimos que CalculateSpecialDamage también devolvería una tupla similar
+            (isCriticalHit, damage) = CalculateSpecialDamage(attacker, defender, attack); 
         }
 
-        return damage;
+        return (isCriticalHit, damage);
     }
 
-    private int CalculatePhysicalDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
+    private (bool, int) CalculatePhysicalDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
     {
-        float contactMultiplier = 0;
+        float contactMultiplier = 1;
 
         if(attack.makesContact == true)
         {
@@ -294,14 +298,24 @@ public class AttackCatalog : MonoBehaviour
         // Aplicar el valor de afinidad para incrementar el daño base
         float affinityMultiplier = 1.0f + (attacker.affinity / 100f * 0.1f); // Aumentar el daño basado en la afinidad
 
-        // Calcular daño crítico
-        int criticalHitDamage = (Random.Range(0, 100) < 20) ? (int)(baseDamage * 1.5f * affinityMultiplier) : (int)(baseDamage * affinityMultiplier); // 20% de chance de golpe crítico
+        // Determinar si es un golpe crítico
+        bool isCriticalHit = Random.Range(0, 100) < 20; // 20% de probabilidad de golpe crítico
 
-        return Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier * contactMultiplier / 3);
+        // Calcular daño crítico
+        int criticalHitDamage = isCriticalHit ? (int)(baseDamage * 1.5f * affinityMultiplier) : (int)(baseDamage * affinityMultiplier); 
+        
+        return (isCriticalHit, Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier * contactMultiplier / 3));
     }
 
-    private int CalculateSpecialDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
+    private (bool, int) CalculateSpecialDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
     {
+        float contactMultiplier = 1;
+
+        if(attack.makesContact == true)
+        {
+            contactMultiplier = (attacker.mass * attacker.agility) / (defender.mass * attacker.agility);
+        }
+
         // Lógica para calcular el daño especial con tipo, crítico y STAB
         float effectivenessAgainstType1 = GetTypeEffectiveness(attack.type, defender.type1); // Tipo del ataque contra type1 del defensor
         float effectivenessAgainstType2 = GetTypeEffectiveness(attack.type, defender.type2); // Tipo del ataque contra type2 del defensor
@@ -317,10 +331,19 @@ public class AttackCatalog : MonoBehaviour
         // Aplicar el valor de afinidad para incrementar el daño base
         float affinityMultiplier = 1.0f + (attacker.affinity / 100f * 0.1f); // Aumentar el daño basado en la afinidad
 
-        // Calcular daño crítico
-        int criticalHitDamage = (Random.Range(0, 100) < 20) ? (int)(baseDamage * 1.5f * affinityMultiplier) : (int)(baseDamage * affinityMultiplier); // 20% de chance de golpe crítico
+        // Determinar si es un golpe crítico
+        bool isCriticalHit = Random.Range(0, 100) < 20; // 20% de probabilidad de golpe crítico
 
-        return Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier / 3);
+        // Calcular daño crítico
+        int criticalHitDamage = isCriticalHit ? (int)(baseDamage * 1.5f * affinityMultiplier) : (int)(baseDamage * affinityMultiplier); 
+
+        // Lanzar un debug si se produce un golpe crítico
+        if (isCriticalHit)
+        {
+            Debug.Log("It's a critical hit!");
+        }
+
+        return (isCriticalHit, Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier * contactMultiplier / 3));
     }
 
     private void ApplyStatusEffect(PokemonBase defender, Attack attack)
@@ -401,15 +424,14 @@ public class AttackCatalog : MonoBehaviour
                                         // Regresar el atacante a su posición original
                                         yield return StartCoroutine(MovePokemon(attacker, originalAttackerPosition));
                                     }
-
-                                    // Empujar al defensor
-                                    yield return StartCoroutine(PushPokemon(defender, originalAttackerPosition, attackPrefab));
                                     
-                                    // Regresar el defensor a su posición original
-                                    defender.transform.position = originalDefenderPosition;
-                                    
+                                    bool isCriticalHit = false;
                                     // Ejecutar el ataque
-                                    ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                                    isCriticalHit = ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                                    
+                                        // Animar & Empujar al defensor
+                                    yield return StartCoroutine(PushPokemon(defender, originalAttackerPosition, attackPrefab, isCriticalHit));
+                                    
                                     
                                     attacker.Attack(GetAttackByName(attackName));
                                     
@@ -470,10 +492,12 @@ public class AttackCatalog : MonoBehaviour
         pokemon.transform.position = stopPosition;
     }
 
-    private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPosition, GameObject attackPrefab)
+    private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPosition, GameObject attackPrefab, bool isCriticalHit)
     {
+        isCriticalHit = isCriticalHit;
+
         float pushDuration = 0.3f; // Duración del empuje
-        float pushDistance = 0.3f; // Distancia a empujar
+        float pushDistance = 1f; // Distancia a empujar
         Vector3 originalPosition = defender.transform.position;
 
         // Calcular la dirección opuesta al atacante
@@ -487,15 +511,19 @@ public class AttackCatalog : MonoBehaviour
         Destroy(animationInstance, 2f);
 
         float elapsedTime = 0f;
-        while (elapsedTime < pushDuration)
+        if (isCriticalHit)
+        {
+            while (elapsedTime < pushDuration)
         {
             defender.transform.position = Vector3.Lerp(originalPosition, originalPosition + pushDirection * pushDistance, (elapsedTime / pushDuration));
             elapsedTime += Time.deltaTime;
             yield return null; // Esperar el siguiente frame
         }
+        }
+        
 
         // Asegurarse de que el defensor regrese a su posición original
-        defender.transform.position = originalPosition;
+        //defender.transform.position = originalPosition;
     }
 
     private bool IsWithinMapBounds(Vector3 position)
@@ -777,10 +805,6 @@ public void DragonClaw(PokemonBase attacker)
             attackerPosition + new Vector3(1, 0, 0),  // Derecha
             attackerPosition + new Vector3(0, 1, 0),  // Arriba
             attackerPosition + new Vector3(0, -1, 0),  // Abajo
-            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
-            attackerPosition + new Vector3(1, 1, 0),  // Derecha
-            attackerPosition + new Vector3(1, -1, 0),  // Arriba
-            attackerPosition + new Vector3(-1, -1, 0)  // Abajo
         };
 
         // Verificar si el prefab está referenciado correctamente
@@ -863,6 +887,9 @@ public void WaterGun(PokemonBase attacker)
     }
 
 #endregion
+
+
+
 
 #region Heat Wave
 public void HeatWave(PokemonBase attacker)

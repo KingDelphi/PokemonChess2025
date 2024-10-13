@@ -532,10 +532,6 @@ private bool IsWithinMapBounds(Vector3 position)
             }
         }
     }
-    else 
-    {
-        Debug.Log($"{pokemon.name} ya ha sido seleccionado para el ataque.");
-    }
 }
 
 
