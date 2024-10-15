@@ -70,15 +70,15 @@ public class Charmander : PokemonBase
         forms = new List<PokemonForm>();
         // Ejemplo: Agregar formas (deberías hacer esto con los datos específicos de tu Pokémon)
         DetermineGender();
-        DetermineMass();
         AssignRandomNature(); // Asignar una naturaleza aleatoria al inicializar
         ApplyNature(); // Aplicar la naturaleza a las estadísticas
         AssignRandomIVs();
-        DetermineAgility();
         DisplayNatureInfo(); // Mostrar información de la naturaleza
         isShiny = GenerateIsShiny(); 
-        height = GenerateRandomHeight(height); 
-        weight = GenerateRandomWeight(weight); 
+        realHeight = GenerateRandomHeight(height); 
+        realWeight = GenerateRandomWeight(weight);
+        DetermineMass();
+        DetermineAgility();
     }
     
     void Start()

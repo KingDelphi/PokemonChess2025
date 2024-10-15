@@ -78,8 +78,10 @@ public class Espeon : PokemonBase
         AssignRandomIVs();
         DisplayNatureInfo(); // Mostrar información de la naturaleza
         isShiny = GenerateIsShiny(); 
-        height = GenerateRandomHeight(height); 
-        weight = GenerateRandomWeight(weight); 
+        realHeight = GenerateRandomHeight(height); 
+        realWeight = GenerateRandomWeight(weight);
+        DetermineMass();
+        DetermineAgility();
     }
     
     void Start()

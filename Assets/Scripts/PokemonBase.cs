@@ -215,15 +215,15 @@ public class PokemonBase : MonoBehaviour
         // Ejemplo: Agregar formas (deberías hacer esto con los datos específicos de tu Pokémon)
     
         DetermineGender();
-        DetermineMass();
         AssignRandomIVs();
         AssignRandomNature(); // Asignar una naturaleza aleatoria al inicializar
         ApplyNature(); // Aplicar la naturaleza a las estadísticas
-        DetermineAgility();
         DisplayNatureInfo(); // Mostrar información de la naturaleza
         isShiny = GenerateIsShiny(); 
         realHeight = GenerateRandomHeight(height); 
-        realWeight = GenerateRandomWeight(weight); 
+        realWeight = GenerateRandomWeight(weight);
+        DetermineMass();
+        DetermineAgility();
     }
 
     public void Start()
@@ -253,12 +253,12 @@ public class PokemonBase : MonoBehaviour
 
 public void DetermineMass()
 {
-    mass = height * weight;
+    mass = realHeight * realWeight;
 }
 
 public void DetermineAgility()
 {
-    agility = (height / mass * stats.spd);
+    agility = (realHeight / mass * stats.spd);
 }
 
 #endregion

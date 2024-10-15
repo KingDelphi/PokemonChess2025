@@ -2,12 +2,6 @@ using UnityEngine;
 
 public class PokemonValuator : MonoBehaviour
 {
-    // Rango de precios
-    private float normalMinPrice = 1f;
-    private float normalMaxPrice = 100f;
-    private float shinyMinPrice = 100f;
-    private float shinyMaxPrice = 10000f;
-
     // private bool isEvaluating = false; // Estado para controlar la evaluación
 
     void Update()
@@ -38,108 +32,158 @@ public class PokemonValuator : MonoBehaviour
 
     // Fórmula para el cálculo de precio basado en naturaleza (IMPROVE)
     public float GetNatureBoost(string nature, PokemonBase.Stats stats)
+{
+    // Agregar este Debug.Log al inicio de la función GetNatureBoost
+    Debug.Log("Nature: " + nature + 
+            "\nIVs - HP: " + stats.hpIV + 
+            ", Attack: " + stats.atkIV + 
+            ", Defense: " + stats.defIV + 
+            ", Special Attack: " + stats.spAtkIV + 
+            ", Special Defense: " + stats.spDefIV + 
+            ", Speed: " + stats.spdIV);
+
+    
+    // Calcular el efecto de IVs de manera más específica según la naturaleza
+    float natureBoost = 1.0f;
+
+    switch (nature)
     {
-        // Calcular el efecto de IVs
-        float ivEffect = (stats.hpIV + stats.atkIV + stats.defIV + stats.spAtkIV + stats.spDefIV + stats.spdIV) / 186f; // Normalizar IVs si es necesario.
-
-        // Definir un valor de efecto por defecto
-        float natureBoost = 0f;
-
-        // Lógica para calcular el efecto según la naturaleza
-        switch (nature)
-        {
-            case "Adamant":
-                natureBoost = 0.1f + ivEffect; // Aumenta Ataque, disminuye Ataque Especial
-                break;
-            case "Bashful":
-                natureBoost = 0.0f + ivEffect; // Neutra
-                break;
-            case "Bold":
-                natureBoost = 0.1f + ivEffect; // Aumenta Defensa, disminuye Velocidad
-                break;
-            case "Brave":
-                natureBoost = 0.1f + ivEffect; // Aumenta Ataque, disminuye Velocidad
-                break;
-            case "Calm":
-                natureBoost = 0.1f + ivEffect; // Aumenta Defensa Especial, disminuye Velocidad
-                break;
-            case "Careful":
-                natureBoost = 0.1f + ivEffect; // Aumenta Defensa Especial, disminuye Ataque Especial
-                break;
-            case "Docile":
-                natureBoost = 0.0f + ivEffect; // Neutra
-                break;
-            case "Gentle":
-                natureBoost = 0.1f + ivEffect; // Aumenta Defensa Especial, disminuye Defensa
-                break;
-            case "Hardy":
-                natureBoost = 0.0f + ivEffect; // Neutra
-                break;
-            case "Hasty":
-                natureBoost = 0.1f + ivEffect; // Aumenta Velocidad, disminuye Defensa
-                break;
-            case "Impish":
-                natureBoost = 0.1f + ivEffect; // Aumenta Defensa, disminuye Ataque Especial
-                break;
-            case "Jolly":
-                natureBoost = 0.1f + ivEffect; // Aumenta Velocidad, disminuye Ataque Especial
-                break;
-            case "Lax":
-                natureBoost = 0.1f + ivEffect; // Aumenta Defensa, disminuye Defensa Especial
-                break;
-            case "Lonely":
-                natureBoost = 0.1f + ivEffect; // Aumenta Ataque, disminuye Defensa
-                break;
-            case "Mild":
-                natureBoost = 0.1f + ivEffect; // Aumenta Ataque Especial, disminuye Defensa
-                break;
-            case "Modest":
-                natureBoost = 0.1f + ivEffect; // Aumenta Ataque Especial, disminuye Ataque
-                break;
-            case "Naive":
-                natureBoost = 0.1f + ivEffect; // Aumenta Defensa Especial, disminuye Velocidad
-                break;
-            case "Naughty":
-                natureBoost = 0.1f + ivEffect; // Aumenta Ataque, disminuye Defensa Especial
-                break;
-            case "Quiet":
-                natureBoost = 0.1f + ivEffect; // Aumenta Ataque Especial, disminuye Velocidad
-                break;
-            case "Quirky":
-                natureBoost = 0.0f + ivEffect; // Neutra
-                break;
-            case "Rash":
-                natureBoost = 0.1f + ivEffect; // Aumenta Ataque Especial, disminuye Defensa Especial
-                break;
-            case "Relaxed":
-                natureBoost = 0.1f + ivEffect; // Aumenta Defensa, disminuye Velocidad
-                break;
-            case "Sassy":
-                natureBoost = 0.1f + ivEffect; // Aumenta Defensa Especial, disminuye Velocidad
-                break;
-            case "Serious":
-                natureBoost = 0.0f + ivEffect; // Neutra
-                break;
-            case "Timid":
-                natureBoost = 0.1f + ivEffect; // Aumenta Velocidad, disminuye Ataque
-                break;
-            default:
-                natureBoost = ivEffect; // Neutro, solo el efecto de IVs
-                break;
-        }
-
-        return natureBoost; // Retornar el efecto de la naturaleza
+        case "Adamant":
+            // Aumenta Ataque, disminuye Ataque Especial
+            natureBoost = (0.1f * stats.atkIV) - (0.1f * stats.spAtkIV);
+            break;
+        case "Bashful":
+            // Neutra
+            natureBoost = 0.0f;
+            break;
+        case "Bold":
+            // Aumenta Defensa, disminuye Velocidad
+            natureBoost = (0.1f * stats.defIV) - (0.1f * stats.spdIV);
+            break;
+        case "Brave":
+            // Aumenta Ataque, disminuye Velocidad
+            natureBoost = (0.1f * stats.atkIV) - (0.1f * stats.spdIV);
+            break;
+        case "Calm":
+            // Aumenta Defensa Especial, disminuye Velocidad
+            natureBoost = (0.1f * stats.spDefIV) - (0.1f * stats.spdIV);
+            break;
+        case "Careful":
+            // Aumenta Defensa Especial, disminuye Ataque Especial
+            natureBoost = (0.1f * stats.spDefIV) - (0.1f * stats.spAtkIV);
+            break;
+        case "Docile":
+            // Neutra
+            natureBoost = 0.0f;
+            break;
+        case "Gentle":
+            // Aumenta Defensa Especial, disminuye Defensa
+            natureBoost = (0.1f * stats.spDefIV) - (0.1f * stats.defIV);
+            break;
+        case "Hardy":
+            // Neutra
+            natureBoost = 0.0f;
+            break;
+        case "Hasty":
+            // Aumenta Velocidad, disminuye Defensa
+            natureBoost = (0.1f * stats.spdIV) - (0.1f * stats.defIV);
+            break;
+        case "Impish":
+            // Aumenta Defensa, disminuye Ataque Especial
+            natureBoost = (0.1f * stats.defIV) - (0.1f * stats.spAtkIV);
+            break;
+        case "Jolly":
+            // Aumenta Velocidad, disminuye Ataque Especial
+            natureBoost = (0.1f * stats.spdIV) - (0.1f * stats.spAtkIV);
+            break;
+        case "Lax":
+            // Aumenta Defensa, disminuye Defensa Especial
+            natureBoost = (0.1f * stats.defIV) - (0.1f * stats.spDefIV);
+            break;
+        case "Lonely":
+            // Aumenta Ataque, disminuye Defensa
+            natureBoost = (0.1f * stats.atkIV) - (0.1f * stats.defIV);
+            break;
+        case "Mild":
+            // Aumenta Ataque Especial, disminuye Defensa
+            natureBoost = (0.1f * stats.spAtkIV) - (0.1f * stats.defIV);
+            break;
+        case "Modest":
+            // Aumenta Ataque Especial, disminuye Ataque
+            natureBoost = (0.1f * stats.spAtkIV) - (0.1f * stats.atkIV);
+            break;
+        case "Naive":
+            // Aumenta Defensa Especial, disminuye Velocidad
+            natureBoost = (0.1f * stats.spDefIV) - (0.1f * stats.spdIV);
+            break;
+        case "Naughty":
+            // Aumenta Ataque, disminuye Defensa Especial
+            natureBoost = (0.1f * stats.atkIV) - (0.1f * stats.spDefIV);
+            break;
+        case "Quiet":
+            // Aumenta Ataque Especial, disminuye Velocidad
+            natureBoost = (0.1f * stats.spAtkIV) - (0.1f * stats.spdIV);
+            break;
+        case "Quirky":
+            // Neutra
+            natureBoost = 0.0f;
+            break;
+        case "Rash":
+            // Aumenta Ataque Especial, disminuye Defensa Especial
+            natureBoost = (0.1f * stats.spAtkIV) - (0.1f * stats.spDefIV);
+            break;
+        case "Relaxed":
+            // Aumenta Defensa, disminuye Velocidad
+            natureBoost = (0.1f * stats.defIV) - (0.1f * stats.spdIV);
+            break;
+        case "Sassy":
+            // Aumenta Defensa Especial, disminuye Velocidad
+            natureBoost = (0.1f * stats.spDefIV) - (0.1f * stats.spdIV);
+            break;
+        case "Serious":
+            // Neutra
+            natureBoost = 0.0f;
+            break;
+        case "Timid":
+            // Aumenta Velocidad, disminuye Ataque
+            natureBoost = (0.1f * stats.spdIV) - (0.1f * stats.atkIV);
+            break;
+        default:
+            // Neutra, solo el efecto de IVs
+            natureBoost = 0.0f;
+            break;
     }
+
+    return natureBoost + 1.0f; // Retornar el efecto final
+}
+
 
     // Fórmula para el cálculo de IVs
     public float GetIVEffect(PokemonBase.Stats stats)
     {
-        // Calcula el total de IVs usando las variables individuales
-        float totalIVs = stats.hpIV + stats.atkIV + stats.defIV + stats.spAtkIV + stats.spDefIV + stats.spdIV;
-        float maxIVs = 186f; // 31 IVs * 6 stats (31 * 6)
+        // Mostrar las estadísticas base que se están usando para el cálculo
+        Debug.Log("Base Stats - HP: " + stats.hp + 
+                ", Attack: " + stats.atk + 
+                ", Defense: " + stats.def + 
+                ", Special Attack: " + stats.spAtk + 
+                ", Special Defense: " + stats.spDef + 
+                ", Speed: " + stats.spd);
 
-        return totalIVs / maxIVs; // Entre 0-1
+        // Calcula el total de IVs multiplicado por sus respectivos stats base
+        float totalIVs = (stats.hpIV * stats.hp) +
+                        (stats.atkIV * stats.atk) +
+                        (stats.defIV * stats.def) +
+                        (stats.spAtkIV * stats.spAtk) +
+                        (stats.spDefIV * stats.spDef) +
+                        (stats.spdIV * stats.spd);
+
+        // Sumar los stats base para obtener el maximo total posible
+        float maxIVs = (31 * stats.hp) + (31 * stats.atk) + (31 * stats.def) + 
+                    (31 * stats.spAtk) + (31 * stats.spDef) + (31 * stats.spd); 
+
+        return (totalIVs / maxIVs) + 0.5f; // Entre 0-1
     }
+
 
     // Fórmula para calcular masa
     public float GetMassEffect(PokemonBase pokemon)
@@ -159,14 +203,20 @@ public class PokemonValuator : MonoBehaviour
         float maxMass = maxHeight * maxWeight;
 
         // Retorna el efecto de la masa basado en la masa real del Pokémon comparada con los límites estándar
-        return (realMass - minMass) / (maxMass - minMass); // Valor entre 0 y 1
+        return ((realMass - minMass) / (maxMass - minMass)) + 0.5f; // Valor entre 0 y 1
     }
 
     // Cálculo de agilidad
     public float GetAgilityEffect(PokemonBase.Stats stats, float height, float mass)
-    {
-        return (height / mass) * stats.spd;
-    }
+{
+    float rawAgility = (height / mass) * stats.spd;
+
+    // Aplicar logaritmo para reducir el impacto de valores altos
+    float scaledAgility = Mathf.Log10(rawAgility + 1); // "+1" para evitar log(0)
+
+    return (Mathf.Clamp01(scaledAgility));
+}
+
 
     // Cálculo del valor del ratio de género
     public float GetGenderRatioEffect(PokemonBase.Gender gender)
@@ -192,12 +242,6 @@ public class PokemonValuator : MonoBehaviour
         bool isShiny = pokemon.isShiny;
         Debug.Log("Shiny status: " + isShiny);
 
-        // Factores iniciales
-        float minPrice = isShiny ? shinyMinPrice : normalMinPrice;
-        float maxPrice = isShiny ? shinyMaxPrice : normalMaxPrice;
-        Debug.Log("Min price: " + minPrice);
-        Debug.Log("Max price: " + maxPrice);
-
         // Factores del mercado
         float rarityEffect = (float)(totalPokemonInGame - pokemon.CountInGame) / totalPokemonInGame;
         Debug.Log("Rarity effect: " + rarityEffect);
@@ -206,7 +250,7 @@ public class PokemonValuator : MonoBehaviour
         float ivEffect = GetIVEffect(pokemon.stats);
         Debug.Log("IV effect: " + ivEffect);
 
-        float natureEffect = GetNatureBoost(pokemon.nature.name, pokemon.stats);
+        float natureEffect = GetNatureBoost(pokemon.pokemonNature.name, pokemon.stats);
         Debug.Log("Nature effect: " + natureEffect);
 
         float massEffect = GetMassEffect(pokemon);
@@ -215,19 +259,22 @@ public class PokemonValuator : MonoBehaviour
         float agilityEffect = GetAgilityEffect(pokemon.stats, pokemon.height, pokemon.mass);
         Debug.Log("Agility effect: " + agilityEffect);
 
-        float genderEffect = GetGenderRatioEffect(pokemon.DetermineGender());
+        float genderEffect = GetGenderRatioEffect(pokemon.gender);
         Debug.Log("Gender effect: " + genderEffect);
 
         // Peso total de factores
         float finalEffect = (rarityEffect + ivEffect + natureEffect + massEffect + agilityEffect + genderEffect) / 6;
         Debug.Log("Final effect: " + finalEffect);
 
-        // Precio final basado en todos los factores
-        float finalPrice = Mathf.Lerp(minPrice, maxPrice, finalEffect);
+        // Precio final sin depender de un rango predefinido
+        float basePrice = isShiny ? 10000f : 100f; // Definir un precio base para shiny o normal
+        float finalPrice = basePrice * finalEffect; // Escalar según los efectos
+
         Debug.Log("Final price: " + finalPrice);
 
-        return finalPrice;
+        return finalPrice * 10/4;
     }
+
 
     // Aquí puedes aplicar las fórmulas con tus ejemplos
     public void TestValuation(PokemonBase pokemon)
