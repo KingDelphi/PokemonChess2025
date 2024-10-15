@@ -427,6 +427,13 @@ public class AttackCatalog : MonoBehaviour
             (isCriticalHit, damage) = CalculateNormalDamage(attacker, defender, attack);
         }
 
+        // Aplicar modificador del enraged antes de retornar el resultado
+        if (attacker.enraged > 0)
+        {
+            float enragedModifier = 1 + (attacker.enraged * 0.05f); // Cada nivel de enraged incrementa el daño en un 5%
+            damage = Mathf.RoundToInt(damage * enragedModifier); // Redondear a un número entero
+        }
+
         return (isCriticalHit, damage);
     }
 
@@ -481,7 +488,7 @@ public class AttackCatalog : MonoBehaviour
         // Calcular daño crítico
         int criticalHitDamage = isCriticalHit ? (int)(baseDamage * 1.5f * affinityMultiplier) : (int)(baseDamage * affinityMultiplier); 
         
-        return (isCriticalHit, Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier * contactMultiplier / 3));
+        return (isCriticalHit, Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier * contactMultiplier / 4));
     }
 
     private (bool, int) CalculateSpecialDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
