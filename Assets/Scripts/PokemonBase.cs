@@ -7,13 +7,17 @@ using TMPro;
 public class PokemonBase : MonoBehaviour
 {
     [SerializeField] private GameObject evolutionPrefab; // Asegúrate de que esté asignado en el inspector
+    public bool isShiny;
     public int pokemonNumber;       // Pokémon number
     public string pokemonName;      // Pokémon name
     public Nature pokemonNature;
     public string type1;            // First type of the Pokémon
     public string type2;            // Second type (can be empty if only one type)
+    public float realHeight;            // Height of the Pokémon
+    public float realWeight;            // Weight of the Pokémon
     public float height;            // Height of the Pokémon
     public float weight;            // Weight of the Pokémon
+
     public float mass;
     public float agility;
     public int c; // aprox. 5
@@ -75,7 +79,56 @@ public class PokemonBase : MonoBehaviour
 
     public GameManager gameManager;
 
+    public int CountInGame = 1;
 
+    public PokemonBase(bool isShiny, float height, float weight, Gender gender, int pokemonNumber, int expYield, 
+                      int hpIV, int atkIV, int defIV, int spAtkIV, int spDefIV, int spdIV)
+    {
+        this.isShiny = isShiny;
+        this.height = height;
+        this.weight = weight;
+        this.gender = gender;
+        this.pokemonNumber = pokemonNumber;
+        this.expYield = expYield;
+        
+        // Inicializar IVs en el objeto Stats
+        stats.hpIV = hpIV;
+        stats.atkIV = atkIV;
+        stats.defIV = defIV;
+        stats.spAtkIV = spAtkIV;
+        stats.spDefIV = spDefIV;
+        stats.spdIV = spdIV;
+
+        // Si tienes más lógica de inicialización, puedes agregarla aquí
+    }
+
+
+    public static bool GenerateIsShiny()
+    {
+        return Random.Range(0f, 1f) < 0.005f; // 0.5% de probabilidad
+    }
+
+    public static float GenerateRandomHeight(float baseHeight)
+    {
+        float variation = baseHeight * 0.1f; // 10% de variación
+        return Random.Range(baseHeight - variation, baseHeight + variation);
+    }
+
+    public static float GenerateRandomWeight(float baseWeight)
+    {
+        float lowerBound = baseWeight * 0.9f; // 10% menos
+        float upperBound = baseWeight * 1.2f; // 20% más
+        return Random.Range(lowerBound, upperBound);
+    }
+
+
+    public static int GenerateRandomExpYield(int baseExpYield)
+    {
+        float variation = baseExpYield * 0.05f; // 5% de variación
+        int minYield = Mathf.Max(0, Mathf.FloorToInt(baseExpYield - variation));
+        int maxYield = Mathf.FloorToInt(baseExpYield + variation);
+        return Random.Range(minYield, maxYield + 1);
+    }
 
     // Método para agregar experiencia
     public void AddExperience(int amount)
@@ -120,13 +173,13 @@ public class PokemonBase : MonoBehaviour
         Genderless // Si quieres incluir la opción de Pokémon sin género
     }
 
-    public void DetermineGender()
+    public PokemonBase.Gender DetermineGender()
     {
         // Verificar si el género es genderless
         if (genderRatio < 0)
         {
             gender = Gender.Genderless;
-            return;
+            return gender;
         }
 
         // Generar un número aleatorio entre 0 y 1
@@ -136,10 +189,12 @@ public class PokemonBase : MonoBehaviour
         if (randomValue <= genderRatio)
         {
             gender = Gender.Male; // Es masculino
+            return gender;
         }
         else
         {
             gender = Gender.Female; // Es femenino
+            return gender;
         }
 
         //Debug.Log($"{this.name} is {gender}");
@@ -158,7 +213,7 @@ public class PokemonBase : MonoBehaviour
         // Inicialización y asignación de la forma inicial
         forms = new List<PokemonForm>();
         // Ejemplo: Agregar formas (deberías hacer esto con los datos específicos de tu Pokémon)
-        
+    
         DetermineGender();
         DetermineMass();
         AssignRandomIVs();
@@ -166,6 +221,9 @@ public class PokemonBase : MonoBehaviour
         ApplyNature(); // Aplicar la naturaleza a las estadísticas
         DetermineAgility();
         DisplayNatureInfo(); // Mostrar información de la naturaleza
+        isShiny = GenerateIsShiny(); 
+        realHeight = GenerateRandomHeight(height); 
+        realWeight = GenerateRandomWeight(weight); 
     }
 
     public void Start()
@@ -189,6 +247,7 @@ public class PokemonBase : MonoBehaviour
             isInPokeball = false;
         }
     }
+
 
 #region Mass & Agility Methods
 

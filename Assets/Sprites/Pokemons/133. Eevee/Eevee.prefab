@@ -16,6 +16,7 @@ GameObject:
   - component: {fileID: 5131944338243765039}
   - component: {fileID: 5311896270595114162}
   - component: {fileID: -5293496181939320997}
+  - component: {fileID: -4787510700616292665}
   m_Layer: 6
   m_Name: Eevee
   m_TagString: pokemon
@@ -124,6 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   evolutionPrefab: {fileID: 0}
+  isShiny: 0
   pokemonNumber: 0
   pokemonName: 
   pokemonNature:
@@ -135,8 +137,12 @@ MonoBehaviour:
     speedModifier: 0
   type1: 
   type2: 
+  baseHeight: 0
+  baseWeight: 0
   height: 0
   weight: 0
+  mass: 0
+  agility: 0
   c: 0
   k: 0
   description: 
@@ -220,6 +226,7 @@ MonoBehaviour:
   experienceToNextLevel: 100
   blinkMaterial: {fileID: 0}
   gameManager: {fileID: 0}
+  CountInGame: 1
   hp: 0
   maxHP: 0
 --- !u!114 &1148584360422642532
@@ -418,3 +425,15 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &-4787510700616292665
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7563041121663411961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6add85dd47c344fd5bb05a9e5c141795, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 public class Venusaur : PokemonBase
 {
+    public Venusaur() : base(false, 0, 0, Gender.Male, 0, 0, 0, 0, 0, 0, 0, 0)
+    {
+        // Lógica adicional de inicialización si es necesario
+    }
+    
     public override void Awake()
     {
         attackCatalog = FindObjectOfType<AttackCatalog>();
@@ -72,6 +77,9 @@ public class Venusaur : PokemonBase
         AssignRandomIVs();
         DetermineAgility();
         DisplayNatureInfo(); // Mostrar información de la naturaleza
+        isShiny = GenerateIsShiny(); 
+        height = GenerateRandomHeight(height); 
+        weight = GenerateRandomWeight(weight); 
     }
     
     void Start()

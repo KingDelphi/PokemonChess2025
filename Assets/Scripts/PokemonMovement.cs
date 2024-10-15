@@ -31,7 +31,7 @@ public class PokemonMovement : MonoBehaviour
     private Vector3 lastClickedPosition;
     private Vector3? lastHoveredTile = null;
 
-    public static PokemonMovement currentPokemon;
+    public static PokemonMovement currentPokemon = null;
     private bool isClickProcessing = false;
 
     private PokedexUIController pokedexUIController;
@@ -110,6 +110,9 @@ public class PokemonMovement : MonoBehaviour
 
                 // Actualiza currentPokemon para llevar un registro
                 currentPokemon = clickedPokemon;
+
+                Debug.Log("Seleccionado Pokémon: " + currentPokemon.name);
+
             }
             // Verifica si se ha hecho clic en un tile
             else if (hit.collider.CompareTag("tile")) 
@@ -142,6 +145,8 @@ public class PokemonMovement : MonoBehaviour
         }
     }
 }
+
+
 
 
 

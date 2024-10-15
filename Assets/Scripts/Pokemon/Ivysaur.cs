@@ -3,6 +3,11 @@ using System.Collections.Generic;
 
 public class Ivysaur : PokemonBase
 {
+    public Ivysaur() : base(false, 0, 0, Gender.Male, 0, 0, 0, 0, 0, 0, 0, 0)
+    {
+        // Lógica adicional de inicialización si es necesario
+    }
+    
     public override void Awake()
     {
         attackCatalog = FindObjectOfType<AttackCatalog>();
@@ -71,6 +76,9 @@ public class Ivysaur : PokemonBase
         AssignRandomIVs();
         DetermineAgility();
         DisplayNatureInfo(); // Mostrar información de la naturaleza
+        isShiny = GenerateIsShiny(); 
+        height = GenerateRandomHeight(height); 
+        weight = GenerateRandomWeight(weight); 
     }
     
     void Start()

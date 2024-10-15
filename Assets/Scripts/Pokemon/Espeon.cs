@@ -3,6 +3,12 @@ using System.Collections.Generic;
 
 public class Espeon : PokemonBase
 {
+    
+    public Espeon() : base(false, 0, 0, Gender.Male, 0, 0, 0, 0, 0, 0, 0, 0)
+    {
+        // Lógica adicional de inicialización si es necesario
+    }
+    
     public override void Awake()
     {
         attackCatalog = FindObjectOfType<AttackCatalog>();
@@ -71,6 +77,9 @@ public class Espeon : PokemonBase
         ApplyNature(); // Aplicar la naturaleza a las estadísticas
         AssignRandomIVs();
         DisplayNatureInfo(); // Mostrar información de la naturaleza
+        isShiny = GenerateIsShiny(); 
+        height = GenerateRandomHeight(height); 
+        weight = GenerateRandomWeight(weight); 
     }
     
     void Start()
