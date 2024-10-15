@@ -81,6 +81,7 @@ public class PokemonBase : MonoBehaviour
 
     public int CountInGame = 1;
     public int rarity;
+    public int stamina = 100;
 
     public PokemonBase(bool isShiny, float height, float weight, Gender gender, int pokemonNumber, int expYield, 
                       int hpIV, int atkIV, int defIV, int spAtkIV, int spDefIV, int spdIV)

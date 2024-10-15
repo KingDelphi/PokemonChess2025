@@ -175,7 +175,6 @@ public class AttackCatalog : MonoBehaviour
     return isCriticalHit; // Retorna solo el valor booleano
 }
 
-
     public void CancelAttack()
     {
         // Restablecer el estado del Pokémon
@@ -186,49 +185,217 @@ public class AttackCatalog : MonoBehaviour
     }
 
     private float GetTypeEffectiveness(string attackType, string defenderType)
+{
+    // Tabla de efectividad de tipos
+    Dictionary<string, Dictionary<string, float>> effectivenessTable = new Dictionary<string, Dictionary<string, float>>
     {
-        // Tabla de efectividad de tipos
-        Dictionary<string, Dictionary<string, float>> effectivenessTable = new Dictionary<string, Dictionary<string, float>>
-        {
-            { "Fire", new Dictionary<string, float>
-                {
-                    { "Grass", 2.0f }, // Doble daño
-                    { "Water", 0.5f }, // Mitad de daño
-                    { "Fire", 1.0f },  // Daño normal
-                    { "Rock", 0.5f }   // Mitad de daño
-                }
-            },
-            { "Grass", new Dictionary<string, float>
-                {
-                    { "Water", 2.0f }, // Doble daño
-                    { "Fire", 0.5f },  // Mitad de daño
-                    { "Grass", 1.0f },  // Daño normal
-                    { "Rock", 2.0f }    // Doble daño
-                }
-            },
-            { "Water", new Dictionary<string, float>
-                {
-                    { "Fire", 2.0f },  // Doble daño
-                    { "Grass", 0.5f },  // Mitad de daño
-                    { "Water", 1.0f },  // Daño normal
-                    { "Electric", 0.5f } // Mitad de daño
-                }
-            },
-            // Agregar más tipos aquí según sea necesario
-        };
-
-        // Comprobar si el tipo de ataque está en la tabla
-        if (effectivenessTable.ContainsKey(attackType))
-        {
-            // Comprobar si el tipo defensor está en la tabla de efectividad del tipo atacante
-            if (effectivenessTable[attackType].ContainsKey(defenderType))
+        { "Normal", new Dictionary<string, float>
             {
-                return effectivenessTable[attackType][defenderType]; // Retorna la efectividad
+                { "Rock", 0.5f }, // Mitad de daño
+                { "Ghost", 0.0f }, // Sin daño
+                { "Steel", 0.5f }  // Mitad de daño
+            }
+        },
+        { "Fire", new Dictionary<string, float>
+            {
+                { "Grass", 2.0f }, // Doble daño
+                { "Water", 0.5f }, // Mitad de daño
+                { "Fire", 0.5f },  // Daño normal
+                { "Rock", 0.5f },  // Mitad de daño
+                { "Bug", 2.0f },   // Doble daño
+                { "Ice", 2.0f },   // Doble daño
+                { "Steel", 2.0f },
+                { "Dragon", 0.5f }
+            }
+        },
+        { "Water", new Dictionary<string, float>
+            {
+                { "Fire", 2.0f },  // Doble daño
+                { "Grass", 0.5f },  // Mitad de daño
+                { "Water", 0.5f },  // Daño normal
+                { "Dragon", 0.5f }, // Mitad de daño
+                { "Ground", 2.0f }, // Daño normal
+                { "Rock", 2.0f }
+            }
+        },
+        { "Grass", new Dictionary<string, float>
+            {
+                { "Water", 2.0f }, // Doble daño
+                { "Fire", 0.5f },  // Mitad de daño
+                { "Grass", 0.5f },  // Daño normal
+                { "Flying", 0.5f }, // Mitad de daño
+                { "Bug", 0.5f },    // Mitad de daño
+                { "Poison", 0.5f },
+                { "Dragon", 0.5f },
+                { "Steel", 0.5f },
+                { "Rock", 2.0f },   // Doble daño
+                { "Ground", 2.0f }
+            }
+        },
+        { "Electric", new Dictionary<string, float>
+            {
+                { "Water", 2.0f }, // Doble daño
+                { "Ground", 0.0f }, // Sin daño
+                { "Electric", 0.5f }, // Daño normal
+                { "Grass", 0.5f },
+                { "Dragon", 0.5f },
+                { "Flying", 2.0f } // Doble daño
+            }
+        },
+        { "Ice", new Dictionary<string, float>
+            {
+                { "Grass", 2.0f }, // Doble daño
+                { "Fire", 0.5f },  // Mitad de daño
+                { "Ice", 0.5f },   // Daño normal
+                { "Water", 0.5f },
+                { "Steel", 0.5f },
+                { "Flying", 2.0f }, // Doble daño
+                { "Dragon", 2.0f }, // Doble daño
+                { "Ground", 2.0f } // Daño normal
+            }
+        },
+        { "Fighting", new Dictionary<string, float>
+            {
+                { "Normal", 2.0f }, // Doble daño
+                { "Flying", 0.5f }, // Mitad de daño
+                { "Psychic", 0.5f }, // Mitad de daño
+                { "Rock", 2.0f },   // Daño normal
+                { "Ice", 2.0f },
+                { "Steel", 2.0f },
+                { "Dark", 2.0f },
+                { "Bug", 0.5f },    // Daño normal
+                { "Poison", 0.5f },
+                { "Ghost", 0.0f },
+                { "Fairy", 0.5f }   // Mitad de daño
+            }
+        },
+        { "Poison", new Dictionary<string, float>
+            {
+                { "Grass", 2.0f }, // Doble daño
+                { "Ground", 0.5f }, // Daño normal
+                { "Poison", 0.5f }, // Mitad de daño
+                { "Rock", 0.5f },    // Daño normal
+                { "Fairy", 2.0f },
+                { "Steel", 0.0f },  // Daño normal
+                { "Ghost", 0.5f }   // Mitad de daño
+            }
+        },
+        { "Ground", new Dictionary<string, float>
+            {
+                { "Fire", 2.0f },  // Daño normal
+                { "Grass", 0.5f },  // Mitad de daño
+                { "Electric", 2.0f }, // Doble daño
+                { "Poison", 2.0f },
+                { "Steel", 2.0f },
+                { "Flying", 0.0f }, // Daño normal
+                { "Bug", 0.5f }, // Daño normal
+                { "Rock", 2.0f }    // Doble daño
+            }
+        },
+        { "Flying", new Dictionary<string, float>
+            {
+                { "Grass", 2.0f }, // Doble daño
+                { "Electric", 0.5f }, // Mitad de daño
+                { "Fighting", 2.0f }, // Doble daño
+                { "Bug", 2.0f },    // Daño normal
+                { "Stel", 0.5f },
+                { "Rock", 0.5f }    // Mitad de daño
+            }
+        },
+        { "Psychic", new Dictionary<string, float>
+            {
+                { "Fighting", 2.0f }, // Doble daño
+                { "Poison", 2.0f },   // Doble daño
+                { "Psychic", 0.5f },  // Daño normal
+                { "Dark", 0.0f },
+                { "Steel", 0.5f }       // Mitad de daño
+            }
+        },
+        { "Bug", new Dictionary<string, float>
+            {
+                { "Grass", 2.0f },  // Daño normal
+                { "Fire", 0.5f },   // Mitad de daño
+                { "Fighting", 0.5f }, // Mitad de daño
+                { "Flying", 0.5f }, // Mitad de daño
+                { "Psychic", 2.0f }, // Daño normal
+                { "Dark", 2.0f },   // Daño normal
+                { "Poison", 0.5f },   // Mitad de daño
+                { "Ghost", 0.5f },
+                { "Fairy", 0.5f },
+                { "Steel", 0.5f }    // Daño normal
+            }
+        },
+        { "Rock", new Dictionary<string, float>
+            {
+                { "Fire", 2.0f },   // Daño normal
+                { "Flying", 2.0f }, // Doble daño
+                { "Bug", 2.0f },    // Doble daño
+                { "Fighting", 0.5f }, // Mitad de daño
+                { "Ice", 2.0f }, // Daño normal
+                { "Ground", 0.5f },
+                { "Steel", 0.5f }    // Daño normal
+            }
+        },
+        { "Ghost", new Dictionary<string, float>
+            {
+                { "Normal", 0.0f }, // Mitad de daño
+                { "Dark", 0.5f }, // Daño normal
+                { "Ghost", 2.0f },
+                { "Psychic", 2.0f }   // Doble daño
+            }
+        },
+        { "Dragon", new Dictionary<string, float>
+            {
+                { "Dragon", 2.0f }, // Doble daño
+                { "Fairy", 0.0f },  // Mitad de daño
+                { "Steel", 0.5f }    // Daño normal
+            }
+        },
+        { "Dark", new Dictionary<string, float>
+            {
+                { "Psychic", 2.0f }, // Doble daño
+                { "Ghost", 2.0f },   // Doble daño
+                { "Fighting", 0.5f }, // Mitad de daño
+                { "Dark", 0.5f },    // Daño normal
+                { "Fairy", 0.5f }    // Mitad de daño
+            }
+        },
+        { "Steel", new Dictionary<string, float>
+            {
+                { "Ice", 2.0f }, // Doble daño
+                { "Rock", 2.0f },   // Doble daño
+                { "Fairy", 2.0f },
+                { "Fire", 0.5f }, // Mitad de daño
+                { "Water", 0.5f },    // Daño normal
+                { "Steel", 0.5f },
+                { "Electric", 0.5f }    // Mitad de daño
+            }
+        },
+        { "Fairy", new Dictionary<string, float>
+            {
+                { "Fighting", 2.0f }, // Doble daño
+                { "Dark", 2.0f },     // Doble daño
+                { "Dragon", 2.0f },   // Doble daño
+                { "Fire", 0.5f },    // Daño normal
+                { "Poison", 0.5f },   // Mitad de daño
+                { "Steel", 0.5f }     // Mitad de daño
             }
         }
+    };
 
-        return 1.0f; // Daño normal si no hay interacción específica
+    // Comprobar si el tipo de ataque está en la tabla
+    if (effectivenessTable.ContainsKey(attackType))
+    {
+        // Comprobar si el tipo defensor está en la tabla de efectividad del tipo atacante
+        if (effectivenessTable[attackType].ContainsKey(defenderType))
+        {
+            return effectivenessTable[attackType][defenderType]; // Retorna la efectividad
+        }
     }
+
+    return 1.0f; // Daño normal si no hay interacción específica
+}
+
 
     public (bool, int) CalculateDamage(Attack attack, PokemonBase attacker, PokemonBase defender)
     {
