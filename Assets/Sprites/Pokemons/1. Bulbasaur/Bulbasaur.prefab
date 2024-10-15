@@ -423,6 +423,7 @@ MonoBehaviour:
   blinkMaterial: {fileID: 2100000, guid: 14842897c6a584b3ba6009f9d21250ea, type: 2}
   gameManager: {fileID: 0}
   CountInGame: 1
+  rarity: 5
   hp: 0
   maxHP: 0
 --- !u!114 &-5861113828436141386

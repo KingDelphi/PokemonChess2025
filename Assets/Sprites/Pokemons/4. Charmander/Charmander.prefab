@@ -333,8 +333,8 @@ MonoBehaviour:
     speedModifier: 0
   type1: 
   type2: 
-  baseHeight: 0
-  baseWeight: 0
+  realHeight: 0
+  realWeight: 0
   height: 0
   weight: 0
   mass: 0
@@ -423,6 +423,7 @@ MonoBehaviour:
   blinkMaterial: {fileID: 0}
   gameManager: {fileID: 0}
   CountInGame: 1
+  rarity: 5
   hp: 0
   maxHP: 0
 --- !u!114 &1943546890103771577

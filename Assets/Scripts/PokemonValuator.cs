@@ -243,7 +243,8 @@ public class PokemonValuator : MonoBehaviour
         Debug.Log("Shiny status: " + isShiny);
 
         // Factores del mercado
-        float rarityEffect = (float)(totalPokemonInGame - pokemon.CountInGame) / totalPokemonInGame;
+        // Calcular la rareza basada en la cantidad de Pokémon en el juego
+        float rarityEffect = (1 / Mathf.Log10(pokemon.CountInGame + 1)) * pokemon.rarity;
         Debug.Log("Rarity effect: " + rarityEffect);
 
         // Factores de stats
@@ -267,12 +268,10 @@ public class PokemonValuator : MonoBehaviour
         Debug.Log("Final effect: " + finalEffect);
 
         // Precio final sin depender de un rango predefinido
-        float basePrice = isShiny ? 10000f : 100f; // Definir un precio base para shiny o normal
+        float basePrice = isShiny ? 5000f : 100f; // Definir un precio base para shiny o normal
         float finalPrice = basePrice * finalEffect; // Escalar según los efectos
 
-        Debug.Log("Final price: " + finalPrice);
-
-        return finalPrice * 10/4;
+        return finalPrice * pokemon.stats.level;
     }
 
 
