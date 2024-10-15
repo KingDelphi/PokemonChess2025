@@ -150,6 +150,16 @@ public class AttackCatalog : MonoBehaviour
 
     // Aplicar daño
     defender.stats.hp -= damage;
+    if(damage >= 1)
+    {
+        defender.enraged += 1;
+    }
+
+    if(attacker.enraged >= 1)
+    {
+        attacker.enraged += 1;
+    }
+
     Debug.Log($"{attacker.pokemonName} dealt {damage} damage to {defender.pokemonName} using {attack.name}!");
 
     if (isCriticalHit)
@@ -544,7 +554,7 @@ public class AttackCatalog : MonoBehaviour
         return baseDamage;
     }
 
-    private IEnumerator WaitForUserClick(List<Vector3> attackPositions, PokemonBase attacker, string attackName, GameObject attackPrefab)
+    private IEnumerator WaitForUserClick(List<Vector3> attackPositions, PokemonBase attacker, string attackName, GameObject attackPrefab, int staminaCost)
     {
         //Debug.Log($"{attacker.pokemonName} is waiting for a target to attack with {attackName}...");
         int pokemonLayerMask = LayerMask.GetMask("pokemon"); // Asegúrate de que "pokemon" sea el nombre exacto de la capa.
@@ -596,6 +606,8 @@ public class AttackCatalog : MonoBehaviour
                                     // Ejecutar el ataque
                                     isCriticalHit = ApplyAttack(attacker, defender, GetAttackByName(attackName));
                                     
+                                    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCost, 0, 100);
+
                                         // Animar & Empujar al defensor
                                     yield return StartCoroutine(PushPokemon(defender, originalAttackerPosition, attackPrefab, isCriticalHit));
                                     
@@ -687,10 +699,6 @@ public class AttackCatalog : MonoBehaviour
             yield return null; // Esperar el siguiente frame
         }
         }
-        
-
-        // Asegurarse de que el defensor regrese a su posición original
-        //defender.transform.position = originalPosition;
     }
 
     private bool IsWithinMapBounds(Vector3 position)
@@ -803,8 +811,14 @@ public void Tackle(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Tackle", tacklePrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Tackle", tacklePrefab, staminaCostInt));
     }
 
 #endregion
@@ -857,8 +871,12 @@ public void VineWhip(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Vine Whip", vineWhipPrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Vine Whip", vineWhipPrefab, staminaCostInt));
     }
 
 #endregion
@@ -903,8 +921,12 @@ public void Scratch(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Scratch", scratchPrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Scratch", scratchPrefab, staminaCostInt));
     }
 
 #endregion
@@ -953,8 +975,12 @@ public void Ember(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Ember", emberPrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Ember", emberPrefab, staminaCostInt));
     }
 
 #endregion
@@ -999,8 +1025,12 @@ public void DragonClaw(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Dragon Claw", scratchPrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Dragon Claw", scratchPrefab, staminaCostInt));
     }
 
 #endregion
@@ -1049,12 +1079,15 @@ public void WaterGun(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Water Gun", waterGunPrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Water Gun", waterGunPrefab, staminaCostInt));
     }
 
 #endregion
-
 
 
 
@@ -1102,8 +1135,12 @@ public void HeatWave(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Heat Wave", emberPrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Heat Wave", emberPrefab, staminaCostInt));
     }
 
 #endregion
@@ -1152,8 +1189,12 @@ public void Nuzzle(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Nuzzle", nuzzlePrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Nuzzle", nuzzlePrefab, staminaCostInt));
     }
 
 #endregion
@@ -1217,8 +1258,12 @@ public void ThunderShock(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Thunder Shock", nuzzlePrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Thunder Shock", nuzzlePrefab, staminaCostInt));
     }
 #endregion
 
@@ -1280,8 +1325,12 @@ public void Discharge(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Discharge", nuzzlePrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Discharge", nuzzlePrefab, staminaCostInt));
     }
 
 #endregion
@@ -1330,8 +1379,12 @@ public void Spark(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Spark", nuzzlePrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Spark", nuzzlePrefab, staminaCostInt));
     }
 
 #endregion
@@ -1394,8 +1447,12 @@ public void ThunderBolt(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Thunder Bolt", nuzzlePrefab));
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Thunder Bolt", nuzzlePrefab, staminaCostInt));
     }
 
 #endregion

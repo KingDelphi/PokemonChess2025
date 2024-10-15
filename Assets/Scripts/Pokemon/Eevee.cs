@@ -89,6 +89,7 @@ public class Eevee : PokemonBase
         realWeight = GenerateRandomWeight(weight);
         DetermineMass();
         DetermineAgility();
+        t = 60;
 
     }
     

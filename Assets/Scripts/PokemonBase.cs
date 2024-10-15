@@ -82,6 +82,9 @@ public class PokemonBase : MonoBehaviour
     public int CountInGame = 1;
     public int rarity;
     public int stamina = 100;
+    public int t = 1; // Tackle Stamina Constant
+    public int enraged = 0; // Valor inicial de enraged
+
 
     public PokemonBase(bool isShiny, float height, float weight, Gender gender, int pokemonNumber, int expYield, 
                       int hpIV, int atkIV, int defIV, int spAtkIV, int spDefIV, int spdIV)
