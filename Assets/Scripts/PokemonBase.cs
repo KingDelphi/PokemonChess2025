@@ -84,7 +84,7 @@ public class PokemonBase : MonoBehaviour
     public int stamina = 100;
     public int t = 1; // Tackle Stamina Constant
     public int enraged = 0; // Valor inicial de enraged
-
+    public BodyParts pokemonBody; // Este debe ser public o [SerializeField]
 
     public PokemonBase(bool isShiny, float height, float weight, Gender gender, int pokemonNumber, int expYield, 
                       int hpIV, int atkIV, int defIV, int spAtkIV, int spDefIV, int spdIV)
@@ -229,6 +229,7 @@ public class PokemonBase : MonoBehaviour
         realWeight = GenerateRandomWeight(weight);
         DetermineMass();
         DetermineAgility();
+        pokemonBody = new BodyParts(realHeight);
     }
 
     public void Start()
@@ -252,6 +253,27 @@ public class PokemonBase : MonoBehaviour
             isInPokeball = false;
         }
     }
+
+    [System.Serializable] // Asegúrate de que esta clase sea serializable
+public class BodyParts
+{
+    public float legsStart { get; private set; }
+    public float legsEnd { get; private set; }
+    public float bodyStart { get; private set; }
+    public float bodyEnd { get; private set; }
+    public float headStart { get; private set; }
+    public float headEnd { get; private set; }
+
+    public BodyParts(float height)
+    {
+        legsStart = 0;
+        legsEnd = height * 0.3f;
+        bodyStart = legsEnd;
+        bodyEnd = height * 0.8f;
+        headStart = bodyEnd;
+        headEnd = height;
+    }
+}
 
 
 #region Mass & Agility Methods

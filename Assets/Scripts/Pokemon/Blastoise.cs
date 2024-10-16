@@ -81,6 +81,7 @@ public class Blastoise : PokemonBase
         realWeight = GenerateRandomWeight(weight);
         DetermineMass();
         DetermineAgility();
+        pokemonBody = new BodyParts(realHeight);
 
     }
     

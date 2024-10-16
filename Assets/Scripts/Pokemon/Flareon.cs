@@ -81,6 +81,7 @@ public class Flareon : PokemonBase
         realWeight = GenerateRandomWeight(weight);
         DetermineMass();
         DetermineAgility();
+        pokemonBody = new BodyParts(realHeight);
     }
     
     void Start()

@@ -79,6 +79,7 @@ public class Ivysaur : PokemonBase
         realWeight = GenerateRandomWeight(weight);
         DetermineMass();
         DetermineAgility();
+        pokemonBody = new BodyParts(realHeight);
     }
     
     void Start()

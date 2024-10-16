@@ -79,6 +79,7 @@ public class Pidgeot : PokemonBase
         realWeight = GenerateRandomWeight(weight);
         DetermineMass();
         DetermineAgility();
+        pokemonBody = new BodyParts(realHeight);
     }
     
     void Start()
