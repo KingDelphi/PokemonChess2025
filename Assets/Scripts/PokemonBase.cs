@@ -85,6 +85,7 @@ public class PokemonBase : MonoBehaviour
     public int t = 1; // Tackle Stamina Constant
     public int enraged = 0; // Valor inicial de enraged
     public BodyParts pokemonBody; // Este debe ser public o [SerializeField]
+    public bool isEsnared = false;
 
     public PokemonBase(bool isShiny, float height, float weight, Gender gender, int pokemonNumber, int expYield, 
                       int hpIV, int atkIV, int defIV, int spAtkIV, int spDefIV, int spdIV)
@@ -656,7 +657,8 @@ public class StatusEffect
         Freeze,
         Burn,
         Poison,
-        Sleep
+        Sleep,
+        Esnared
     }
 
 public void ApplyStatusCondition(StatusCondition condition, float duration)

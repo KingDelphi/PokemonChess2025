@@ -35,6 +35,7 @@ public class PokemonMovement : MonoBehaviour
     private bool isClickProcessing = false;
 
     private PokedexUIController pokedexUIController;
+    public PokemonBase.StatusCondition statusCondition;
 
 
 
@@ -131,7 +132,7 @@ public class PokemonMovement : MonoBehaviour
                     int verticalMoves = Mathf.Abs(Mathf.FloorToInt(targetTile.y) - Mathf.FloorToInt(initialPosition.y));
                     int totalMoves = horizontalMoves + verticalMoves; // Total de movimientos
 
-                    int moveCost = CalculateMoveCost(totalMoves, weight, c, k); // Calcular el costo del movimiento
+                    int moveCost = CalculateMoveCost(totalMoves, weight, c, k, statusCondition); // Calcular el costo del movimiento
                     if (moveCost <= actionPoints) // Verificar si hay suficientes puntos de acción
                     {
                         MoveToTile(targetTile); // Mover al Pokémon
@@ -238,7 +239,7 @@ private void ResetTrajectory()
 
     // Determinar el costo del movimiento
     int totalMoves = path.Count; // Restamos 1 porque la posición inicial no cuenta como movimiento
-    int moveCost = CalculateMoveCost(totalMoves, weight, c, k);
+    int moveCost = CalculateMoveCost(totalMoves, weight, c, k, statusCondition);
 
     if (actionPoints >= moveCost)
     {
@@ -358,9 +359,17 @@ private List<Vector3> ReconstructPath(Dictionary<Vector3, Vector3> cameFrom, Vec
 
 
     // Método para calcular el costo de movimiento
-    int CalculateMoveCost(int totalMoves, float weight, float c, float k)
+    int CalculateMoveCost(int totalMoves, float weight, float c, float k, PokemonBase.StatusCondition statusCondition)
     {
-        return (int)(totalMoves * (c + k * weight)); // Costo total de movimiento
+        int moveCost = (int)(totalMoves * (c + k * weight)); // Costo base de movimiento
+        
+        // Si el Pokémon está atrapado (ensnared), duplica el costo de movimiento
+        if (statusCondition == PokemonBase.StatusCondition.Esnared)
+        {
+            moveCost *= 2; // Duplicar el costo si está bajo la condición "esnared"
+        }
+
+        return moveCost;
     }
 
     // Función para obtener un tile basado en su posición en el mapa
@@ -389,7 +398,7 @@ private void CalculateMoveableTiles()
     queue.Enqueue(currentPokemonPosition);
     visited.Add(currentPokemonPosition);
 
-    int moveCostPerTile = CalculateMoveCost(1, weight, c, k);
+    int moveCostPerTile = CalculateMoveCost(1, weight, c, k, statusCondition);
     int maxMoves = actionPoints / moveCostPerTile;
 
     int movesMade = 0;

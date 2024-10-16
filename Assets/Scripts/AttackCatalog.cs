@@ -99,7 +99,7 @@ public class AttackCatalog : MonoBehaviour
         {
             // Ejemplos de ataques básicos sin estado alterado
             new Attack("Tackle", true, "Normal", 40, 100, "A full-body charge attack.", AttackCategory.Physical), // Prioridad normal
-            new Attack("Vine Whip", true, "Grass", 45, 100, "Whips the foe with slender vines.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Vine Whip", true, "Grass", 45, 100, "Whips the foe with slender vines.", AttackCategory.Physical, PokemonBase.StatusCondition.Esnared, 0f), // Prioridad normal
             new Attack("Scratch", true, "Normal", 40, 100, "Scratches with sharp claws.", AttackCategory.Physical),
             new Attack("Dragon Claw", true, "Dragon", 80, 100, "Slashes the foe with sharp claws.", AttackCategory.Physical),
             new Attack("Water Gun", false, "Water", 40, 100, "Squirts water to attack.", AttackCategory.Special),
@@ -144,9 +144,11 @@ public class AttackCatalog : MonoBehaviour
     public bool ApplyAttack(PokemonBase attacker, PokemonBase defender, Attack attack)
 {
     bool isCriticalHit = false;
+    int damage = 0;
+    float statusEffectChance = 0f; // Añadir una variable para la probabilidad de efecto
 
-    // Calcular el daño
-    (isCriticalHit, damage) = CalculateDamage(attack, attacker, defender);
+    // Calcular el daño y obtener la probabilidad de efecto de estado
+    (isCriticalHit, damage, statusEffectChance) = CalculateDamage(attack, attacker, defender);
 
     // Aplicar daño
     defender.stats.hp -= damage;
@@ -167,23 +169,24 @@ public class AttackCatalog : MonoBehaviour
         Debug.Log("It's a critical hit!");
     }
 
-     // Aplicar estado alterado con probabilidad
-        if (attack.statusEffect != PokemonBase.StatusCondition.None)
+    // Aplicar estado alterado con la probabilidad recibida de CalculateDamage
+    if (attack.statusEffect != PokemonBase.StatusCondition.None)
+    {
+        float randomChance = Random.Range(0f, 100f);
+        if (randomChance <= statusEffectChance * 100) // Multiplicamos por 100 ya que statusEffectChance está entre 0 y 1
         {
-            float randomChance = Random.Range(0f, 100f);
-            if (randomChance <= attack.statusEffectChance)
-            {
-                defender.ApplyStatusCondition(attack.statusEffect, 3); // Ejemplo: duración de 3 turnos
-                Debug.Log($"{defender.pokemonName} is now {attack.statusEffect} due to {attack.name}!");
-            }
-            else
-            {
-                Debug.Log($"{defender.pokemonName} resisted the {attack.statusEffect} from {attack.name}.");
-            }
+            defender.ApplyStatusCondition(attack.statusEffect, 3); // Ejemplo: duración de 3 turnos
+            Debug.Log($"{defender.pokemonName} is now {attack.statusEffect} due to {attack.name}!");
         }
+        else
+        {
+            Debug.Log($"{defender.pokemonName} resisted the {attack.statusEffect} from {attack.name}.");
+        }
+    }
 
     return isCriticalHit; // Retorna solo el valor booleano
 }
+
 
     public void CancelAttack()
     {
@@ -442,67 +445,76 @@ public class AttackCatalog : MonoBehaviour
     }
 }
 
+    public (bool, int, float) CalculateDamage(Attack attack, PokemonBase attacker, PokemonBase defender)
+{
+    int damage = 0;
+    bool isCriticalHit = false;
+    float statusEffectChance = 0f; // Variable para almacenar la probabilidad del efecto de estado
 
-    public (bool, int) CalculateDamage(Attack attack, PokemonBase attacker, PokemonBase defender)
+    // Ajuste de daño basado en la transformación
+    if (attacker.currentTransformation == PokemonBase.TransformationType.Dynamax)
     {
-        int damage = 0;
-        bool isCriticalHit = false;
-
-        // Aquí se puede ajustar el daño basado en la transformación
-        if (attacker.currentTransformation == PokemonBase.TransformationType.Dynamax)
-        {
-            damage = CalculateDynamaxDamage(attack, defender);
-        }
-        else if (attacker.currentTransformation == PokemonBase.TransformationType.MegaEvolve)
-        {
-            damage = CalculateMegaEvolveDamage(attack, defender);
-        }
-        else
-        {
-            // Lógica normal de daño
-            (isCriticalHit, damage) = CalculateNormalDamage(attacker, defender, attack);
-        }
-
-        // Verificar la altura del ataque
-        float attackHeight = GetAttackHeight(attack, attacker); // Calcula la altura del ataque basado en el atacante
-        PokemonBase.BodyParts defenderBody = defender.pokemonBody;
-
-        // Determinar qué parte del cuerpo del defensor recibió el golpe
-        if (attackHeight >= defenderBody.legsStart && attackHeight <= defenderBody.legsEnd)
-        {
-            // Golpe en las piernas
-            damage = Mathf.RoundToInt(damage * 0.8f); // Menos daño en las piernas
-            Debug.Log("Golpe en las piernas, menos daño.");
-        }
-        else if (attackHeight > defenderBody.bodyStart && attackHeight <= defenderBody.bodyEnd)
-        {
-            // Golpe en el cuerpo
-            // Daño normal
-            Debug.Log("Golpe en el cuerpo, daño normal.");
-        }
-        else if (attackHeight > defenderBody.headStart && attackHeight <= defenderBody.headEnd)
-        {
-            // Golpe en la cabeza
-            damage = Mathf.RoundToInt(damage * 1.1f); // Más daño en la cabeza
-            Debug.Log("Golpe en la cabeza, más daño.");
-        }
-        else if (attackHeight > defenderBody.headEnd)
-        {
-            // Golpe por encima de la cabeza, "full body contact"
-            damage = Mathf.RoundToInt(damage * 1.2f); // Modificador de daño más grande
-            Debug.Log("Full body contact! Golpe en todas las áreas, daño máximo.");
-        }
-
-
-        // Aplicar modificador del enraged antes de retornar el resultado
-        if (attacker.enraged > 0)
-        {
-            float enragedModifier = 1 + (attacker.enraged * 0.05f); // Cada nivel de enraged incrementa el daño en un 5%
-            damage = Mathf.RoundToInt(damage * enragedModifier); // Redondear a un número entero
-        }
-
-        return (isCriticalHit, damage);
+        damage = CalculateDynamaxDamage(attack, defender);
     }
+    else if (attacker.currentTransformation == PokemonBase.TransformationType.MegaEvolve)
+    {
+        damage = CalculateMegaEvolveDamage(attack, defender);
+    }
+    else
+    {
+        // Lógica normal de daño
+        (isCriticalHit, damage) = CalculateNormalDamage(attacker, defender, attack);
+    }
+
+    // Verificar la altura del ataque
+    float attackHeight = GetAttackHeight(attack, attacker); // Calcula la altura del ataque basado en el atacante
+    PokemonBase.BodyParts defenderBody = defender.pokemonBody;
+
+    // Determinar qué parte del cuerpo del defensor recibió el golpe
+    if (attackHeight >= defenderBody.legsStart && attackHeight <= defenderBody.legsEnd)
+    {
+        // Golpe en las piernas
+        damage = Mathf.RoundToInt(damage * 0.8f); // Menos daño en las piernas
+        Debug.Log("Golpe en las piernas, menos daño.");
+
+        // Solo para el ataque Vine Whip, aplicar 100% de probabilidad de esnared
+        if (attack.name == "Vine Whip")
+        {
+            statusEffectChance = 1f; // 100% probabilidad de aplicar esnared
+            Debug.Log("Golpe en las piernas con Vine Whip, menos daño pero aplica esnared.");
+        }
+
+    }
+    else if (attackHeight > defenderBody.bodyStart && attackHeight <= defenderBody.bodyEnd)
+    {
+        // Golpe en el cuerpo
+        Debug.Log("Golpe en el cuerpo, daño normal.");
+        // Para Vine Whip, no se aplica esnared aquí, por lo que statusEffectChance sigue siendo 0f
+    }
+    else if (attackHeight > defenderBody.headStart && attackHeight <= defenderBody.headEnd)
+    {
+        // Golpe en la cabeza
+        damage = Mathf.RoundToInt(damage * 1.1f); // Más daño en la cabeza
+        Debug.Log("Golpe en la cabeza, más daño.");
+    }
+    else if (attackHeight > defenderBody.headEnd)
+    {
+        // Golpe por encima de la cabeza, "full body contact"
+        damage = Mathf.RoundToInt(damage * 1.2f); // Modificador de daño más grande
+        Debug.Log("Full body contact! Golpe en todas las áreas, daño máximo.");
+    }
+
+    // Aplicar modificador del enraged antes de retornar el resultado
+    if (attacker.enraged > 0)
+    {
+        float enragedModifier = 1 + (attacker.enraged * 0.05f); // Cada nivel de enraged incrementa el daño en un 5%
+        damage = Mathf.RoundToInt(damage * enragedModifier); // Redondear a un número entero
+    }
+
+    // Retornamos el crítico, el daño y la probabilidad del efecto de estado
+    return (isCriticalHit, damage, statusEffectChance);
+}
+
 
     private (bool, int) CalculateNormalDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
     {
@@ -812,7 +824,6 @@ public class AttackCatalog : MonoBehaviour
     }
     return false; // No hay Pokémon en este tile
 }
-
 
     private void DestroyAttackTiles()
     {
