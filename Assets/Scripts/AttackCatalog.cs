@@ -15,6 +15,7 @@ public class Attack
 {
     public string name;
     public bool makesContact;
+    public bool noPush;
     public string type;
     public int power;
     public int accuracy;
@@ -26,10 +27,11 @@ public class Attack
     
 
     // Constructor modificado para incluir la categoría
-    public Attack(string name, bool makesContact, string type, int power, int accuracy, string description, AttackCategory category, PokemonBase.StatusCondition statusEffect = PokemonBase.StatusCondition.None, float statusEffectChance = 0, int priority = 0)
+    public Attack(string name, bool makesContact, bool noPush, string type, int power, int accuracy, string description, AttackCategory category, PokemonBase.StatusCondition statusEffect = PokemonBase.StatusCondition.None, float statusEffectChance = 0, int priority = 0)
     {
         this.name = name;
         this.makesContact = makesContact;
+        this.noPush = noPush;
         this.type = type;
         this.power = power;
         this.accuracy = accuracy;
@@ -98,29 +100,29 @@ public class AttackCatalog : MonoBehaviour
         allAttacks = new List<Attack>
         {
             // Ejemplos de ataques básicos sin estado alterado
-            new Attack("Tackle", true, "Normal", 40, 100, "A full-body charge attack.", AttackCategory.Physical), // Prioridad normal
-            new Attack("Vine Whip", true, "Grass", 45, 100, "Whips the foe with slender vines.", AttackCategory.Physical, PokemonBase.StatusCondition.Esnared, 0f), // Prioridad normal
-            new Attack("Scratch", true, "Normal", 40, 100, "Scratches with sharp claws.", AttackCategory.Physical),
-            new Attack("Dragon Claw", true, "Dragon", 80, 100, "Slashes the foe with sharp claws.", AttackCategory.Physical),
-            new Attack("Water Gun", false, "Water", 40, 100, "Squirts water to attack.", AttackCategory.Special),
+            new Attack("Tackle", true, false, "Normal", 40, 100, "A full-body charge attack.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Vine Whip", true, false, "Grass", 45, 100, "Whips the foe with slender vines.", AttackCategory.Physical, PokemonBase.StatusCondition.Esnared, 0f), // Prioridad normal
+            new Attack("Scratch", true, true, "Normal", 40, 100, "Scratches with sharp claws.", AttackCategory.Physical),
+            new Attack("Dragon Claw", true, true, "Dragon", 80, 100, "Slashes the foe with sharp claws.", AttackCategory.Physical),
+            new Attack("Water Gun", false, false, "Water", 40, 100, "Squirts water to attack.", AttackCategory.Special),
+            new Attack("Ember", false, false, "Fire", 40, 100, "An attack that may inflict a burn.", AttackCategory.Special, PokemonBase.StatusCondition.Burn, 10f),
 
-            // Ejemplos de ataques con efectos de estado alterado
-            new Attack("Ember", false, "Fire", 40, 100, "An attack that may inflict a burn.", AttackCategory.Special, PokemonBase.StatusCondition.Burn, 10f),
-            new Attack("Heat Wave", false, "Fire", 95, 90, "Exhales a hot breath on the foe. May inflict a burn.", AttackCategory.Special, PokemonBase.StatusCondition.Burn, 10f),
-            new Attack("Nuzzle", true, "Electric", 20, 100, "The user attacks by nuzzling its electrified cheeks against the target. This also leaves the target with paralysis.", AttackCategory.Physical, PokemonBase.StatusCondition.Paralysis, 100f), // Prioridad normal
-            new Attack("Thunder Shock", false, "Electric", 40, 100, "An attack that may cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 10f), // Prioridad normal
-            new Attack("Discharge", false, "Electric", 80, 100, "A flare of electricity is loosed to strike all Pokémon in battle. It may also cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 30f), // Prioridad normal
-            new Attack("Spark", true, "Electric", 65, 100, "An attack that may cause paralysis.", AttackCategory.Physical, PokemonBase.StatusCondition.Paralysis, 30f), // Prioridad normal
-            new Attack("Thunder Bolt", false, "Electric", 90, 100, "An attack that may cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 10f), // Prioridad normal
+
+            new Attack("Heat Wave", false, false, "Fire", 95, 90, "Exhales a hot breath on the foe. May inflict a burn.", AttackCategory.Special, PokemonBase.StatusCondition.Burn, 10f),
+            new Attack("Nuzzle", true, false, "Electric", 20, 100, "The user attacks by nuzzling its electrified cheeks against the target. This also leaves the target with paralysis.", AttackCategory.Physical, PokemonBase.StatusCondition.Paralysis, 100f), // Prioridad normal
+            new Attack("Thunder Shock", false, false, "Electric", 40, 100, "An attack that may cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 10f), // Prioridad normal
+            new Attack("Discharge", false, false, "Electric", 80, 100, "A flare of electricity is loosed to strike all Pokémon in battle. It may also cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 30f), // Prioridad normal
+            new Attack("Spark", true, false, "Electric", 65, 100, "An attack that may cause paralysis.", AttackCategory.Physical, PokemonBase.StatusCondition.Paralysis, 30f), // Prioridad normal
+            new Attack("Thunder Bolt", false, false, "Electric", 90, 100, "An attack that may cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 10f), // Prioridad normal
 
 
             // Ataques de alta prioridad
-            new Attack("Quick Attack", false, "Normal", 40, 100, "A fast attack that strikes first.", AttackCategory.Physical, PokemonBase.StatusCondition.None, 0, 1), // Alta prioridad
-            new Attack("Extreme Speed", false, "Normal", 80, 100, "An extremely fast attack.", AttackCategory.Physical, PokemonBase.StatusCondition.None, 0, 2), // Alta prioridad
+            new Attack("Quick Attack", false, false, "Normal", 40, 100, "A fast attack that strikes first.", AttackCategory.Physical, PokemonBase.StatusCondition.None, 0, 1), // Alta prioridad
+            new Attack("Extreme Speed", false, false, "Normal", 80, 100, "An extremely fast attack.", AttackCategory.Physical, PokemonBase.StatusCondition.None, 0, 2), // Alta prioridad
 
             // Ejemplos de ataques adicionales
-            new Attack("Thunder Wave", false, "Electric", 0, 90, "A jolt of electricity that paralyzes the opponent.", AttackCategory.Status, PokemonBase.StatusCondition.Paralysis, 100f), // Prioridad normal
-            new Attack("Will-O-Wisp", false, "Fire", 0, 85, "Engulfs the opponent in a damaging fire, causing a burn.", AttackCategory.Status, PokemonBase.StatusCondition.Burn, 85f) // Prioridad normal
+            new Attack("Thunder Wave", false, false, "Electric", 0, 90, "A jolt of electricity that paralyzes the opponent.", AttackCategory.Status, PokemonBase.StatusCondition.Paralysis, 100f), // Prioridad normal
+            new Attack("Will-O-Wisp", false, false, "Fire", 0, 85, "Engulfs the opponent in a damaging fire, causing a burn.", AttackCategory.Status, PokemonBase.StatusCondition.Burn, 85f) // Prioridad normal
         };
 
         // Inicializar el catálogo de TMs
@@ -141,7 +143,7 @@ public class AttackCatalog : MonoBehaviour
         };
     }
 
-    public bool ApplyAttack(PokemonBase attacker, PokemonBase defender, Attack attack)
+    public (bool, int) ApplyAttack(PokemonBase attacker, PokemonBase defender, Attack attack)
 {
     bool isCriticalHit = false;
     int damage = 0;
@@ -150,6 +152,7 @@ public class AttackCatalog : MonoBehaviour
     // Calcular el daño y obtener la probabilidad de efecto de estado
     (isCriticalHit, damage, statusEffectChance) = CalculateDamage(attack, attacker, defender);
 
+    Debug.Log("ApplyAttack Calculated Damage (before decreasing defender.stats.hp): " + damage);
     // Aplicar daño
     defender.stats.hp -= damage;
     if(damage >= 1)
@@ -184,7 +187,7 @@ public class AttackCatalog : MonoBehaviour
         }
     }
 
-    return isCriticalHit; // Retorna solo el valor booleano
+    return (isCriticalHit, damage); // Retorna solo el valor booleano
 }
 
 
@@ -465,6 +468,7 @@ public class AttackCatalog : MonoBehaviour
         // Lógica normal de daño
         (isCriticalHit, damage) = CalculateNormalDamage(attacker, defender, attack);
     }
+    Debug.Log("CalculateDamage: " + damage);
 
     // Verificar la altura del ataque
     float attackHeight = GetAttackHeight(attack, attacker); // Calcula la altura del ataque basado en el atacante
@@ -504,12 +508,16 @@ public class AttackCatalog : MonoBehaviour
         Debug.Log("Full body contact! Golpe en todas las áreas, daño máximo.");
     }
 
+    Debug.Log("CalculateDamage (after bodyPart hit): " + damage);
+
     // Aplicar modificador del enraged antes de retornar el resultado
     if (attacker.enraged > 0)
     {
         float enragedModifier = 1 + (attacker.enraged * 0.05f); // Cada nivel de enraged incrementa el daño en un 5%
         damage = Mathf.RoundToInt(damage * enragedModifier); // Redondear a un número entero
     }
+
+    Debug.Log("CalculateDamage (after enraged bonus): " + damage);
 
     // Retornamos el crítico, el daño y la probabilidad del efecto de estado
     return (isCriticalHit, damage, statusEffectChance);
@@ -533,6 +541,8 @@ public class AttackCatalog : MonoBehaviour
             // Asumimos que CalculateSpecialDamage también devolvería una tupla similar
             (isCriticalHit, damage) = CalculateSpecialDamage(attacker, defender, attack); 
         }
+
+        Debug.Log("calcuateNormalDamage: " + damage);
 
         return (isCriticalHit, damage);
     }
@@ -567,7 +577,9 @@ public class AttackCatalog : MonoBehaviour
         // Calcular daño crítico
         int criticalHitDamage = isCriticalHit ? (int)(baseDamage * 1.5f * affinityMultiplier) : (int)(baseDamage * affinityMultiplier); 
         
-        return (isCriticalHit, Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier * contactMultiplier / 4));
+        (bool, int) calculatedPhysicalDamage = (isCriticalHit, Mathf.FloorToInt(criticalHitDamage * effectiveness * stabMultiplier * contactMultiplier / 4));
+        Debug.Log("calculatedPhysicalDamage: " + calculatedPhysicalDamage);
+        return calculatedPhysicalDamage;
     }
 
     private (bool, int) CalculateSpecialDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
@@ -690,16 +702,18 @@ public class AttackCatalog : MonoBehaviour
                                     
                                     bool isCriticalHit = false;
                                     // Ejecutar el ataque
-                                    isCriticalHit = ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                                    (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName(attackName));
                                     
                                     attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCost, 0, 100);
 
-                                        // Animar & Empujar al defensor
-                                    yield return StartCoroutine(PushPokemon(defender, originalAttackerPosition, attackPrefab, isCriticalHit));
+                                    // Animar & Empujar al defensor
                                     
+                                    yield return StartCoroutine(PushPokemon(defender, originalAttackerPosition, attackPrefab, isCriticalHit, attackName));
                                     
-                                    attacker.Attack(GetAttackByName(attackName));
+                                    Debug.Log("ESPARRAGO PREVIO- MUST SHOW 2nd LAST - WaitForUserClick attacker.Attack(GetAttackByName(attackName)): " + attackName);
+                                    attacker.Attack(GetAttackByName(attackName), 0);
                                     
+                                    Debug.Log("ESPARRAGO - MUST SHOW LAST & should be same value as before - WaitForUserClick defender.Defend(damage): " + damage);
                                     defender.Defend(damage);
 
                                     this.CancelAttack(); // Cancela el modo de ataque
@@ -757,7 +771,7 @@ public class AttackCatalog : MonoBehaviour
         pokemon.transform.position = stopPosition;
     }
 
-    private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPosition, GameObject attackPrefab, bool isCriticalHit)
+    private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPosition, GameObject attackPrefab, bool isCriticalHit, string attackName)
     {
         isCriticalHit = isCriticalHit;
 
@@ -776,7 +790,7 @@ public class AttackCatalog : MonoBehaviour
         Destroy(animationInstance, 2f);
 
         float elapsedTime = 0f;
-        if (isCriticalHit)
+        if (isCriticalHit && GetAttackByName(attackName).noPush == false)
         {
             while (elapsedTime < pushDuration)
         {
@@ -1027,7 +1041,12 @@ public void Scratch(PokemonBase attacker)
             attackerPosition + new Vector3(-1, 0, 0), // Izquierda
             attackerPosition + new Vector3(1, 0, 0),  // Derecha
             attackerPosition + new Vector3(0, 1, 0),  // Arriba
-            attackerPosition + new Vector3(0, -1, 0)  // Abajo
+            attackerPosition + new Vector3(0, -1, 0),  // Abajo
+            
+            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
+            attackerPosition + new Vector3(1, 1, 0),  // Derecha
+            attackerPosition + new Vector3(1, -1, 0),  // Arriba
+            attackerPosition + new Vector3(1, -1, 0)  // Abajo
         };
 
         // Verificar si el prefab está referenciado correctamente
@@ -1132,6 +1151,11 @@ public void DragonClaw(PokemonBase attacker)
             attackerPosition + new Vector3(1, 0, 0),  // Derecha
             attackerPosition + new Vector3(0, 1, 0),  // Arriba
             attackerPosition + new Vector3(0, -1, 0),  // Abajo
+
+            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
+            attackerPosition + new Vector3(1, 1, 0),  // Derecha
+            attackerPosition + new Vector3(1, -1, 0),  // Arriba
+            attackerPosition + new Vector3(1, -1, 0)  // Abajo
         };
 
         // Verificar si el prefab está referenciado correctamente
