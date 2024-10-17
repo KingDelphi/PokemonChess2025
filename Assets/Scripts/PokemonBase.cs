@@ -83,6 +83,8 @@ public class PokemonBase : MonoBehaviour
     public int rarity;
     public int stamina = 100;
     public int t = 1; // Tackle Stamina Constant
+    public int v = 10; // Vine Whip Stamina Constant
+    public int s = 2; // Scratch Stamina Constant
     public int enraged = 0; // Valor inicial de enraged
     public BodyParts pokemonBody; // Este debe ser public o [SerializeField]
     public bool isEsnared = false;
@@ -316,8 +318,7 @@ public void ApplyNature()
 
 public void DisplayNatureInfo()
 {
-    Debug.Log($"Has encontrado un: {pokemonNature.name} {this.pokemonName}, ATK Modifier: {pokemonNature.attackModifier}, DEF Modifier: {pokemonNature.defenseModifier}, SPATK Modifier: {pokemonNature.specialAttackModifier}, SPDEF Modifier: {pokemonNature.specialDefenseModifier}, SPD Modifier: {pokemonNature.speedModifier}");
-    Debug.Log($"IVs de {pokemonName}: HP {stats.hpIV}, ATK {stats.atkIV}, DEF {stats.defIV}, SP. ATK {stats.spAtkIV}, SP. DEF {stats.spDefIV}, SPD {stats.spdIV}");
+    Debug.Log($"Has encontrado un: {pokemonNature.name} {this.pokemonName}, ATK Modifier: {pokemonNature.attackModifier * 10f}%, DEF Modifier: {pokemonNature.defenseModifier * 10f}%, SPATK Modifier: {pokemonNature.specialAttackModifier * 10f}%, SPDEF Modifier: {pokemonNature.specialDefenseModifier * 10f}%, SPD Modifier: {pokemonNature.speedModifier * 10f}% con IVs = HP {stats.hpIV}, ATK {stats.atkIV}, DEF {stats.defIV}, SP. ATK {stats.spAtkIV}, SP. DEF {stats.spDefIV}, SPD {stats.spdIV}");
 }
 
 public string GetNatureInfo()

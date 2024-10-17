@@ -112,7 +112,7 @@ public class PokemonMovement : MonoBehaviour
                 // Actualiza currentPokemon para llevar un registro
                 currentPokemon = clickedPokemon;
 
-                Debug.Log("Seleccionado Pokémon: " + currentPokemon.name);
+                //Debug.Log("Seleccionado Pokémon: " + currentPokemon.name);
 
             }
             // Verifica si se ha hecho clic en un tile
