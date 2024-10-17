@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 7342578689673828217}
   - component: {fileID: 6313339526417728934}
+  - component: {fileID: -644215836374157466}
+  - component: {fileID: -2554747545170403393}
   m_Layer: 0
   m_Name: Professor Oak Laboratory Tile
   m_TagString: Untagged
@@ -24,13 +26,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 655111701937319008}
+  serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &6313339526417728934
 SpriteRenderer:
@@ -84,3 +86,70 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!114 &-644215836374157466
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 655111701937319008}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d8dd64448ddc143279a8949701f10543, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  currentEffect: 0
+  isOccupied: 0
+  fireDamage: 0
+  movementCostMultiplier: 1
+  canEnsnare: 0
+  canBurn: 0
+  vinesEffectPrefab: {fileID: 100000, guid: 7a2b3c6dde1175a439506d7d2e259bbf, type: 3}
+  fireEffectPrefab: {fileID: 100002, guid: acc1dfe7eb887994a91608061871e683, type: 3}
+  waterEffectPrefab: {fileID: 100000, guid: 064f2a43a4735e243ac17004f2044564, type: 3}
+  staticEffectPrefab: {fileID: 100000, guid: 46e5113392a8a394da11e1781a85dc2d, type: 3}
+--- !u!61 &-2554747545170403393
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 655111701937319008}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 0.32, y: 0.32}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 0.9, y: 0.9}
+  m_EdgeRadius: 0

@@ -89,6 +89,9 @@ public class AttackCatalog : MonoBehaviour
 
     public int damage = 0;
 
+    private TileEffect tileEffect;
+
+
     void Start()
         {
             instantiatedTiles = new Dictionary<Vector3, TileAttack>(); // Inicializa la lista
@@ -772,32 +775,155 @@ public class AttackCatalog : MonoBehaviour
     }
 
     private IEnumerator PushPokemon(PokemonBase defender, Vector3 attackerOriginalPosition, GameObject attackPrefab, bool isCriticalHit, string attackName)
+{
+    float pushDuration = 0.3f; // Duración del empuje
+    float pushDistance = 1f; // Distancia a empujar
+    Vector3 originalPosition = defender.transform.position;
+
+    // Calcular la dirección opuesta al atacante
+    Vector3 pushDirection = (defender.transform.position - attackerOriginalPosition).normalized;
+
+    // Instanciar el prefab de la animación
+    Vector3 animationPosition = defender.transform.position;
+    GameObject animationInstance = Instantiate(attackPrefab, animationPosition, Quaternion.identity);
+    
+    // Comprobar si la animación se instanció correctamente
+    if (animationInstance != null)
     {
-        isCriticalHit = isCriticalHit;
+        Debug.Log("Animación instanciada correctamente en: " + animationPosition);
+    }
+    else
+    {
+        Debug.LogWarning("No se pudo instanciar la animación.");
+    }
 
-        float pushDuration = 0.3f; // Duración del empuje
-        float pushDistance = 1f; // Distancia a empujar
-        Vector3 originalPosition = defender.transform.position;
+    // Destruir el objeto de animación después de 2 segundos
+    Destroy(animationInstance, 2f);
 
-        // Calcular la dirección opuesta al atacante
-        Vector3 pushDirection = (defender.transform.position - attackerOriginalPosition).normalized;
+    // Instanciar el efecto basado en el ataque en la posición del defensor
+    GameObject effectPrefab = GetEffectPrefab(attackName); // Obtener el prefab del efecto basado en el nombre del ataque
+    if (effectPrefab != null)
+    {
+        // Instanciar el efecto en la posición del defensor
+        GameObject effectInstance = Instantiate(effectPrefab, defender.transform.position, Quaternion.identity);
+        Debug.Log("Efecto instanciado: " + effectPrefab.name + " en: " + defender.transform.position);
 
-        // Instanciar el prefab
-        Vector3 animationPosition = (attackerOriginalPosition + defender.transform.position) / 2;
-        GameObject animationInstance = Instantiate(attackPrefab, animationPosition, Quaternion.identity);
-
-        // Destruir el objeto después de 2 segundos (ajusta el tiempo según la duración de la animación)
-        Destroy(animationInstance, 2f);
-
-        float elapsedTime = 0f;
-        if (isCriticalHit && GetAttackByName(attackName).noPush == false)
+        Vector3 position = new Vector3(defender.transform.position.x, defender.transform.position.y, 1);
+        TileEffect tileEffect = GetTileAtPosition(position);
+        if (tileEffect != null)
         {
-            while (elapsedTime < pushDuration)
+            Debug.Log("CHIRIWILLO - Tile encontrado en la posición del defensor: " + defender.transform.position);
+            tileEffect.ActivateEffect(DetermineEffectType(attackName));
+        }
+        else
+        {
+            Debug.LogWarning("tileEffect es null.");
+        }
+    }
+    else
+    {
+        Debug.LogWarning("No se pudo instanciar el efecto.");
+    }
+
+    float elapsedTime = 0f;
+    // Solo empujar si es un golpe crítico y no se ha marcado como noPush
+    if (isCriticalHit && GetAttackByName(attackName).noPush == false)
+    {
+        while (elapsedTime < pushDuration)
         {
             defender.transform.position = Vector3.Lerp(originalPosition, originalPosition + pushDirection * pushDistance, (elapsedTime / pushDuration));
             elapsedTime += Time.deltaTime;
             yield return null; // Esperar el siguiente frame
         }
+    }
+}
+
+private TileEffect GetTileAtPosition(Vector3 position)
+{
+    // Convertimos la posición a 2D, ya que los tiles tienen BoxCollider2D
+    Vector2 position2D = new Vector2(position.x, position.y);
+
+    // Definimos el radio de búsqueda en el área alrededor de la posición dada
+    float searchRadius = 0.5f;
+
+    // Usamos Physics2D.OverlapCircle para detectar colisionadores 2D en la zona
+    Collider2D[] colliders = Physics2D.OverlapCircleAll(position2D, searchRadius);
+
+    foreach (Collider2D collider in colliders)
+    {
+        // Intentamos obtener el componente TileEffect en los objetos detectados
+        TileEffect tileEffect = collider.GetComponent<TileEffect>();
+        if (tileEffect != null)
+        {
+            return tileEffect; // Devolver TileEffect si se encuentra
+        }
+    }
+
+    Debug.LogWarning("No se encontró TileEffect en la posición: " + position);
+    return null;
+}
+
+
+
+
+private GameObject GetEffectPrefab(string attackName)
+{
+    // Encuentra la instancia del script TileEffect en la escena
+    TileEffect tileEffectInstance = FindObjectOfType<TileEffect>();
+
+    if (tileEffectInstance == null)
+    {
+        Debug.LogError("No se encontró una instancia de TileEffect en la escena.");
+        return null;
+    }
+
+    // Ahora usa la instancia para acceder a los prefabs
+    switch (attackName)
+    {
+        case "Vine Whip":
+            return tileEffectInstance.vinesEffectPrefab; // Usa la instancia
+        case "Ember":
+            return tileEffectInstance.fireEffectPrefab; // Usa la instancia
+        case "Water Gun":
+            return tileEffectInstance.waterEffectPrefab; // Usa la instancia
+        // Agrega más casos según sea necesario
+        default:
+            return null;
+    }
+}
+
+
+
+
+    // Método para obtener el componente TileEffect basado en la posición
+    private TileEffect GetTileEffect(Vector3 position)
+    {
+        // Aquí asumo que tus tiles están en un GameObject llamado "Tiles"
+        // Asegúrate de que el nombre y la lógica se ajusten a tu estructura de juego
+        RaycastHit2D hit = Physics2D.Raycast(position, Vector2.down); // Ajusta la dirección si es necesario
+        if (hit.collider != null)
+        {
+            TileEffect tileEffect = hit.collider.GetComponent<TileEffect>();
+            return tileEffect;
+        }
+        return null;
+    }
+
+    // Método para determinar el tipo de efecto basado en el nombre del ataque
+    private TileEffect.TileType DetermineEffectType(string attackName)
+    {
+        switch (attackName)
+        {
+            case "Vine Whip":
+                return TileEffect.TileType.Vines;
+            case "Ember":
+                return TileEffect.TileType.Fire;
+            case "Water Gun":
+                return TileEffect.TileType.Water;
+            case "Thunder Shock":
+                return TileEffect.TileType.Static; // o cualquier ataque eléctrico que tengas
+            default:
+                return TileEffect.TileType.None;
         }
     }
 
