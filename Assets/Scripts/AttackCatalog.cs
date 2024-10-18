@@ -108,15 +108,13 @@ public class AttackCatalog : MonoBehaviour
             new Attack("Scratch", true, true, "Normal", 40, 100, "Scratches with sharp claws.", AttackCategory.Physical),
             new Attack("Dragon Claw", true, true, "Dragon", 80, 100, "Slashes the foe with sharp claws.", AttackCategory.Physical),
             new Attack("Water Gun", false, false, "Water", 40, 100, "Squirts water to attack.", AttackCategory.Special),
-            new Attack("Ember", false, false, "Fire", 40, 100, "An attack that may inflict a burn.", AttackCategory.Special, PokemonBase.StatusCondition.Burn, 10f),
-
-
-            new Attack("Heat Wave", false, false, "Fire", 95, 90, "Exhales a hot breath on the foe. May inflict a burn.", AttackCategory.Special, PokemonBase.StatusCondition.Burn, 10f),
-            new Attack("Nuzzle", true, false, "Electric", 20, 100, "The user attacks by nuzzling its electrified cheeks against the target. This also leaves the target with paralysis.", AttackCategory.Physical, PokemonBase.StatusCondition.Paralysis, 100f), // Prioridad normal
+            new Attack("Ember", false, true, "Fire", 40, 100, "An attack that may inflict a burn.", AttackCategory.Special, PokemonBase.StatusCondition.Burn, 10f),
+            new Attack("Heat Wave", false, true, "Fire", 95, 90, "Exhales a hot breath on the foe. May inflict a burn.", AttackCategory.Special, PokemonBase.StatusCondition.Burn, 10f),
+            new Attack("Nuzzle", true, true, "Electric", 20, 100, "The user attacks by nuzzling its electrified cheeks against the target. This also leaves the target with paralysis.", AttackCategory.Physical, PokemonBase.StatusCondition.Paralysis, 100f), // Prioridad normal
             new Attack("Thunder Shock", false, false, "Electric", 40, 100, "An attack that may cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 10f), // Prioridad normal
-            new Attack("Discharge", false, false, "Electric", 80, 100, "A flare of electricity is loosed to strike all Pokémon in battle. It may also cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 30f), // Prioridad normal
-            new Attack("Spark", true, false, "Electric", 65, 100, "An attack that may cause paralysis.", AttackCategory.Physical, PokemonBase.StatusCondition.Paralysis, 30f), // Prioridad normal
-            new Attack("Thunder Bolt", false, false, "Electric", 90, 100, "An attack that may cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 10f), // Prioridad normal
+            new Attack("Discharge", false, true, "Electric", 80, 100, "A flare of electricity is loosed to strike all Pokémon in battle. It may also cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 30f), // Prioridad normal
+            new Attack("Spark", true, true, "Electric", 65, 100, "An attack that may cause paralysis.", AttackCategory.Physical, PokemonBase.StatusCondition.Paralysis, 30f), // Prioridad normal
+            new Attack("Thunder Bolt", false, true, "Electric", 90, 100, "An attack that may cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 10f), // Prioridad normal
 
 
             // Ataques de alta prioridad
@@ -585,7 +583,7 @@ public class AttackCatalog : MonoBehaviour
         return calculatedPhysicalDamage;
     }
 
-    private void ApplyAOEDamage(PokemonBase attacker, GameObject attackPrefab, List<Vector3> attackPositions)
+    private void ApplyAOEDamage(PokemonBase attacker, GameObject attackPrefab, List<Vector3> attackPositions, string attackName)
 {
     foreach (var position in attackPositions)
     {
@@ -597,15 +595,17 @@ public class AttackCatalog : MonoBehaviour
             if (defender != null && defender != attacker)
             {
                 bool isCriticalHit = false;
-                (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName("Heat Wave"));
+
+                // Cambiar el ataque dinámicamente en función del nombre del ataque
+                (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName(attackName));
                 defender.Defend(damage);
 
                 // Opcional: añadir animación de empuje o efectos si aplica
-                StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, "Heat Wave"));
+                StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, attackName));
             }
 
-            // Instanciar el efecto en el tile afectado
-            GameObject effectPrefab = GetEffectPrefab("Heat Wave");
+            // Instanciar el efecto en el tile afectado según el ataque
+            GameObject effectPrefab = GetEffectPrefab(attackName); // Cambiar el prefab según el nombre del ataque
             if (effectPrefab != null)
             {
                 Instantiate(effectPrefab, position, Quaternion.identity);
@@ -613,6 +613,7 @@ public class AttackCatalog : MonoBehaviour
         }
     }
 }
+
 
 
     private (bool, int) CalculateSpecialDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
@@ -893,9 +894,6 @@ private TileEffect GetTileAtPosition(Vector3 position)
     return null;
 }
 
-
-
-
 private GameObject GetEffectPrefab(string attackName)
 {
     // Encuentra la instancia del script TileEffect en la escena
@@ -918,14 +916,21 @@ private GameObject GetEffectPrefab(string attackName)
             return tileEffectInstance.waterEffectPrefab; // Usa la instancia
         case "Heat Wave":
             return tileEffectInstance.fireEffectPrefab; // Usa la instancia
+        case "Nuzzle":
+            return tileEffectInstance.staticEffectPrefab; // Usa la instancia
+        case "Thunder Shock":
+            return tileEffectInstance.staticEffectPrefab; // Usa la instancia
+        case "Discharge":
+            return tileEffectInstance.staticEffectPrefab; // Usa la instancia
+        case "Spark":
+            return tileEffectInstance.staticEffectPrefab; // Usa la instancia
+        case "Thunder Bolt":
+            return tileEffectInstance.staticEffectPrefab; // Usa la instancia
         // Agrega más casos según sea necesario
         default:
             return null;
     }
 }
-
-
-
 
     // Método para obtener el componente TileEffect basado en la posición
     private TileEffect GetTileEffect(Vector3 position)
@@ -952,7 +957,15 @@ private GameObject GetEffectPrefab(string attackName)
                 return TileEffect.TileType.Fire;
             case "Water Gun":
                 return TileEffect.TileType.Water;
+            case "Nuzzle":
+                return TileEffect.TileType.Static; // o cualquier ataque eléctrico que tengas
             case "Thunder Shock":
+                return TileEffect.TileType.Static; // o cualquier ataque eléctrico que tengas
+            case "Discharge":
+                return TileEffect.TileType.Static; // o cualquier ataque eléctrico que tengas
+            case "Spark":
+                return TileEffect.TileType.Static; // o cualquier ataque eléctrico que tengas
+            case "Thunder Bolt":
                 return TileEffect.TileType.Static; // o cualquier ataque eléctrico que tengas
             default:
                 return TileEffect.TileType.None;
@@ -1360,43 +1373,65 @@ public void WaterGun(PokemonBase attacker)
         Debug.Log($"{attacker.pokemonName} use Water Gun!");
         Vector3 attackerPosition = attacker.transform.position;
 
-        // Definir los rangos de alcance (cuadrados alrededor del atacante)
-        List<Vector3> attackPositions = new List<Vector3>
-        {
-            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
-            attackerPosition + new Vector3(1, 0, 0),  // Derecha
-            attackerPosition + new Vector3(0, 1, 0),  // Arriba
-            attackerPosition + new Vector3(0, -1, 0),  // Abajo
-            attackerPosition + new Vector3(-2, 0, 0), // Izquierda
-            attackerPosition + new Vector3(2, 0, 0),  // Derecha
-            attackerPosition + new Vector3(0, 2, 0),  // Arriba
-            attackerPosition + new Vector3(0, -2, 0)  // Abajo
-        };
+        // Definir los rangos de alcance (direcciones ortogonales, como en ajedrez con la torre)
+    List<Vector3> directions = new List<Vector3>
+    {
+        new Vector3(-1, 0, 0), // Izquierda
+        new Vector3(1, 0, 0),  // Derecha
+        new Vector3(0, 1, 0),  // Arriba
+        new Vector3(0, -1, 0)  // Abajo
+    };
 
-        // Verificar si el prefab está referenciado correctamente
-        if (attackTilePrefab == null)
-        {
-            Debug.LogError("tilePrefab is not assigned!");
-            return; // Salir si el prefab no está asignado
-        }
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
 
-        // Instanciar el prefab en las posiciones de ataque
-        foreach (var position in attackPositions)
+    // Lista para guardar posiciones válidas de ataque
+    List<Vector3> validAttackPositions = new List<Vector3>();
+
+    // Iterar sobre cada dirección y verificar los tiles en esa dirección
+    foreach (var direction in directions)
+    {
+        // Verificar el primer tile (distancia 1)
+        Vector3 firstTile = attackerPosition + direction;
+        
+        // Comprobar si el primer tile está dentro del mapa
+        if (IsWithinMapBounds(firstTile))
         {
-            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
-            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            // Comprobar si hay un objeto o un Pokémon en el primer tile
+            bool isTileBlockedByObject = IsTileBlocked(firstTile);  // Para objetos
+            bool isTileBlockedByPokemon = IsPokemonInTile(firstTile); // Nueva función para detectar Pokémon
+
+            if (!isTileBlockedByObject)
             {
-                //Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
-                continue; // Saltar si está fuera de los límites
+                // Instanciar el tile de ataque si no está bloqueado por objeto (si hay Pokémon, sí se instancia)
+                validAttackPositions.Add(firstTile);
+
+                // Verificar el segundo tile (distancia 2), solo si el primer tile no está bloqueado por objeto
+                if (!isTileBlockedByPokemon) // Solo continuamos si no hay un Pokémon
+                {
+                    Vector3 secondTile = attackerPosition + (direction * 2);
+                    if (IsWithinMapBounds(secondTile) && !IsTileBlocked(secondTile))
+                    {
+                        validAttackPositions.Add(secondTile);
+                    }
+                }
             }
-
-            // Instancia el prefab del tile en la posición de ataque
-            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
-            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
-
-            // Obtener el componente TileHover para cambiar el color del tile
-            TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
+    }
+
+    // Instanciar el prefab en las posiciones de ataque válidas
+    foreach (var position in validAttackPositions)
+    {
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+        // Obtener el componente TileAttack para configurar propiedades adicionales si es necesario
+        TileAttack tileAttack = tile.GetComponent<TileAttack>();
+    }
 
         float staminaCost = attacker.mass * attacker.v;
         staminaCost = Mathf.Clamp(staminaCost, 0, 100);
@@ -1405,12 +1440,10 @@ public void WaterGun(PokemonBase attacker)
 
 
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Water Gun", waterGunPrefab, staminaCostInt));
+        StartCoroutine(WaitForUserClick(validAttackPositions, attacker, "Water Gun", waterGunPrefab, staminaCostInt));
     }
 
 #endregion
-
-
 
 #region Heat Wave
 public void HeatWave(PokemonBase attacker)
@@ -1458,7 +1491,7 @@ public void HeatWave(PokemonBase attacker)
 
 
     // No necesitamos esperar un clic del usuario para Heat Wave, solo ejecutamos el daño en área
-    ApplyAOEDamage(attacker, emberPrefab, attackPositions);
+    ApplyAOEDamage(attacker, emberPrefab, attackPositions, "Heat Wave");
     attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
     DestroyAttackTiles();
 }
@@ -1513,6 +1546,7 @@ public void Nuzzle(PokemonBase attacker)
         float staminaCost = attacker.mass / attacker.agility * attacker.t;
         staminaCost = Mathf.Clamp(staminaCost, 0, 100);
         int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
 
         // Ahora, espera la interacción del usuario
         StartCoroutine(WaitForUserClick(attackPositions, attacker, "Nuzzle", nuzzlePrefab, staminaCostInt));
@@ -1526,133 +1560,126 @@ public void ThunderShock(PokemonBase attacker)
         Debug.Log($"{attacker.pokemonName} use Thunder Shock!");
         Vector3 attackerPosition = attacker.transform.position;
 
-        // Definir los rangos de alcance (cuadrados alrededor del atacante)
-        List<Vector3> attackPositions = new List<Vector3>
-        {
-            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
-            attackerPosition + new Vector3(1, 0, 0),  // Derecha
-            attackerPosition + new Vector3(0, 1, 0),  // Arriba
-            attackerPosition + new Vector3(0, -1, 0),  // Abajo
-            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
-            attackerPosition + new Vector3(1, 1, 0),  // Derecha
-            attackerPosition + new Vector3(1, -1, 0),  // Arriba
-            attackerPosition + new Vector3(-1, -1, 0),  // Abajo
-            attackerPosition + new Vector3(-1, 2, 0), // Izquierda
-            attackerPosition + new Vector3(1, -2, 0),  // Derecha
-            attackerPosition + new Vector3(1, 2, 0),  // Arriba
-            attackerPosition + new Vector3(-1, -2, 0),  // Abajo
+        // Definir los rangos de alcance (direcciones ortogonales, como en ajedrez con la torre)
+    List<Vector3> directions = new List<Vector3>
+    {
+        new Vector3(-1, 0, 0), // Izquierda
+        new Vector3(1, 0, 0),  // Derecha
+        new Vector3(0, 1, 0),  // Arriba
+        new Vector3(0, -1, 0)  // Abajo
+    };
 
-            attackerPosition + new Vector3(-2, 0, 0), // Izquierda
-            attackerPosition + new Vector3(2, 0, 0),  // Derecha
-            attackerPosition + new Vector3(0, 2, 0),  // Arriba
-            attackerPosition + new Vector3(0, -2, 0),  // Abajo
-            attackerPosition + new Vector3(-2, 1, 0), // Izquierda
-            attackerPosition + new Vector3(2, 1, 0),  // Derecha
-            attackerPosition + new Vector3(2, -1, 0),  // Arriba
-            attackerPosition + new Vector3(-2, -1, 0),  // Abajo
-            
-            
-        };
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
 
-        // Verificar si el prefab está referenciado correctamente
-        if (attackTilePrefab == null)
-        {
-            Debug.LogError("tilePrefab is not assigned!");
-            return; // Salir si el prefab no está asignado
-        }
+    // Lista para guardar posiciones válidas de ataque
+    List<Vector3> validAttackPositions = new List<Vector3>();
 
-        // Instanciar el prefab en las posiciones de ataque
-        foreach (var position in attackPositions)
+    // Iterar sobre cada dirección y verificar los tiles en esa dirección
+    foreach (var direction in directions)
+    {
+        // Verificar el primer tile (distancia 1)
+        Vector3 firstTile = attackerPosition + direction;
+        
+        // Comprobar si el primer tile está dentro del mapa
+        if (IsWithinMapBounds(firstTile))
         {
-            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
-            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            // Comprobar si hay un objeto o un Pokémon en el primer tile
+            bool isTileBlockedByObject = IsTileBlocked(firstTile);  // Para objetos
+            bool isTileBlockedByPokemon = IsPokemonInTile(firstTile); // Nueva función para detectar Pokémon
+
+            if (!isTileBlockedByObject)
             {
-                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
-                continue; // Saltar si está fuera de los límites
+                // Instanciar el tile de ataque si no está bloqueado por objeto (si hay Pokémon, sí se instancia)
+                validAttackPositions.Add(firstTile);
+
+                // Verificar el segundo tile (distancia 2), solo si el primer tile no está bloqueado por objeto
+                if (!isTileBlockedByPokemon) // Solo continuamos si no hay un Pokémon
+                {
+                    Vector3 secondTile = attackerPosition + (direction * 2);
+                    if (IsWithinMapBounds(secondTile) && !IsTileBlocked(secondTile))
+                    {
+                        validAttackPositions.Add(secondTile);
+                    }
+                }
             }
-
-            // Instancia el prefab del tile en la posición de ataque
-            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
-            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
-
-            // Obtener el componente TileHover para cambiar el color del tile
-            TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
+    }
 
-        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+    // Instanciar el prefab en las posiciones de ataque válidas
+    foreach (var position in validAttackPositions)
+    {
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+        // Obtener el componente TileAttack para configurar propiedades adicionales si es necesario
+        TileAttack tileAttack = tile.GetComponent<TileAttack>();
+    }
+
+        float staminaCost = attacker.mass * attacker.v;
         staminaCost = Mathf.Clamp(staminaCost, 0, 100);
         int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
 
         // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Thunder Shock", nuzzlePrefab, staminaCostInt));
+        StartCoroutine(WaitForUserClick(validAttackPositions, attacker, "Thunder Shock", nuzzlePrefab, staminaCostInt));
     }
 #endregion
 
 #region Discharge
 public void Discharge(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Discharge!");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
     {
-        Debug.Log($"{attacker.pokemonName} use Discharge!");
-        Vector3 attackerPosition = attacker.transform.position;
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
 
-        // Definir los rangos de alcance (cuadrados alrededor del atacante)
-        List<Vector3> attackPositions = new List<Vector3>
-        {
-            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
-            attackerPosition + new Vector3(1, 0, 0),  // Derecha
-            attackerPosition + new Vector3(0, 1, 0),  // Arriba
-            attackerPosition + new Vector3(0, -1, 0),  // Abajo
-            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
-            attackerPosition + new Vector3(1, 1, 0),  // Derecha
-            attackerPosition + new Vector3(1, -1, 0),  // Arriba
-            attackerPosition + new Vector3(-1, -1, 0),  // Abajo
-            attackerPosition + new Vector3(-1, 2, 0), // Izquierda
-            attackerPosition + new Vector3(1, -2, 0),  // Derecha
-            attackerPosition + new Vector3(1, 2, 0),  // Arriba
-            attackerPosition + new Vector3(-1, -2, 0),  // Abajo
-
-            attackerPosition + new Vector3(-2, 0, 0), // Izquierda
-            attackerPosition + new Vector3(2, 0, 0),  // Derecha
-            attackerPosition + new Vector3(0, 2, 0),  // Arriba
-            attackerPosition + new Vector3(0, -2, 0),  // Abajo
-            attackerPosition + new Vector3(-2, 1, 0), // Izquierda
-            attackerPosition + new Vector3(2, 1, 0),  // Derecha
-            attackerPosition + new Vector3(2, -1, 0),  // Arriba
-            attackerPosition + new Vector3(-2, -1, 0),  // Abajo
-            
-        };
-
-        // Verificar si el prefab está referenciado correctamente
-        if (attackTilePrefab == null)
-        {
-            Debug.LogError("tilePrefab is not assigned!");
-            return; // Salir si el prefab no está asignado
-        }
-
-        // Instanciar el prefab en las posiciones de ataque
-        foreach (var position in attackPositions)
-        {
-            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
-            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
-            {
-                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
-                continue; // Saltar si está fuera de los límites
-            }
-
-            // Instancia el prefab del tile en la posición de ataque
-            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
-            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
-
-            // Obtener el componente TileHover para cambiar el color del tile
-            TileAttack tileAttack = tile.GetComponent<TileAttack>();
-        }
-
-        float staminaCost = attacker.mass / attacker.agility * attacker.t;
-        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
-        int staminaCostInt = Mathf.RoundToInt(staminaCost);
-
-        // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Discharge", nuzzlePrefab, staminaCostInt));
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return;
     }
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v * 2;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Heat Wave, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, nuzzlePrefab, attackPositions, "Discharge");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+}
 
 #endregion
 
@@ -1670,8 +1697,8 @@ public void Spark(PokemonBase attacker)
             attackerPosition + new Vector3(0, 1, 0),  // Arriba
             attackerPosition + new Vector3(0, -1, 0),  // Abajo
             attackerPosition + new Vector3(-1, 1, 0), // Izquierda
-            attackerPosition + new Vector3(1, -1, 0),  // Derecha
-            attackerPosition + new Vector3(1, 1, 0),  // Arriba
+            attackerPosition + new Vector3(1, 1, 0),  // Derecha
+            attackerPosition + new Vector3(1, -1, 0),  // Arriba
             attackerPosition + new Vector3(-1, -1, 0)  // Abajo
         };
 
@@ -1688,7 +1715,7 @@ public void Spark(PokemonBase attacker)
             // Comprobar si la posición está dentro de los límites del mapa o bloqueada
             if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
             {
-                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                //Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
                 continue; // Saltar si está fuera de los límites
             }
 
@@ -1700,9 +1727,10 @@ public void Spark(PokemonBase attacker)
             TileAttack tileAttack = tile.GetComponent<TileAttack>();
         }
 
-        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        float staminaCost = attacker.mass * attacker.v;
         staminaCost = Mathf.Clamp(staminaCost, 0, 100);
         int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
 
         // Ahora, espera la interacción del usuario
         StartCoroutine(WaitForUserClick(attackPositions, attacker, "Spark", nuzzlePrefab, staminaCostInt));
@@ -1712,69 +1740,80 @@ public void Spark(PokemonBase attacker)
 
 #region Thunder Bolt
 public void ThunderBolt(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} use Thunder Bolt!");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir las direcciones ortogonales y diagonales de ataque
+    Vector3[] directions = 
     {
-        Debug.Log($"{attacker.pokemonName} use Thunder Bolt!");
-        Vector3 attackerPosition = attacker.transform.position;
+        new Vector3(-1, 0, 0),  // Izquierda
+        new Vector3(1, 0, 0),   // Derecha
+        new Vector3(0, 1, 0),   // Arriba
+        new Vector3(0, -1, 0),  // Abajo
+        new Vector3(-1, 1, 0),  // Diagonal arriba-izquierda
+        new Vector3(1, 1, 0),   // Diagonal arriba-derecha
+        new Vector3(-1, -1, 0), // Diagonal abajo-izquierda
+        new Vector3(1, -1, 0)   // Diagonal abajo-derecha
+    };
 
-        // Definir los rangos de alcance (cuadrados alrededor del atacante)
-        List<Vector3> attackPositions = new List<Vector3>
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
+
+    // Recorrer cada dirección para un rango de 3 tiles, excepto la tercera diagonal
+    foreach (var direction in directions)
+    {
+        for (int i = 1; i <= 3; i++) // Rango de 3 cuadros
         {
-            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
-            attackerPosition + new Vector3(1, 0, 0),  // Derecha
-            attackerPosition + new Vector3(0, 1, 0),  // Arriba
-            attackerPosition + new Vector3(0, -1, 0),  // Abajo
-            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
-            attackerPosition + new Vector3(1, -1, 0),  // Derecha
-            attackerPosition + new Vector3(1, 1, 0),  // Arriba
-            attackerPosition + new Vector3(-1, -1, 0),  // Abajo
-            attackerPosition + new Vector3(-1, 2, 0), // Izquierda
-            attackerPosition + new Vector3(1, -2, 0),  // Derecha
-            attackerPosition + new Vector3(1, 2, 0),  // Arriba
-            attackerPosition + new Vector3(-1, -2, 0),  // Abajo
+            Vector3 currentPos = attackerPosition + direction * i;
 
-            attackerPosition + new Vector3(-2, 0, 0), // Izquierda
-            attackerPosition + new Vector3(2, 0, 0),  // Derecha
-            attackerPosition + new Vector3(0, 2, 0),  // Arriba
-            attackerPosition + new Vector3(0, -2, 0),  // Abajo
-            attackerPosition + new Vector3(-2, 1, 0), // Izquierda
-            attackerPosition + new Vector3(2, -1, 0),  // Derecha
-            attackerPosition + new Vector3(2, 1, 0),  // Arriba
-            attackerPosition + new Vector3(-2, -1, 0),  // Abajo
-            
-        };
-
-        // Verificar si el prefab está referenciado correctamente
-        if (attackTilePrefab == null)
-        {
-            Debug.LogError("tilePrefab is not assigned!");
-            return; // Salir si el prefab no está asignado
-        }
-
-        // Instanciar el prefab en las posiciones de ataque
-        foreach (var position in attackPositions)
-        {
-            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
-            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            // En las diagonales, ignorar la tercera línea más lejana
+            if (i == 3 && (direction.x != 0 && direction.y != 0))
             {
-                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
-                continue; // Saltar si está fuera de los límites
+                break; // Si es una diagonal, no procesar el tercer tile
             }
 
-            // Instancia el prefab del tile en la posición de ataque
-            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
-            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+            // Comprobar si la posición está dentro de los límites del mapa
+            if (!IsWithinMapBounds(currentPos))
+            {
+                Debug.LogWarning($"Position {currentPos} is out of map bounds, skipping.");
+                break; // Detenerse si la posición está fuera de los límites
+            }
 
-            // Obtener el componente TileHover para cambiar el color del tile
-            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+            // Verificar si el tile está bloqueado por un objeto
+            if (IsTileBlocked(currentPos))
+            {
+                Debug.LogWarning($"Position {currentPos} is blocked, skipping subsequent tiles in this direction.");
+                break; // Detenerse en esta dirección si está bloqueado por un objeto
+            }
+
+            // Instanciar el prefab del tile en la posición actual
+            GameObject tile = Instantiate(attackTilePrefab, currentPos, Quaternion.identity);
+            instantiatedTiles.Add(currentPos, tile.GetComponent<TileAttack>());
+
+            // Verificar si hay un Pokémon en el tile
+            if (IsPokemonInTile(currentPos))
+            {
+                Debug.Log($"Pokemon detected at {currentPos}, skipping subsequent tiles in this direction.");
+                break; // Detenerse si hay un Pokémon, pero igual instanciar el tile
+            }
         }
-
-        float staminaCost = attacker.mass / attacker.agility * attacker.t;
-        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
-        int staminaCostInt = Mathf.RoundToInt(staminaCost);
-
-        // Ahora, espera la interacción del usuario
-        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Thunder Bolt", nuzzlePrefab, staminaCostInt));
     }
+
+    // Calcular el costo de stamina
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+    // Esperar la interacción del usuario
+    StartCoroutine(WaitForUserClick(new List<Vector3>(instantiatedTiles.Keys), attacker, "Thunder Bolt", nuzzlePrefab, staminaCostInt));
+}
+
 
 #endregion
 

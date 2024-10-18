@@ -107,7 +107,7 @@ MonoBehaviour:
   vinesEffectPrefab: {fileID: 100000, guid: 7a2b3c6dde1175a439506d7d2e259bbf, type: 3}
   fireEffectPrefab: {fileID: 100002, guid: acc1dfe7eb887994a91608061871e683, type: 3}
   waterEffectPrefab: {fileID: 100000, guid: 064f2a43a4735e243ac17004f2044564, type: 3}
-  staticEffectPrefab: {fileID: 100000, guid: 46e5113392a8a394da11e1781a85dc2d, type: 3}
+  staticEffectPrefab: {fileID: 100008, guid: 9c001e713c3ebd34b9a93ba39ccdb2c7, type: 3}
 --- !u!61 &-2554747545170403393
 BoxCollider2D:
   m_ObjectHideFlags: 0
