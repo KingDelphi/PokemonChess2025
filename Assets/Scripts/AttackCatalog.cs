@@ -86,6 +86,8 @@ public class AttackCatalog : MonoBehaviour
     public GameObject emberPrefab;
     public GameObject waterGunPrefab;
     public GameObject nuzzlePrefab;
+    public GameObject growlPrefab;
+    public GameObject smokescreenPrefab;
 
     public int damage = 0;
 
@@ -115,15 +117,61 @@ public class AttackCatalog : MonoBehaviour
             new Attack("Discharge", false, true, "Electric", 80, 100, "A flare of electricity is loosed to strike all Pokémon in battle. It may also cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 30f), // Prioridad normal
             new Attack("Spark", true, true, "Electric", 65, 100, "An attack that may cause paralysis.", AttackCategory.Physical, PokemonBase.StatusCondition.Paralysis, 30f), // Prioridad normal
             new Attack("Thunder Bolt", false, true, "Electric", 90, 100, "An attack that may cause paralysis.", AttackCategory.Special, PokemonBase.StatusCondition.Paralysis, 10f), // Prioridad normal
+            new Attack("Growl", false, true, "Normal", 0, 100, "Reduces the foe’s attack.", AttackCategory.Status, PokemonBase.StatusCondition.AttackEnhanced, 100f),
+            new Attack("Smokescreen", false, true, "Normal", 0, 100, "Reduces the foe’s accuracy.", AttackCategory.Status, PokemonBase.StatusCondition.AccuracyEnhanced, 100f),
+            new Attack("Tail Whip", false, true, "Normal", 0, 100, "Reduces the foe’s defense.", AttackCategory.Status, PokemonBase.StatusCondition.DefenseEnhanced, 100f),
+            new Attack("Withdraw", false, true, "Water", 0, 100, "Raises the user's defense.", AttackCategory.Status, PokemonBase.StatusCondition.DefenseEnhanced, 100f),
+            new Attack("Charm", false, true, "Fairy", 0, 100, "Sharply reduces the foe’s attack.", AttackCategory.Status, PokemonBase.StatusCondition.AttackEnhanced, 100f),
+            new Attack("Nasty Plot", false, true, "Dark", 0, 100, "Sharply raises the user's special attack.", AttackCategory.Status, PokemonBase.StatusCondition.SpecialAttackEnhanced, 100f),
+            new Attack("Play Nice", false, true, "Normal", 0, 100, "Reduces the foe’s attack.", AttackCategory.Status, PokemonBase.StatusCondition.AttackEnhanced, 100f),
+            new Attack("Sweet Kiss", false, true, "Fairy", 0, 75, "Confuses the target.", AttackCategory.Status, PokemonBase.StatusCondition.Confuse, 100f),
+            new Attack("Thunder Wave", false, true, "Electric", 0, 90, "Paralyzes the target.", AttackCategory.Status, PokemonBase.StatusCondition.Paralysis, 100f),
+            new Attack("Double Team", false, true, "Normal", 0, 100, "Raises the user's evasion.", AttackCategory.Status, PokemonBase.StatusCondition.EvasionEnhanced, 100f),
+            new Attack("Sand Attack", false, true, "Ground", 0, 100, "Reduces the foe’s accuracy.", AttackCategory.Status, PokemonBase.StatusCondition.AccuracyEnhanced, 100f),
+            new Attack("Growth", false, true, "Normal", 0, 100, "Raises the user's attack and special attack.", AttackCategory.Status, PokemonBase.StatusCondition.AttackEnhanced, 100f), // Should we also add SpecialAttackEnhanced? It doesnt affect but for clarity...
+            new Attack("Razor Leaf", false, true, "Grass", 55, 95, "Has a high critical hit ratio.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Poison Powder", false, true, "Poison", 0, 75, "Poisons the target.", AttackCategory.Status, PokemonBase.StatusCondition.Poison, 100f),
+            new Attack("Sleep Powder", false, true, "Grass", 0, 75, "Sleeps the target.", AttackCategory.Status, PokemonBase.StatusCondition.Sleep, 100f),
+            new Attack("Bite", true, true, "Dark", 60, 100, "An attack that may cause flinching.", AttackCategory.Physical, PokemonBase.StatusCondition.Flinch, 30f), // Prioridad normal
+            new Attack("Water Pulse", false, true, "Water", 60, 100, "Attacks with ultrasonic waves. May confuse the foe", AttackCategory.Special, PokemonBase.StatusCondition.Confuse, 20f), // Prioridad normal
+            new Attack("Seed Bomb", false, true, "Grass", 80, 100, "The user slams a barrage of hard-shelled seeds down on the foe from above.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Take Down", true, false, "Normal", 90, 85, "A tackle that also hurts the user.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Sweet Scent", false, true, "Normal", 0, 100, "Reduces the foe’s evasion.", AttackCategory.Status, PokemonBase.StatusCondition.EvasionEnhanced, 100f),
+            new Attack("Slash", true, true, "Normal", 70, 100, "Has a high critical hit ratio.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Scary Face", false, true, "Normal", 0, 100, "Sharply reduces the foe’s speed.", AttackCategory.Status, PokemonBase.StatusCondition.SpeedEnhanced, 100f),
+            new Attack("Aqua Tail", true, true, "Water", 90, 90, "The user attacks by swinging its tail as if it were a vicious wave in a raging storm.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Shell Smash", false, true, "Normal", 0, 100, "The user breaks its shell, lowering its Defense and Sp. Def stats but sharply raising Attack, Sp. Atk, and Speed stats.", AttackCategory.Status, PokemonBase.StatusCondition.AttackEnhanced, 100f), // Should we also add SpecialAttackEnhanced? It doesnt affect but for clarity...
+            new Attack("Iron Defense", false, true, "Steel", 0, 100, "Sharply raises the user's defense.", AttackCategory.Status, PokemonBase.StatusCondition.DefenseEnhanced, 100f),
+            new Attack("Wave Crash", true, true, "Water", 120, 100, "The user shrouds itself in water and slams into the target with its whole body to inflict damage. This also damages the user quite a lot.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Agility", false, true, "Psychic", 0, 100, "Sharply raises the user's speed.", AttackCategory.Status, PokemonBase.StatusCondition.SpeedEnhanced, 100f),
+            new Attack("Double-Edge", true, false, "Normal", 120, 100, "A tackle that also hurts the user.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Power Whip", true, false, "Grass", 120, 85, "The user violently whirls its vines or tentacles to harshly lash the foe.", AttackCategory.Physical),
+            new Attack("Feather Dance", false, true, "Flying", 0, 100, "Envelops the foe with down to sharply reduce attack.", AttackCategory.Status, PokemonBase.StatusCondition.AttackEnhanced, 100f),
+            new Attack("Wing Attack", true, true, "Flying", 60, 100, "Strikes the target with wings.", AttackCategory.Physical), // Prioridad normal
+            new Attack("Air Slash", false, true, "Flying", 75, 95, "The user attacks with a blade of air that slices even the sky. It may also make the target flinch.", AttackCategory.Special, PokemonBase.StatusCondition.Flinch, 30f), // Prioridad normal
+            new Attack("String Shot", false, true, "Bug", 0, 95, "A move that lowers the foe’s speed.", AttackCategory.Status, PokemonBase.StatusCondition.SpeedEnhanced, 100f),
+            new Attack("Poison Sting", false, true, "Poison", 15, 100, "An attack that may poison the target.", AttackCategory.Physical, PokemonBase.StatusCondition.Poison, 30f), // Prioridad normal
+            new Attack("Harden", false, true, "Normal", 0, 100, "Raises the user's defense.", AttackCategory.Status, PokemonBase.StatusCondition.DefenseEnhanced, 100f),
+            new Attack("Supersonic", false, true, "Normal", 0, 100, "Sound waves that cause confusion.", AttackCategory.Status, PokemonBase.StatusCondition.Confuse, 55f), // Prioridad normal
+            new Attack("Confusion", false, true, "Psychic", 50, 100, "An attack that may cause confusion.", AttackCategory.Special, PokemonBase.StatusCondition.Confuse, 10f), // Prioridad normal
+            new Attack("Stun Spore", false, true, "Grass", 0, 75, "A move that may paralyze the foe.", AttackCategory.Status, PokemonBase.StatusCondition.Paralysis, 100f),
+            new Attack("Psybeam", false, true, "Psychic", 65, 100, "An attack that may confuse the foe.", AttackCategory.Special, PokemonBase.StatusCondition.Confuse, 10f), // Prioridad normal
+            new Attack("Quiver Dance", false, true, "Bug", 0, 100, "The user lightly performs a beautiful, mystic dance. It boosts the user’s Sp. Atk, Sp. Def, and Speed stats.", AttackCategory.Status, PokemonBase.StatusCondition.SpeedEnhanced, 100f), // Should we also add SpecialAttackEnhanced? It doesnt affect but for clarity...
+            new Attack("Poison Jab", true, true, "Poison", 80, 100, "The foe is stabbed with a tentacle or arm steeped in poison. It may also poison the foe.", AttackCategory.Physical, PokemonBase.StatusCondition.Poison, 30f), // Prioridad normal
+
+
 
 
             // Ataques de alta prioridad
             new Attack("Quick Attack", false, false, "Normal", 40, 100, "A fast attack that strikes first.", AttackCategory.Physical, PokemonBase.StatusCondition.None, 0, 1), // Alta prioridad
             new Attack("Extreme Speed", false, false, "Normal", 80, 100, "An extremely fast attack.", AttackCategory.Physical, PokemonBase.StatusCondition.None, 0, 2), // Alta prioridad
 
-            // Ejemplos de ataques adicionales
-            new Attack("Thunder Wave", false, false, "Electric", 0, 90, "A jolt of electricity that paralyzes the opponent.", AttackCategory.Status, PokemonBase.StatusCondition.Paralysis, 100f), // Prioridad normal
-            new Attack("Will-O-Wisp", false, false, "Fire", 0, 85, "Engulfs the opponent in a damaging fire, causing a burn.", AttackCategory.Status, PokemonBase.StatusCondition.Burn, 85f) // Prioridad normal
+            // Ataques Pendientes
+            // Leech Seed, Dragon Breath, Rapid Spin, Quick Attack, Electro Ball, Feint, Covet, Helping Hand, Baby-Doll Eyes, Synthesis, Worry Seed, Fire Fang, 
+            // Fire Spin, Protect, Rain Dance, Flamethrower, Inferno, Hydro Pump, Iron Tail, Light Screen, Thunder, Swift, Copycat, Baton Pass, Last Resort,
+            // Solar Beam, Flare Blitz, Focus Energy, Laser Focus, Assurance, Crunch, Sucker Punch, Super Fang, Endeavor, Gust, Whirlwind, Twister, Roost,
+            // Tailwind, Aerial Ace, Hurricane, Bug Bite, Safeguard, Bug Buzz, Rage Powder, Fury Attack, Fury Cutter, Venoshock, Toxic Spikes, Pin Missile,
+            // 
         };
 
         // Inicializar el catálogo de TMs
@@ -148,7 +196,437 @@ public class AttackCatalog : MonoBehaviour
 {
     bool isCriticalHit = false;
     int damage = 0;
-    float statusEffectChance = 0f; // Añadir una variable para la probabilidad de efecto
+    float statusEffectChance = attack.statusEffectChance; // Asigna la probabilidad de efecto de estado del ataque
+
+    // Si es un ataque de estado y se llama "Growl", aplicamos la lógica para reducir el Attack
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Growl")
+    {
+        if (defender.attackModifier > -6) // Máximo se puede reducir hasta -6
+        {
+            defender.attackModifier--;
+            defender.ApplyAttackStatModifier(); // Recalcular el valor de Attack
+            Debug.Log($"{defender.pokemonName}'s Attack fell to {defender.attackModifier}!");
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Attack can't be lowered further!");
+        }
+
+        return (false, 0); // Growl no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Smokescreen")
+    {
+        if (defender.accuracyModifier > -6) // Máximo se puede reducir hasta -6
+        {
+            defender.accuracyModifier--;
+            defender.ApplyAccuracyStatModifier(); // Recalcular el valor de Attack
+            Debug.Log($"{defender.pokemonName}'s Accuracy fell to {defender.accuracyModifier}!");
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Accuracy can't be lowered further!");
+        }
+
+        return (false, 0); // Smokescreen no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Tail Whip")
+    {
+        if (defender.defenseModifier > -6) // Máximo se puede reducir hasta -6
+        {
+            defender.defenseModifier--;
+            defender.ApplyDefenseStatModifier(); // Recalcular el valor de Attack
+            Debug.Log($"{defender.pokemonName}'s Defense fell to {defender.defenseModifier}!");
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Defense can't be lowered further!");
+        }
+
+        return (false, 0); // Tail Whip no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Withdraw")
+    {
+        if (defender.defenseModifier < 6) // Máximo se puede reducir hasta -6
+        {
+            defender.defenseModifier++;
+            defender.ApplyDefenseStatModifier(); // Recalcular el valor de Attack
+            Debug.Log($"{defender.pokemonName}'s Defense increased to {defender.defenseModifier}!");
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Defense can't be increased further!");
+        }
+
+        return (false, 0); // Tail Whip no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Charm")
+    {
+        for (int i = 0; i < 2; i++) // Intentar reducir el ataque en 2 niveles
+        {
+            if (defender.attackModifier > -6)
+            {
+                defender.attackModifier--;
+                defender.ApplyAttackStatModifier(); // Recalcular el valor de Attack
+                Debug.Log($"{defender.pokemonName}'s Attack fell to {defender.attackModifier}!");
+            }
+            else
+            {
+                Debug.Log($"{defender.pokemonName}'s Attack can't be lowered further!");
+                break; // Detener el bucle si ya alcanzamos el límite
+            }
+        }
+
+        return (false, 0); // Charm no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Nasty Plot")
+    {
+        for (int i = 0; i < 2; i++) // Intentar reducir el ataque en 2 niveles
+        {   
+            if (defender.specialAttackModifier < 6)
+            {
+                defender.specialAttackModifier++;
+                defender.ApplySpecialAttackStatModifier(); // Recalcular el valor de Attack
+                Debug.Log($"{defender.pokemonName}'s Special Attack increased to {defender.specialAttackModifier}!");
+            }
+            else
+            {
+                Debug.Log($"{defender.pokemonName}'s Special Attack can't be increased further!");
+                break; // Detener el bucle si ya alcanzamos el límite
+            }
+        }
+
+        return (false, 0); // Nasty Plot no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Play Nice")
+    {
+        if (defender.attackModifier > -6) // Máximo se puede reducir hasta -6
+        {
+            defender.attackModifier--;
+            defender.ApplyAttackStatModifier(); // Recalcular el valor de Attack
+            Debug.Log($"{defender.pokemonName}'s Attack fell to {defender.attackModifier}!");
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Attack can't be lowered further!");
+        }
+
+        return (false, 0); // Play Nice no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Double Team")
+    {
+        if (defender.evasionModifier < 6) // Máximo se puede reducir hasta -6
+        {
+            defender.evasionModifier++;
+            defender.ApplyEvasionStatModifier(); // Recalcular el valor de Attack
+            Debug.Log($"{defender.pokemonName}'s Evasion increased to {defender.evasionModifier}!");
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Evasion can't be increased further!");
+        }
+
+        return (false, 0); // Double Team no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Sand Attack")
+    {
+        if (defender.accuracyModifier > -6) // Máximo se puede reducir hasta -6
+        {
+            defender.accuracyModifier--;
+            defender.ApplyAccuracyStatModifier(); // Recalcular el valor de Attack
+            Debug.Log($"{defender.pokemonName}'s Accuracy fell to {defender.accuracyModifier}!");
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Accuracy can't be lowered further!");
+        }
+
+        return (false, 0); // Sand Attack no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Growth")
+    {
+        // Verificar y aumentar el modificador de ataque si está por debajo de +6
+        if (defender.attackModifier < 6)
+        {
+            defender.attackModifier++;
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Attack can't be increased further!");
+        }
+
+        // Verificar y aumentar el modificador de ataque especial si está por debajo de +6
+        if (defender.specialAttackModifier < 6)
+        {
+            defender.specialAttackModifier++;
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Special Attack can't be increased further!");
+        }
+
+        defender.ApplyAttackStatModifier();
+        defender.ApplySpecialAttackStatModifier();
+        Debug.Log($"{defender.pokemonName}'s Attack increased to {defender.attackModifier} and Special Attack increased to {defender.specialAttackModifier}!");
+
+        return (false, 0); // Growth no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Sweet Scent")
+    {
+        if (defender.evasionModifier > -6) // Máximo se puede reducir hasta -6
+        {
+            defender.evasionModifier--;
+            defender.ApplyEvasionStatModifier(); // Recalcular el valor de Attack
+            Debug.Log($"{defender.pokemonName}'s Evasion fell to {defender.evasionModifier}!");
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Evasion can't be lowered further!");
+        }
+
+        return (false, 0); // Sweet Scent no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Scary Face")
+    {
+        for (int i = 0; i < 2; i++) // Intentar reducir el ataque en 2 niveles
+        {
+            if (defender.speedModifier > -6)
+            {
+                defender.speedModifier--;
+                defender.ApplySpeedStatModifier(); // Recalcular el valor de Attack
+                Debug.Log($"{defender.pokemonName}'s Speed fell to {defender.speedModifier}!");
+            }
+            else
+            {
+                Debug.Log($"{defender.pokemonName}'s Speed can't be lowered further!");
+                break; // Detener el bucle si ya alcanzamos el límite
+            }
+        }
+
+        return (false, 0); // Scary Face no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Shell Smash")
+    {
+        // Verificar y aumentar el modificador de ataque si está por debajo de +6
+        if (defender.defenseModifier > -6)
+        {
+            defender.defenseModifier--;
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Defense can't be decreased further!");
+        }
+
+        // Verificar y aumentar el modificador de ataque especial si está por debajo de +6
+        if (defender.specialDefenseModifier > -6)
+        {
+            defender.specialDefenseModifier--;
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Special Defense can't be decreased further!");
+        }
+
+        for (int i = 0; i < 2; i++) // Intentar aumentar el ataque en 2 niveles
+        {
+            if (defender.attackModifier < 6)
+            {
+                defender.attackModifier++;
+                defender.ApplyAttackStatModifier(); // Recalcular el valor de Attack
+                //Debug.Log($"{defender.pokemonName}'s Attack increased to {defender.attackModifier}!");
+            }
+            else
+            {
+                Debug.Log($"{defender.pokemonName}'s Attack can't be increased further!");
+                break; // Detener el bucle si ya alcanzamos el límite
+            }
+        }
+
+        for (int i = 0; i < 2; i++) // Intentar aumentar el ataque en 2 niveles
+        {
+            if (defender.specialAttackModifier < 6)
+            {
+                defender.specialAttackModifier++;
+                defender.ApplySpecialAttackStatModifier(); // Recalcular el valor de Attack
+                //Debug.Log($"{defender.pokemonName}'s Special Attack increased to {defender.specialAttackModifier}!");
+            }
+            else
+            {
+                Debug.Log($"{defender.pokemonName}'s Special Attack can't be increased further!");
+                break; // Detener el bucle si ya alcanzamos el límite
+            }
+        }
+
+        for (int i = 0; i < 2; i++) // Intentar aumentar el ataque en 2 niveles
+        {
+            if (defender.speedModifier < 6)
+            {
+                defender.speedModifier++;
+                defender.ApplySpeedStatModifier(); // Recalcular el valor de Attack
+                //Debug.Log($"{defender.pokemonName}'s Speed increased to {defender.speedModifier}!");
+            }
+            else
+            {
+                Debug.Log($"{defender.pokemonName}'s Speed can't be increased further!");
+                break; // Detener el bucle si ya alcanzamos el límite
+            }
+        }
+
+        defender.ApplyDefenseStatModifier();
+        defender.ApplySpecialDefenseStatModifier();
+        Debug.Log($"{defender.pokemonName}'s Defense decreased to {defender.defenseModifier}, Special Defense decreased to {defender.specialDefenseModifier}, Attack increased to {defender.attackModifier}, Special Attack increased to {defender.specialAttackModifier} and Speed increased to {defender.speedModifier}!");
+
+        return (false, 0); // Shell Smash no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Iron Defense")
+    {
+        for (int i = 0; i < 2; i++) // Intentar reducir el ataque en 2 niveles
+        {   
+            if (defender.defenseModifier < 6)
+            {
+                defender.defenseModifier++;
+                defender.ApplyDefenseStatModifier(); // Recalcular el valor de Attack
+                Debug.Log($"{defender.pokemonName}'s Defense increased to {defender.defenseModifier}!");
+            }
+            else
+            {
+                Debug.Log($"{defender.pokemonName}'s Defense can't be increased further!");
+                break; // Detener el bucle si ya alcanzamos el límite
+            }
+        }
+
+        return (false, 0); // Iron Defense no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Agility")
+    {
+        for (int i = 0; i < 2; i++) // Intentar reducir el ataque en 2 niveles
+        {   
+            if (defender.speedModifier < 6)
+            {
+                defender.speedModifier++;
+                defender.ApplySpeedStatModifier(); // Recalcular el valor de Attack
+                Debug.Log($"{defender.pokemonName}'s Speed increased to {defender.speedModifier}!");
+            }
+            else
+            {
+                Debug.Log($"{defender.pokemonName}'s Speed can't be increased further!");
+                break; // Detener el bucle si ya alcanzamos el límite
+            }
+        }
+
+        return (false, 0); // Agility no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Feather Dance")
+    {
+        for (int i = 0; i < 2; i++) // Intentar reducir el ataque en 2 niveles
+        {
+            if (defender.attackModifier > -6)
+            {
+                defender.attackModifier--;
+                defender.ApplyAttackStatModifier(); // Recalcular el valor de Attack
+                Debug.Log($"{defender.pokemonName}'s Attack fell to {defender.attackModifier}!");
+            }
+            else
+            {
+                Debug.Log($"{defender.pokemonName}'s Attack can't be lowered further!");
+                break; // Detener el bucle si ya alcanzamos el límite
+            }
+        }
+
+        return (false, 0); // Feather Dance no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "String Shot")
+    {
+        for (int i = 0; i < 2; i++) // Intentar reducir el ataque en 2 niveles
+        {
+            if (defender.speedModifier > -6)
+            {
+                defender.speedModifier--;
+                defender.ApplySpeedStatModifier(); // Recalcular el valor de Attack
+                Debug.Log($"{defender.pokemonName}'s Speed fell to {defender.speedModifier}!");
+            }
+            else
+            {
+                Debug.Log($"{defender.pokemonName}'s Speed can't be lowered further!");
+                break; // Detener el bucle si ya alcanzamos el límite
+            }
+        }
+
+        return (false, 0); // String Shot no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Harden")
+    {
+        if (defender.defenseModifier < 6) // Máximo se puede reducir hasta -6
+        {
+            defender.defenseModifier++;
+            defender.ApplyDefenseStatModifier(); // Recalcular el valor de Attack
+            Debug.Log($"{defender.pokemonName}'s Defense increased to {defender.defenseModifier}!");
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Defense can't be increased further!");
+        }
+
+        return (false, 0); // Harden no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    if ((attack.statusEffect != PokemonBase.StatusCondition.None) && attack.name == "Quiver Dance")
+    {
+        // Verificar y aumentar el modificador de ataque si está por debajo de +6
+        if (defender.specialAttackModifier < 6)
+        {
+            defender.specialAttackModifier++;
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Special Attack can't be increased further!");
+        }
+
+        // Verificar y aumentar el modificador de ataque especial si está por debajo de +6
+        if (defender.specialDefenseModifier < 6)
+        {
+            defender.specialDefenseModifier++;
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Special Defense can't be increased further!");
+        }
+
+        // Verificar y aumentar el modificador de ataque especial si está por debajo de +6
+        if (defender.speedModifier < 6)
+        {
+            defender.speedModifier++;
+        }
+        else
+        {
+            Debug.Log($"{defender.pokemonName}'s Speed can't be increased further!");
+        }
+
+        defender.ApplySpecialAttackStatModifier();
+        defender.ApplySpecialDefenseStatModifier();
+        defender.ApplySpeedStatModifier();
+        Debug.Log($"{defender.pokemonName}'s Special Attack increased to {defender.specialAttackModifier}, Special Defense increased to {defender.specialDefenseModifier} and Speed increased to {defender.speedModifier}!");
+
+        return (false, 0); // Quiver Dance no causa daño, así que regresamos 0 como daño y false para critical hit
+    }
+
+    
 
     // Calcular el daño y obtener la probabilidad de efecto de estado
     (isCriticalHit, damage, statusEffectChance) = CalculateDamage(attack, attacker, defender);
@@ -177,7 +655,7 @@ public class AttackCatalog : MonoBehaviour
     if (attack.statusEffect != PokemonBase.StatusCondition.None)
     {
         float randomChance = Random.Range(0f, 100f);
-        if (randomChance <= statusEffectChance * 100) // Multiplicamos por 100 ya que statusEffectChance está entre 0 y 1
+        if (randomChance <= statusEffectChance) // Multiplicamos statusEffectChance para convertir a porcentaje
         {
             defender.ApplyStatusCondition(attack.statusEffect, 3); // Ejemplo: duración de 3 turnos
             Debug.Log($"{defender.pokemonName} is now {attack.statusEffect} due to {attack.name}!");
@@ -190,7 +668,6 @@ public class AttackCatalog : MonoBehaviour
 
     return (isCriticalHit, damage); // Retorna solo el valor booleano
 }
-
 
     public void CancelAttack()
     {
@@ -444,6 +921,34 @@ public class AttackCatalog : MonoBehaviour
             return attackerHeight * 0.4f; // Un ataque rápido y cercano como Spark golpea en la parte baja del oponente.
         case "Thunder Bolt":
             return attackerHeight * 0.8f; // Thunder Bolt es un ataque eléctrico fuerte y dirigido hacia la parte alta, como la cabeza o el torso alto.
+        case "Razor Leaf":
+            return attackerHeight * 0.8f; 
+        case "Bite":
+            return attackerHeight * 0.7f;
+        case "Water Pulse":
+            return attackerHeight * 0.6f; 
+        case "Seed Bomb":
+            return attackerHeight * 0.9f; 
+        case "Take Down":
+            return attackerHeight * 0.5f;
+        case "Slash":
+            return attackerHeight * 0.6f;
+        case "Aqua Tail":
+            return attackerHeight * 0.2f;
+        case "Wave Crash":
+            return attackerHeight * 0.4f;
+        case "Double-Edge":
+            return attackerHeight * 0.5f;
+        case "Power Whip":
+            return attackerHeight * 0.6f;
+        case "Wing Attack":
+            return attackerHeight * 0.9f;
+        case "Air Slash":
+            return attackerHeight * 0.9f;
+        case "Poison Sting":
+            return attackerHeight * 0.6f;
+        case "Poison Jab":
+            return attackerHeight * 0.3f;
         default:
             return attackerHeight * 0.5f; // Valor por defecto, en el medio.
     }
@@ -453,7 +958,7 @@ public class AttackCatalog : MonoBehaviour
 {
     int damage = 0;
     bool isCriticalHit = false;
-    float statusEffectChance = 0f; // Variable para almacenar la probabilidad del efecto de estado
+    float statusEffectChance = attack.statusEffectChance; // Variable para almacenar la probabilidad del efecto de estado
 
     // Ajuste de daño basado en la transformación
     if (attacker.currentTransformation == PokemonBase.TransformationType.Dynamax)
@@ -469,7 +974,6 @@ public class AttackCatalog : MonoBehaviour
         // Lógica normal de daño
         (isCriticalHit, damage) = CalculateNormalDamage(attacker, defender, attack);
     }
-    //Debug.Log("CalculateDamage: " + damage);
 
     // Verificar la altura del ataque
     float attackHeight = GetAttackHeight(attack, attacker); // Calcula la altura del ataque basado en el atacante
@@ -573,7 +1077,16 @@ public class AttackCatalog : MonoBehaviour
         float affinityMultiplier = 1.0f + (attacker.affinity / 100f * 0.1f); // Aumentar el daño basado en la afinidad
 
         // Determinar si es un golpe crítico
-        bool isCriticalHit = Random.Range(0, 100) < 20; // 20% de probabilidad de golpe crítico
+        bool isCriticalHit = false;
+
+        if(attack.name == "Razor Leaf" || attack.name == "Slash")
+        {
+            isCriticalHit = Random.Range(0, 100) < 12.51f; // 1/8 de probabilidad de golpe crítico
+        }
+        else
+        {
+            isCriticalHit = Random.Range(0, 100) < 4.17f; // 1/24 de probabilidad de golpe crítico
+        }
 
         // Calcular daño crítico
         int criticalHitDamage = isCriticalHit ? (int)(baseDamage * 1.5f * affinityMultiplier) : (int)(baseDamage * affinityMultiplier); 
@@ -604,6 +1117,114 @@ public class AttackCatalog : MonoBehaviour
                 StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, attackName));
             }
 
+            if (defender != null && attackName == "Withdraw")
+            {
+                bool isCriticalHit = false;
+
+                // Cambiar el ataque dinámicamente en función del nombre del ataque
+                (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                defender.Defend(damage);
+
+                // Opcional: añadir animación de empuje o efectos si aplica
+                StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, attackName));
+            }
+
+            if (defender != null && attackName == "Nasty Plot")
+            {
+                bool isCriticalHit = false;
+
+                // Cambiar el ataque dinámicamente en función del nombre del ataque
+                (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                defender.Defend(damage);
+
+                // Opcional: añadir animación de empuje o efectos si aplica
+                StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, attackName));
+            }
+
+            if (defender != null && attackName == "Double Team")
+            {
+                bool isCriticalHit = false;
+
+                // Cambiar el ataque dinámicamente en función del nombre del ataque
+                (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                defender.Defend(damage);
+
+                // Opcional: añadir animación de empuje o efectos si aplica
+                StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, attackName));
+            }
+
+            if (defender != null && attackName == "Growth")
+            {
+                bool isCriticalHit = false;
+
+                // Cambiar el ataque dinámicamente en función del nombre del ataque
+                (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                defender.Defend(damage);
+
+                // Opcional: añadir animación de empuje o efectos si aplica
+                StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, attackName));
+            }
+
+            if (defender != null && attackName == "Shell Smash")
+            {
+                bool isCriticalHit = false;
+
+                // Cambiar el ataque dinámicamente en función del nombre del ataque
+                (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                defender.Defend(damage);
+
+                // Opcional: añadir animación de empuje o efectos si aplica
+                StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, attackName));
+            }
+
+            if (defender != null && attackName == "Iron Defense")
+            {
+                bool isCriticalHit = false;
+
+                // Cambiar el ataque dinámicamente en función del nombre del ataque
+                (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                defender.Defend(damage);
+
+                // Opcional: añadir animación de empuje o efectos si aplica
+                StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, attackName));
+            }
+
+            if (defender != null && attackName == "Agility")
+            {
+                bool isCriticalHit = false;
+
+                // Cambiar el ataque dinámicamente en función del nombre del ataque
+                (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                defender.Defend(damage);
+
+                // Opcional: añadir animación de empuje o efectos si aplica
+                StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, attackName));
+            }
+
+            if (defender != null && attackName == "Harden")
+            {
+                bool isCriticalHit = false;
+
+                // Cambiar el ataque dinámicamente en función del nombre del ataque
+                (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                defender.Defend(damage);
+
+                // Opcional: añadir animación de empuje o efectos si aplica
+                StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, attackName));
+            }
+
+            if (defender != null && attackName == "Quiver Dance")
+            {
+                bool isCriticalHit = false;
+
+                // Cambiar el ataque dinámicamente en función del nombre del ataque
+                (isCriticalHit, damage) = ApplyAttack(attacker, defender, GetAttackByName(attackName));
+                defender.Defend(damage);
+
+                // Opcional: añadir animación de empuje o efectos si aplica
+                StartCoroutine(PushPokemon(defender, attacker.transform.position, attackPrefab, isCriticalHit, attackName));
+            }
+
             // Instanciar el efecto en el tile afectado según el ataque
             GameObject effectPrefab = GetEffectPrefab(attackName); // Cambiar el prefab según el nombre del ataque
             if (effectPrefab != null)
@@ -613,8 +1234,6 @@ public class AttackCatalog : MonoBehaviour
         }
     }
 }
-
-
 
     private (bool, int) CalculateSpecialDamage(PokemonBase attacker, PokemonBase defender, Attack attack)
     {
@@ -744,8 +1363,19 @@ public class AttackCatalog : MonoBehaviour
                                     
                                     yield return StartCoroutine(PushPokemon(defender, originalAttackerPosition, attackPrefab, isCriticalHit, attackName));
                                     
-                                    //Debug.Log("ESPARRAGO PREVIO- MUST SHOW 2nd LAST - WaitForUserClick attacker.Attack(GetAttackByName(attackName)): " + attackName);
-                                    attacker.Attack(GetAttackByName(attackName), 0);
+                                    if(attackName == "Take Down")
+                                    {
+                                        attacker.Attack(GetAttackByName(attackName), (int)(0.25f * damage));
+
+                                    }
+                                    else if(attackName == "Wave Crash" || attackName == "Double-Edge")
+                                    {
+                                        attacker.Attack(GetAttackByName(attackName), (int)(0.33f * damage));
+                                    }
+                                    else
+                                    {
+                                        attacker.Attack(GetAttackByName(attackName), 0);
+                                    }
                                     
                                     //Debug.Log("ESPARRAGO - MUST SHOW LAST & should be same value as before - WaitForUserClick defender.Defend(damage): " + damage);
                                     defender.Defend(damage);
@@ -926,6 +1556,7 @@ private GameObject GetEffectPrefab(string attackName)
             return tileEffectInstance.staticEffectPrefab; // Usa la instancia
         case "Thunder Bolt":
             return tileEffectInstance.staticEffectPrefab; // Usa la instancia
+        
         // Agrega más casos según sea necesario
         default:
             return null;
@@ -1675,7 +2306,7 @@ public void Discharge(PokemonBase attacker)
     Debug.Log("Stamina to Consume: " + staminaCostInt);
 
 
-    // No necesitamos esperar un clic del usuario para Heat Wave, solo ejecutamos el daño en área
+    // No necesitamos esperar un clic del usuario para Discharge, solo ejecutamos el daño en área
     ApplyAOEDamage(attacker, nuzzlePrefab, attackPositions, "Discharge");
     attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
     DestroyAttackTiles();
@@ -1817,11 +2448,2205 @@ public void ThunderBolt(PokemonBase attacker)
 
 #endregion
 
+#region Growl
+public void Growl(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Growl!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
 
 
+    // No necesitamos esperar un clic del usuario para Growl, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Growl");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Smokescreen
+public void Smokescreen(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Smokescreen!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
 
 
+    // No necesitamos esperar un clic del usuario para Smokescreen, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Smokescreen");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
 
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Tail Whip
+public void TailWhip(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Tail Whip!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Smokescreen, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Tail Whip");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Withdraw
+public void Withdraw(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Withdraw!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Smokescreen, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, growlPrefab, attackPositions, "Withdraw");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Charm
+public void Charm(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Charm!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Growl, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Charm");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Nasty Plot
+public void NastyPlot(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Nasty Plot!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Smokescreen, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, growlPrefab, attackPositions, "Nasty Plot");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+#endregion
+
+#region Play Nice
+public void PlayNice(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Play Nice!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Play Nice, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Play Nice");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+#endregion
+
+#region Sweet Kiss
+public void SweetKiss(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Sweet Kiss!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Sweet Kiss, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Sweet Kiss");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Thunder Wave
+public void ThunderWave(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Thunder Wave!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Growl, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, nuzzlePrefab, attackPositions, "Thunder Wave");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Double Team
+public void DoubleTeam(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Double Team!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Smokescreen, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, growlPrefab, attackPositions, "Double Team");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Sand Attack
+public void SandAttack(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Sand Attack!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Smokescreen, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Sand Attack");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Growth
+public void Growth(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Growth!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Smokescreen, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, growlPrefab, attackPositions, "Growth");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Razor Leaf
+public void RazorLeaf(PokemonBase attacker)
+    {
+        Debug.Log($"{attacker.pokemonName} use Razor Leaf!");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0),  // Abajo
+            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
+            attackerPosition + new Vector3(1, 1, 0),  // Derecha
+            attackerPosition + new Vector3(1, -1, 0),  // Arriba
+            attackerPosition + new Vector3(-1, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Razor Leaf", vineWhipPrefab, staminaCostInt));
+    }
+
+#endregion
+
+#region Poison Powder
+public void PoisonPowder(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Poison Powder!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Poison Powder, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Poison Powder");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Sleep Powder
+public void SleepPowder(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Sleep Powder!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Sleep Powder, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Sleep Powder");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Bite
+public void Bite(PokemonBase attacker)
+    {
+        Debug.Log($"{attacker.pokemonName} use Bite!");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0),  // Abajo
+            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
+            attackerPosition + new Vector3(1, 1, 0),  // Derecha
+            attackerPosition + new Vector3(1, -1, 0),  // Arriba
+            attackerPosition + new Vector3(-1, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Bite", scratchPrefab, staminaCostInt));
+    }
+
+#endregion
+
+#region Water Pulse
+public void WaterPulse(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Water Pulse!");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return;
+    }
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v * 2;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Water Pulse, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, waterGunPrefab, attackPositions, "Water Pulse");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+}
+#endregion
+
+#region Seed Bomb
+public void SeedBomb(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Seed Bomb!");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
+
+    // Lista para guardar posiciones válidas de ataque
+    List<Vector3> validAttackPositions = new List<Vector3>();
+
+    // Direcciones ortogonales y diagonales
+    List<Vector3> directions = new List<Vector3>
+    {
+        new Vector3(-1, 0, 0),  // Izquierda
+        new Vector3(1, 0, 0),   // Derecha
+        new Vector3(0, 1, 0),   // Arriba
+        new Vector3(0, -1, 0),  // Abajo
+        new Vector3(-1, 1, 0),  // Diagonal arriba-izquierda
+        new Vector3(1, 1, 0),   // Diagonal arriba-derecha
+        new Vector3(-1, -1, 0), // Diagonal abajo-izquierda
+        new Vector3(1, -1, 0)   // Diagonal abajo-derecha
+    };
+
+    // Añadir los tiles alrededor (distancia 1)
+    foreach (var direction in directions)
+    {
+        Vector3 tilePos = attackerPosition + direction;
+
+        if (IsWithinMapBounds(tilePos) && !IsTileBlocked(tilePos))
+        {
+            validAttackPositions.Add(tilePos);
+        }
+    }
+
+    // Añadir los tiles adicionales en las direcciones ortogonales (distancia 2)
+    foreach (var direction in directions.GetRange(0, 4)) // Solo las direcciones ortogonales
+    {
+        Vector3 secondTilePos = attackerPosition + (direction * 2);
+
+        if (IsWithinMapBounds(secondTilePos) && !IsTileBlocked(secondTilePos))
+        {
+            validAttackPositions.Add(secondTilePos);
+        }
+    }
+
+    // Instanciar el prefab en las posiciones de ataque válidas
+    foreach (var position in validAttackPositions)
+    {
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+        // Obtener el componente TileAttack para configurar propiedades adicionales si es necesario
+        TileAttack tileAttack = tile.GetComponent<TileAttack>();
+    }
+
+    // Calcular el costo de stamina
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+    // Ahora, espera la interacción del usuario
+    StartCoroutine(WaitForUserClick(validAttackPositions, attacker, "Seed Bomb", vineWhipPrefab, staminaCostInt));
+}
+#endregion
+
+#region Take Down
+public void TakeDown(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} use Take Down!");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (direcciones ortogonales, como en ajedrez con la torre)
+    List<Vector3> directions = new List<Vector3>
+    {
+        new Vector3(-1, 0, 0), // Izquierda
+        new Vector3(1, 0, 0),  // Derecha
+        new Vector3(0, 1, 0),  // Arriba
+        new Vector3(0, -1, 0)  // Abajo
+    };
+
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
+
+    // Lista para guardar posiciones válidas de ataque
+    List<Vector3> validAttackPositions = new List<Vector3>();
+
+    // Iterar sobre cada dirección y verificar los tiles en esa dirección
+    foreach (var direction in directions)
+    {
+        // Verificar el primer tile (distancia 1)
+        Vector3 firstTile = attackerPosition + direction;
+        
+        // Comprobar si el primer tile está dentro del mapa
+        if (IsWithinMapBounds(firstTile))
+        {
+            // Comprobar si hay un objeto o un Pokémon en el primer tile
+            bool isTileBlockedByObject = IsTileBlocked(firstTile);  // Para objetos
+            bool isTileBlockedByPokemon = IsPokemonInTile(firstTile); // Nueva función para detectar Pokémon
+
+            if (!isTileBlockedByObject)
+            {
+                // Instanciar el tile de ataque si no está bloqueado por objeto (si hay Pokémon, sí se instancia)
+                validAttackPositions.Add(firstTile);
+
+                // Verificar el segundo tile (distancia 2), solo si el primer tile no está bloqueado por objeto
+                if (!isTileBlockedByPokemon) // Solo continuamos si no hay un Pokémon
+                {
+                    Vector3 secondTile = attackerPosition + (direction * 2);
+                    if (IsWithinMapBounds(secondTile) && !IsTileBlocked(secondTile))
+                    {
+                        validAttackPositions.Add(secondTile);
+                    }
+                }
+            }
+        }
+    }
+
+    // Instanciar el prefab en las posiciones de ataque válidas
+    foreach (var position in validAttackPositions)
+    {
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+        // Obtener el componente TileAttack para configurar propiedades adicionales si es necesario
+        TileAttack tileAttack = tile.GetComponent<TileAttack>();
+    }
+
+    // Calcular el costo de stamina del ataque
+    float staminaCost = attacker.mass / attacker.agility * attacker.t;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+    // Esperar la interacción del usuario
+    StartCoroutine(WaitForUserClick(validAttackPositions, attacker, "Take Down", tacklePrefab, staminaCostInt));
+}
+#endregion
+
+#region Sweet Scent
+public void SweetScent(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Sweet Scent!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Sweet Scent, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Sweet Scent");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Slash
+public void Slash(PokemonBase attacker)
+    {
+        Debug.Log($"{attacker.pokemonName} use Slash!");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0),  // Abajo
+            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
+            attackerPosition + new Vector3(1, 1, 0),  // Derecha
+            attackerPosition + new Vector3(1, -1, 0),  // Arriba
+            attackerPosition + new Vector3(-1, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Slash", scratchPrefab, staminaCostInt));
+    }
+
+#endregion
+
+#region Scary Face
+public void ScaryFace(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Scary Face!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Growl, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Scary Face");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+#endregion
+
+#region Aqua Tail
+public void AquaTail(PokemonBase attacker)
+    {
+        Debug.Log($"{attacker.pokemonName} use Aqua Tail!");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0),  // Abajo
+            
+            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
+            attackerPosition + new Vector3(1, 1, 0),  // Derecha
+            attackerPosition + new Vector3(1, -1, 0),  // Arriba
+            attackerPosition + new Vector3(-1, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                //Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        float staminaCost = attacker.mass * attacker.agility * attacker.s;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Aqua Tail", waterGunPrefab, staminaCostInt));
+    }
+
+#endregion
+
+#region Shell Smash
+public void ShellSmash(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Shell Smash!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Smokescreen, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, growlPrefab, attackPositions, "Shell Smash");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Iron Defense
+public void IronDefense(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Iron Defense!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Iron Defense, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, growlPrefab, attackPositions, "Iron Defense");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+#endregion
+
+#region Wave Crash
+public void WaveCrash(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Wave Crash!");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
+
+    // Lista para guardar posiciones válidas de ataque
+    List<Vector3> validAttackPositions = new List<Vector3>();
+
+    // Direcciones ortogonales y diagonales
+    List<Vector3> directions = new List<Vector3>
+    {
+        new Vector3(-1, 0, 0),  // Izquierda
+        new Vector3(1, 0, 0),   // Derecha
+        new Vector3(0, 1, 0),   // Arriba
+        new Vector3(0, -1, 0),  // Abajo
+        new Vector3(-1, 1, 0),  // Diagonal arriba-izquierda
+        new Vector3(1, 1, 0),   // Diagonal arriba-derecha
+        new Vector3(-1, -1, 0), // Diagonal abajo-izquierda
+        new Vector3(1, -1, 0)   // Diagonal abajo-derecha
+    };
+
+    // Añadir los tiles alrededor (distancia 1)
+    foreach (var direction in directions)
+    {
+        Vector3 tilePos = attackerPosition + direction;
+
+        if (IsWithinMapBounds(tilePos) && !IsTileBlocked(tilePos))
+        {
+            validAttackPositions.Add(tilePos);
+        }
+    }
+
+    // Añadir los tiles adicionales en las direcciones ortogonales (distancia 2)
+    foreach (var direction in directions.GetRange(0, 4)) // Solo las direcciones ortogonales
+    {
+        Vector3 secondTilePos = attackerPosition + (direction * 2);
+
+        if (IsWithinMapBounds(secondTilePos) && !IsTileBlocked(secondTilePos))
+        {
+            validAttackPositions.Add(secondTilePos);
+        }
+    }
+
+    // Instanciar el prefab en las posiciones de ataque válidas
+    foreach (var position in validAttackPositions)
+    {
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+        // Obtener el componente TileAttack para configurar propiedades adicionales si es necesario
+        TileAttack tileAttack = tile.GetComponent<TileAttack>();
+    }
+
+    // Calcular el costo de stamina
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+    // Ahora, espera la interacción del usuario
+    StartCoroutine(WaitForUserClick(validAttackPositions, attacker, "Wave Crash", waterGunPrefab, staminaCostInt));
+}
+#endregion
+
+#region Agility
+public void Agility(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Agility!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Smokescreen, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, growlPrefab, attackPositions, "Agility");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+#endregion
+
+#region Double-Edge
+public void DoubleEdge(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} use Double Edge!");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (direcciones ortogonales, como en ajedrez con la torre)
+    List<Vector3> directions = new List<Vector3>
+    {
+        new Vector3(-1, 0, 0), // Izquierda
+        new Vector3(1, 0, 0),  // Derecha
+        new Vector3(0, 1, 0),  // Arriba
+        new Vector3(0, -1, 0)  // Abajo
+    };
+
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
+
+    // Lista para guardar posiciones válidas de ataque
+    List<Vector3> validAttackPositions = new List<Vector3>();
+
+    // Iterar sobre cada dirección y verificar los tiles en esa dirección
+    foreach (var direction in directions)
+    {
+        // Verificar el primer tile (distancia 1)
+        Vector3 firstTile = attackerPosition + direction;
+        
+        // Comprobar si el primer tile está dentro del mapa
+        if (IsWithinMapBounds(firstTile))
+        {
+            // Comprobar si hay un objeto o un Pokémon en el primer tile
+            bool isTileBlockedByObject = IsTileBlocked(firstTile);  // Para objetos
+            bool isTileBlockedByPokemon = IsPokemonInTile(firstTile); // Nueva función para detectar Pokémon
+
+            if (!isTileBlockedByObject)
+            {
+                // Instanciar el tile de ataque si no está bloqueado por objeto (si hay Pokémon, sí se instancia)
+                validAttackPositions.Add(firstTile);
+
+                // Verificar el segundo tile (distancia 2), solo si el primer tile no está bloqueado por objeto
+                if (!isTileBlockedByPokemon) // Solo continuamos si no hay un Pokémon
+                {
+                    Vector3 secondTile = attackerPosition + (direction * 2);
+                    if (IsWithinMapBounds(secondTile) && !IsTileBlocked(secondTile))
+                    {
+                        validAttackPositions.Add(secondTile);
+                    }
+                }
+            }
+        }
+    }
+
+    // Instanciar el prefab en las posiciones de ataque válidas
+    foreach (var position in validAttackPositions)
+    {
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+        // Obtener el componente TileAttack para configurar propiedades adicionales si es necesario
+        TileAttack tileAttack = tile.GetComponent<TileAttack>();
+    }
+
+    // Calcular el costo de stamina del ataque
+    float staminaCost = attacker.mass / attacker.agility * attacker.t;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+    // Esperar la interacción del usuario
+    StartCoroutine(WaitForUserClick(validAttackPositions, attacker, "Double-Edge", tacklePrefab, staminaCostInt));
+}
+#endregion
+
+#region Power Whip
+public void PowerWhip(PokemonBase attacker)
+    {
+        Debug.Log($"{attacker.pokemonName} use Power Whip!");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (direcciones ortogonales, como en ajedrez con la torre)
+    List<Vector3> directions = new List<Vector3>
+    {
+        new Vector3(-1, 0, 0), // Izquierda
+        new Vector3(1, 0, 0),  // Derecha
+        new Vector3(0, 1, 0),  // Arriba
+        new Vector3(0, -1, 0)  // Abajo
+    };
+
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
+
+    // Lista para guardar posiciones válidas de ataque
+    List<Vector3> validAttackPositions = new List<Vector3>();
+
+    // Iterar sobre cada dirección y verificar los tiles en esa dirección
+    foreach (var direction in directions)
+    {
+        // Verificar el primer tile (distancia 1)
+        Vector3 firstTile = attackerPosition + direction;
+        
+        // Comprobar si el primer tile está dentro del mapa
+        if (IsWithinMapBounds(firstTile))
+        {
+            // Comprobar si hay un objeto o un Pokémon en el primer tile
+            bool isTileBlockedByObject = IsTileBlocked(firstTile);  // Para objetos
+            bool isTileBlockedByPokemon = IsPokemonInTile(firstTile); // Nueva función para detectar Pokémon
+
+            if (!isTileBlockedByObject)
+            {
+                // Instanciar el tile de ataque si no está bloqueado por objeto (si hay Pokémon, sí se instancia)
+                validAttackPositions.Add(firstTile);
+
+                // Verificar el segundo tile (distancia 2), solo si el primer tile no está bloqueado por objeto
+                if (!isTileBlockedByPokemon) // Solo continuamos si no hay un Pokémon
+                {
+                    Vector3 secondTile = attackerPosition + (direction * 2);
+                    if (IsWithinMapBounds(secondTile) && !IsTileBlocked(secondTile))
+                    {
+                        validAttackPositions.Add(secondTile);
+                    }
+                }
+            }
+        }
+    }
+
+    // Instanciar el prefab en las posiciones de ataque válidas
+    foreach (var position in validAttackPositions)
+    {
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+        // Obtener el componente TileAttack para configurar propiedades adicionales si es necesario
+        TileAttack tileAttack = tile.GetComponent<TileAttack>();
+    }
+
+        float staminaCost = attacker.mass * attacker.v;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(validAttackPositions, attacker, "Power Whip", vineWhipPrefab, staminaCostInt));
+    }
+
+#endregion
+
+#region Feather Dance
+public void FeatherDance(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Feather Dance!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Growl, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Feather Dance");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+#endregion
+
+#region Wing Attack
+public void WingAttack(PokemonBase attacker)
+    {
+        Debug.Log($"{attacker.pokemonName} use Wing Attack!");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0),  // Abajo
+            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
+            attackerPosition + new Vector3(1, 1, 0),  // Derecha
+            attackerPosition + new Vector3(1, -1, 0),  // Arriba
+            attackerPosition + new Vector3(-1, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Wing Attack", scratchPrefab, staminaCostInt));
+    }
+
+#endregion
+
+#region Air Slash
+public void AirSlash(PokemonBase attacker)
+    {
+        Debug.Log($"{attacker.pokemonName} use Air Slash!");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0),  // Abajo
+            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
+            attackerPosition + new Vector3(1, 1, 0),  // Derecha
+            attackerPosition + new Vector3(1, -1, 0),  // Arriba
+            attackerPosition + new Vector3(-1, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Air Slash", scratchPrefab, staminaCostInt));
+    }
+
+#endregion
+
+#region String Shot
+public void StringShot(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} use String Shot!");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (direcciones ortogonales, como en ajedrez con la torre)
+    List<Vector3> directions = new List<Vector3>
+    {
+        new Vector3(-1, 0, 0), // Izquierda
+        new Vector3(1, 0, 0),  // Derecha
+        new Vector3(0, 1, 0),  // Arriba
+        new Vector3(0, -1, 0)  // Abajo
+    };
+
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
+
+    // Lista para guardar posiciones válidas de ataque
+    List<Vector3> validAttackPositions = new List<Vector3>();
+
+    // Iterar sobre cada dirección y verificar los tiles en esa dirección
+    foreach (var direction in directions)
+    {
+        // Verificar el primer tile (distancia 1)
+        Vector3 firstTile = attackerPosition + direction;
+        
+        // Comprobar si el primer tile está dentro del mapa
+        if (IsWithinMapBounds(firstTile))
+        {
+            // Comprobar si hay un objeto o un Pokémon en el primer tile
+            bool isTileBlockedByObject = IsTileBlocked(firstTile);  // Para objetos
+            bool isTileBlockedByPokemon = IsPokemonInTile(firstTile); // Nueva función para detectar Pokémon
+
+            if (!isTileBlockedByObject)
+            {
+                // Instanciar el tile de ataque si no está bloqueado por objeto (si hay Pokémon, sí se instancia)
+                validAttackPositions.Add(firstTile);
+
+                // Verificar el segundo tile (distancia 2), solo si el primer tile no está bloqueado por objeto
+                if (!isTileBlockedByPokemon) // Solo continuamos si no hay un Pokémon
+                {
+                    Vector3 secondTile = attackerPosition + (direction * 2);
+                    if (IsWithinMapBounds(secondTile) && !IsTileBlocked(secondTile))
+                    {
+                        validAttackPositions.Add(secondTile);
+                    }
+                }
+            }
+        }
+    }
+
+    // Instanciar el prefab en las posiciones de ataque válidas
+    foreach (var position in validAttackPositions)
+    {
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+        // Obtener el componente TileAttack para configurar propiedades adicionales si es necesario
+        TileAttack tileAttack = tile.GetComponent<TileAttack>();
+    }
+
+    // Calcular el costo de stamina del ataque
+    float staminaCost = attacker.mass / attacker.agility * attacker.t;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+    // Esperar la interacción del usuario
+    StartCoroutine(WaitForUserClick(validAttackPositions, attacker, "String Shot", smokescreenPrefab, staminaCostInt));
+}
+
+#endregion
+
+#region Poison Sting
+public void PoisonSting(PokemonBase attacker)
+    {
+        Debug.Log($"{attacker.pokemonName} use Poison Sting!");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0),  // Abajo
+            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
+            attackerPosition + new Vector3(1, 1, 0),  // Derecha
+            attackerPosition + new Vector3(1, -1, 0),  // Arriba
+            attackerPosition + new Vector3(-1, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Poison Sting", scratchPrefab, staminaCostInt));
+    }
+
+#endregion
+
+#region Harden
+public void Harden(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Harden!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Smokescreen, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, growlPrefab, attackPositions, "Harden");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Supersonic
+public void Supersonic(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} use Supersonic!");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir las direcciones de ataque y el rango (3 cuadros alrededor del atacante)
+    Vector3[] directions = 
+    {
+        new Vector3(-1, 0, 0), // Izquierda
+        new Vector3(1, 0, 0),  // Derecha
+        new Vector3(0, 1, 0),  // Arriba
+        new Vector3(0, -1, 0)  // Abajo
+    };
+
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
+
+    // Recorrer cada dirección para un rango de 3 tiles
+    foreach (var direction in directions)
+    {
+        for (int i = 1; i <= 3; i++) // Rango de 3 cuadros
+        {
+            Vector3 currentPos = attackerPosition + direction * i;
+
+            // Comprobar si la posición está dentro de los límites del mapa
+            if (!IsWithinMapBounds(currentPos))
+            {
+                //Debug.LogWarning($"Position {currentPos} is out of map bounds, skipping instantiation.");
+                break; // Detenerse si la posición está fuera de los límites
+            }
+
+            // Verificar si el tile está bloqueado por un objeto
+            if (IsTileBlocked(currentPos))
+            {
+                //Debug.LogWarning($"Position {currentPos} is blocked by an object, skipping subsequent tiles in this direction.");
+                break; // Detenerse en esta dirección si está bloqueado por un objeto
+            }
+
+            // Instanciar el prefab del tile en la posición actual
+            GameObject tile = Instantiate(attackTilePrefab, currentPos, Quaternion.identity);
+            instantiatedTiles.Add(currentPos, tile.GetComponent<TileAttack>());
+
+            // Verificar si hay un Pokémon en el tile
+            if (IsPokemonInTile(currentPos))
+            {
+                //Debug.Log($"Pokemon detected at {currentPos}, skipping subsequent tiles in this direction.");
+                break; // Detenerse si hay un Pokémon, pero igual instanciar el tile
+            }
+        }
+    }
+
+    // Calcular el costo de stamina
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+    // Ahora, espera la interacción del usuario
+    StartCoroutine(WaitForUserClick(new List<Vector3>(instantiatedTiles.Keys), attacker, "Supersonic", smokescreenPrefab, staminaCostInt));
+}
+
+
+#endregion
+
+#region Confusion
+public void Confusion(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} use Confusion!");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir las direcciones de ataque y el rango (3 cuadros alrededor del atacante)
+    Vector3[] directions = 
+    {
+        new Vector3(-1, 0, 0), // Izquierda
+        new Vector3(1, 0, 0),  // Derecha
+        new Vector3(0, 1, 0),  // Arriba
+        new Vector3(0, -1, 0)  // Abajo
+    };
+
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
+
+    // Recorrer cada dirección para un rango de 3 tiles
+    foreach (var direction in directions)
+    {
+        for (int i = 1; i <= 3; i++) // Rango de 3 cuadros
+        {
+            Vector3 currentPos = attackerPosition + direction * i;
+
+            // Comprobar si la posición está dentro de los límites del mapa
+            if (!IsWithinMapBounds(currentPos))
+            {
+                //Debug.LogWarning($"Position {currentPos} is out of map bounds, skipping instantiation.");
+                break; // Detenerse si la posición está fuera de los límites
+            }
+
+            // Verificar si el tile está bloqueado por un objeto
+            if (IsTileBlocked(currentPos))
+            {
+                //Debug.LogWarning($"Position {currentPos} is blocked by an object, skipping subsequent tiles in this direction.");
+                break; // Detenerse en esta dirección si está bloqueado por un objeto
+            }
+
+            // Instanciar el prefab del tile en la posición actual
+            GameObject tile = Instantiate(attackTilePrefab, currentPos, Quaternion.identity);
+            instantiatedTiles.Add(currentPos, tile.GetComponent<TileAttack>());
+
+            // Verificar si hay un Pokémon en el tile
+            if (IsPokemonInTile(currentPos))
+            {
+                //Debug.Log($"Pokemon detected at {currentPos}, skipping subsequent tiles in this direction.");
+                break; // Detenerse si hay un Pokémon, pero igual instanciar el tile
+            }
+        }
+    }
+
+    // Calcular el costo de stamina
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+    // Ahora, espera la interacción del usuario
+    StartCoroutine(WaitForUserClick(new List<Vector3>(instantiatedTiles.Keys), attacker, "Confusion", smokescreenPrefab, staminaCostInt));
+}
+
+
+#endregion
+
+#region Stun Spore
+public void StunSpore(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Stun Spore!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+        attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+        attackerPosition + new Vector3(1, 0, 0),  // Derecha
+        attackerPosition + new Vector3(0, 1, 0),  // Arriba
+        attackerPosition + new Vector3(0, -1, 0),  // Abajo
+        attackerPosition + new Vector3(-1, 1, 0), // Izquierda Arriba
+        attackerPosition + new Vector3(1, 1, 0),  // Derecha Arriba
+        attackerPosition + new Vector3(1, -1, 0),  // Derecha Abajo
+        attackerPosition + new Vector3(-1, -1, 0)  // Izquierda Abajo
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Stun Spore, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, smokescreenPrefab, attackPositions, "Stun Spore");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Psybeam
+public void Psybeam(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} use Psybeam!");
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir las direcciones de ataque y el rango (3 cuadros alrededor del atacante)
+    Vector3[] directions = 
+    {
+        new Vector3(-1, 0, 0), // Izquierda
+        new Vector3(1, 0, 0),  // Derecha
+        new Vector3(0, 1, 0),  // Arriba
+        new Vector3(0, -1, 0)  // Abajo
+    };
+
+    // Verificar si el prefab está referenciado correctamente
+    if (attackTilePrefab == null)
+    {
+        Debug.LogError("tilePrefab is not assigned!");
+        return; // Salir si el prefab no está asignado
+    }
+
+    // Recorrer cada dirección para un rango de 3 tiles
+    foreach (var direction in directions)
+    {
+        for (int i = 1; i <= 3; i++) // Rango de 3 cuadros
+        {
+            Vector3 currentPos = attackerPosition + direction * i;
+
+            // Comprobar si la posición está dentro de los límites del mapa
+            if (!IsWithinMapBounds(currentPos))
+            {
+                //Debug.LogWarning($"Position {currentPos} is out of map bounds, skipping instantiation.");
+                break; // Detenerse si la posición está fuera de los límites
+            }
+
+            // Verificar si el tile está bloqueado por un objeto
+            if (IsTileBlocked(currentPos))
+            {
+                //Debug.LogWarning($"Position {currentPos} is blocked by an object, skipping subsequent tiles in this direction.");
+                break; // Detenerse en esta dirección si está bloqueado por un objeto
+            }
+
+            // Instanciar el prefab del tile en la posición actual
+            GameObject tile = Instantiate(attackTilePrefab, currentPos, Quaternion.identity);
+            instantiatedTiles.Add(currentPos, tile.GetComponent<TileAttack>());
+
+            // Verificar si hay un Pokémon en el tile
+            if (IsPokemonInTile(currentPos))
+            {
+                //Debug.Log($"Pokemon detected at {currentPos}, skipping subsequent tiles in this direction.");
+                break; // Detenerse si hay un Pokémon, pero igual instanciar el tile
+            }
+        }
+    }
+
+    // Calcular el costo de stamina
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+    // Ahora, espera la interacción del usuario
+    StartCoroutine(WaitForUserClick(new List<Vector3>(instantiatedTiles.Keys), attacker, "Psybeam", smokescreenPrefab, staminaCostInt));
+}
+
+
+#endregion
+
+#region Quiver Dance
+public void QuiverDance(PokemonBase attacker)
+{
+    Debug.Log($"{attacker.pokemonName} uses Quiver Dance!");
+
+    Vector3 attackerPosition = attacker.transform.position;
+
+    // Definir los rangos de alcance (8 casillas alrededor del atacante)
+    List<Vector3> attackPositions = new List<Vector3>
+    {
+        attackerPosition, // Posición del atacante (0,0)
+    };
+
+    // Instanciar el prefab en las posiciones de ataque
+    foreach (var position in attackPositions)
+    {
+        if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+        {
+            continue;
+        }
+
+        GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+        instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+    }
+
+    float staminaCost = attacker.mass * attacker.v;
+    staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+    int staminaCostInt = Mathf.RoundToInt(staminaCost);
+    Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+
+    // No necesitamos esperar un clic del usuario para Quiver Dance, solo ejecutamos el daño en área
+    ApplyAOEDamage(attacker, growlPrefab, attackPositions, "Quiver Dance");
+    attacker.stamina = Mathf.Clamp(attacker.stamina - staminaCostInt, 0, 100);
+    DestroyAttackTiles();
+
+    // No hay costo de energía o stamina para este ataque, ya que es de estado
+}
+
+#endregion
+
+#region Poison Jab
+public void PoisonJab(PokemonBase attacker)
+    {
+        Debug.Log($"{attacker.pokemonName} use Poison Jab!");
+        Vector3 attackerPosition = attacker.transform.position;
+
+        // Definir los rangos de alcance (cuadrados alrededor del atacante)
+        List<Vector3> attackPositions = new List<Vector3>
+        {
+            attackerPosition + new Vector3(-1, 0, 0), // Izquierda
+            attackerPosition + new Vector3(1, 0, 0),  // Derecha
+            attackerPosition + new Vector3(0, 1, 0),  // Arriba
+            attackerPosition + new Vector3(0, -1, 0),  // Abajo
+            attackerPosition + new Vector3(-1, 1, 0), // Izquierda
+            attackerPosition + new Vector3(1, 1, 0),  // Derecha
+            attackerPosition + new Vector3(1, -1, 0),  // Arriba
+            attackerPosition + new Vector3(-1, -1, 0)  // Abajo
+        };
+
+        // Verificar si el prefab está referenciado correctamente
+        if (attackTilePrefab == null)
+        {
+            Debug.LogError("tilePrefab is not assigned!");
+            return; // Salir si el prefab no está asignado
+        }
+
+        // Instanciar el prefab en las posiciones de ataque
+        foreach (var position in attackPositions)
+        {
+            // Comprobar si la posición está dentro de los límites del mapa o bloqueada
+            if (!(IsWithinMapBounds(position) && !IsTileBlocked(position)))
+            {
+                Debug.LogWarning($"Position {position} is out of map bounds or blocked, skipping instantiation.");
+                continue; // Saltar si está fuera de los límites
+            }
+
+            // Instancia el prefab del tile en la posición de ataque
+            GameObject tile = Instantiate(attackTilePrefab, position, Quaternion.identity);
+            instantiatedTiles.Add(position, tile.GetComponent<TileAttack>());
+
+            // Obtener el componente TileHover para cambiar el color del tile
+            TileAttack tileAttack = tile.GetComponent<TileAttack>();
+        }
+
+        float staminaCost = attacker.mass / attacker.agility * attacker.t;
+        staminaCost = Mathf.Clamp(staminaCost, 0, 100);
+        int staminaCostInt = Mathf.RoundToInt(staminaCost);
+        Debug.Log("Stamina to Consume: " + staminaCostInt);
+
+        // Ahora, espera la interacción del usuario
+        StartCoroutine(WaitForUserClick(attackPositions, attacker, "Poison Jab", scratchPrefab, staminaCostInt));
+    }
+
+#endregion
 
 }
 

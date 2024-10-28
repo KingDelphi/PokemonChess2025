@@ -143,64 +143,133 @@ public class Eevee : PokemonBase
     {
         if (Input.GetKeyDown(KeyCode.Q) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.Tackle(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.SleepPowder(this); // Aquí this se refiere a la instancia de Eevee
         }
 
         if (Input.GetKeyDown(KeyCode.W) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.VineWhip(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.Bite(this); // Aquí this se refiere a la instancia de Eevee
         }
 
         if (Input.GetKeyDown(KeyCode.E) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.Scratch(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.WaterPulse(this); // Aquí this se refiere a la instancia de Eevee
         }
 
         if (Input.GetKeyDown(KeyCode.R) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.Ember(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.SeedBomb(this); // Aquí this se refiere a la instancia de Eevee
         }
 
         if (Input.GetKeyDown(KeyCode.T) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.DragonClaw(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.TakeDown(this); // Aquí this se refiere a la instancia de Eevee
         }
 
         if (Input.GetKeyDown(KeyCode.Y) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.WaterGun(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.SweetScent(this); // Aquí this se refiere a la instancia de Eevee
         }
 
         if (Input.GetKeyDown(KeyCode.U) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.HeatWave(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.Slash(this); // Aquí this se refiere a la instancia de Eevee
         }
 
         if (Input.GetKeyDown(KeyCode.I) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.Nuzzle(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.ScaryFace(this); // Aquí this se refiere a la instancia de Eevee
         }
 
         if (Input.GetKeyDown(KeyCode.O) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.ThunderShock(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.AquaTail(this); // Aquí this se refiere a la instancia de Eevee
         }
 
         if (Input.GetKeyDown(KeyCode.P) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.Discharge(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.ShellSmash(this); // Aquí this se refiere a la instancia de Eevee
         }
 
         if (Input.GetKeyDown(KeyCode.A) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.Spark(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.IronDefense(this); // Aquí this se refiere a la instancia de Eevee
         }
 
         if (Input.GetKeyDown(KeyCode.S) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.ThunderBolt(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.WaveCrash(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.D) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.Agility(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.F) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.DoubleEdge(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.G) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.PowerWhip(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.H) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.FeatherDance(this); // Aquí this se refiere a la instancia de Eevee
         }
         
+        if (Input.GetKeyDown(KeyCode.J) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.WingAttack(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.K) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.AirSlash(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.L) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.StringShot(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.Z) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.PoisonSting(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.X) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.Harden(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.C) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.Supersonic(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.V) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.Confusion(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.B) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.QuiverDance(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.N) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.RazorLeaf(this); // Aquí this se refiere a la instancia de Eevee
+        }
+
+        if (Input.GetKeyDown(KeyCode.M) && (this == playerPokemon)) // Presionar la tecla T para atacar
+        {
+            AttackCatalog.Instance.PoisonPowder(this); // Aquí this se refiere a la instancia de Eevee
+        }
     }
 
     private void AddEggMoves()

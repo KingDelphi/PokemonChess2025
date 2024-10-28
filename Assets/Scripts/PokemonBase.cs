@@ -88,6 +88,13 @@ public class PokemonBase : MonoBehaviour
     public int enraged = 0; // Valor inicial de enraged
     public BodyParts pokemonBody; // Este debe ser public o [SerializeField]
     public bool isEsnared = false;
+    public int attackModifier = 0;
+    public int accuracyModifier = 0;
+    public int defenseModifier = 0;
+    public int specialAttackModifier = 0;
+    public int evasionModifier = 0;
+    public int speedModifier = 0;
+    public int specialDefenseModifier = 0;
 
     public PokemonBase(bool isShiny, float height, float weight, Gender gender, int pokemonNumber, int expYield, 
                       int hpIV, int atkIV, int defIV, int spAtkIV, int spDefIV, int spdIV)
@@ -659,7 +666,15 @@ public class StatusEffect
         Burn,
         Poison,
         Sleep,
-        Esnared
+        Esnared,
+        AttackEnhanced,
+        AccuracyEnhanced,
+        DefenseEnhanced,
+        SpecialAttackEnhanced,
+        EvasionEnhanced,
+        SpeedEnhanced,
+        Confuse,
+        Flinch,
     }
 
 public void ApplyStatusCondition(StatusCondition condition, float duration)
@@ -750,6 +765,90 @@ public bool HasImmunityTo(StatusCondition condition)
         return true;
 
     return false;
+}
+
+public void ApplyAttackStatModifier()
+{
+    if (attackModifier >= 0)
+    {
+        stats.currentAtk = stats.atk * (2 + attackModifier) / 2;
+    }
+    else
+    {
+        stats.currentAtk = stats.atk * 2 / (2 - attackModifier);
+    }
+}
+
+public void ApplyAccuracyStatModifier()
+{
+    if (accuracyModifier >= 0)
+    {
+        stats.currentAccuracy = stats.accuracy * (2 + accuracyModifier) / 2;
+    }
+    else
+    {
+        stats.currentAccuracy = stats.accuracy * 2 / (2 - accuracyModifier);
+    }
+}
+
+public void ApplyDefenseStatModifier()
+{
+    if (defenseModifier >= 0)
+    {
+        stats.currentDef = stats.def * (2 + defenseModifier) / 2;
+    }
+    else
+    {
+        stats.currentDef = stats.def * 2 / (2 - defenseModifier);
+    }
+}
+
+public void ApplySpecialAttackStatModifier()
+{
+    if (specialAttackModifier >= 0)
+    {
+        stats.currentSpAtk = stats.spAtk * (2 + specialAttackModifier) / 2;
+    }
+    else
+    {
+        stats.currentSpAtk = stats.spAtk * 2 / (2 - specialAttackModifier);
+    }
+}
+
+public void ApplyEvasionStatModifier()
+{
+    if (evasionModifier >= 0)
+    {
+        stats.currentEvasion = stats.evasion * (2 + evasionModifier) / 2;
+    }
+    else
+    {
+        stats.currentEvasion = stats.evasion * 2 / (2 - evasionModifier);
+    }
+}
+
+public void ApplySpeedStatModifier()
+{
+    if (speedModifier >= 0)
+    {
+        stats.currentSpd = stats.spd * (2 + speedModifier) / 2;
+    }
+    else
+    {
+        stats.currentSpd = stats.spd * 2 / (2 - speedModifier);
+    }
+}
+
+public void ApplySpecialDefenseStatModifier()
+{
+    if (specialDefenseModifier >= 0)
+    {
+        stats.currentSpDef = stats.spDef * (2 + specialDefenseModifier) / 2;
+    }
+    else
+    {
+        stats.currentSpDef = stats.spDef * 2 / (2 - specialDefenseModifier);
+    }
 }
 
 #endregion
@@ -1059,10 +1158,19 @@ public void UseItem()
         public int maxHP;
         public int hp;
         public int atk;
+        public int currentAtk;
         public int def;
+        public int currentDef;
         public int spAtk;
+        public int currentSpAtk;
         public int spDef;
+        public int currentSpDef;
         public int spd;
+        public int currentSpd;
+        public int accuracy;
+        public int currentAccuracy;
+        public int evasion;
+        public int currentEvasion;
 
         public int hpIV;
         public int atkIV;
