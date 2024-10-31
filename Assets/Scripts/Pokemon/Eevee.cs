@@ -3,6 +3,8 @@ using System.Collections.Generic;
 
 public class Eevee : PokemonBase
 {
+    private AttackSelectionUI attackSelectionUI; // Cambiado a privado
+
     
     public Eevee() : base(false, 0, 0, Gender.Male, 0, 0, 0, 0, 0, 0, 0, 0)
     {
@@ -106,22 +108,22 @@ public class Eevee : PokemonBase
         attackCatalog.InitializeAttacks();
 
         // Inicialización de ataques de Eevee
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Covet"), 1)); // Aprendido en nivel 1
+        //attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Covet"), 1)); // Aprendido en nivel 1
         attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Growl"), 1)); // Aprendido en nivel 1
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Helping Hand"), 1)); // Aprendido en nivel 1
+        //attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Helping Hand"), 1)); // Aprendido en nivel 1
         attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Tackle"), 1)); // Aprendido en nivel 1
         attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Tail Whip"), 1)); // Aprendido en nivel 1
         attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Sand Attack"), 5)); // Aprendido en nivel 5
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Quick Attack"), 10)); // Aprendido en nivel 10
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Baby-Doll Eyes"), 15)); // Aprendido en nivel 15
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Swift"), 20)); // Aprendido en nivel 20
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Bite"), 25)); // Aprendido en nivel 25
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Copycat"), 30)); // Aprendido en nivel 30
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Baton Pass"), 35)); // Aprendido en nivel 35
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Take Down"), 40)); // Aprendido en nivel 40
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Charm"), 45)); // Aprendido en nivel 45
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Double-Edge"), 50)); // Aprendido en nivel 50
-        attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Last Resort"), 55)); // Aprendido en nivel 55
+        // attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Quick Attack"), 10)); // Aprendido en nivel 10
+        // attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Baby-Doll Eyes"), 15)); // Aprendido en nivel 15
+        // attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Swift"), 20)); // Aprendido en nivel 20
+        // attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Bite"), 25)); // Aprendido en nivel 25
+        // attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Copycat"), 30)); // Aprendido en nivel 30
+        // attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Baton Pass"), 35)); // Aprendido en nivel 35
+        // attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Take Down"), 40)); // Aprendido en nivel 40
+        // attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Charm"), 45)); // Aprendido en nivel 45
+        // attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Double-Edge"), 50)); // Aprendido en nivel 50
+        // attackList.Add(new LearnedAttack(AttackCatalog.GetAttackByName("Last Resort"), 55)); // Aprendido en nivel 55
 
         // Añadir movimientos por huevo
         AddEggMoves();
@@ -143,132 +145,7 @@ public class Eevee : PokemonBase
     {
         if (Input.GetKeyDown(KeyCode.Q) && (this == playerPokemon)) // Presionar la tecla T para atacar
         {
-            AttackCatalog.Instance.SleepPowder(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.W) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.Bite(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.E) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.WaterPulse(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.R) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.SeedBomb(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.T) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.TakeDown(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.Y) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.SweetScent(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.U) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.Slash(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.I) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.ScaryFace(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.O) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.AquaTail(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.P) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.ShellSmash(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.A) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.IronDefense(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.S) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.WaveCrash(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.D) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.Agility(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.F) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.DoubleEdge(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.G) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.PowerWhip(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.H) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.FeatherDance(this); // Aquí this se refiere a la instancia de Eevee
-        }
-        
-        if (Input.GetKeyDown(KeyCode.J) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.WingAttack(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.K) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.AirSlash(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.L) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.StringShot(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.Z) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.PoisonSting(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.X) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.Harden(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.C) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.Supersonic(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.V) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.Confusion(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.B) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.QuiverDance(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.N) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.RazorLeaf(this); // Aquí this se refiere a la instancia de Eevee
-        }
-
-        if (Input.GetKeyDown(KeyCode.M) && (this == playerPokemon)) // Presionar la tecla T para atacar
-        {
-            AttackCatalog.Instance.PoisonPowder(this); // Aquí this se refiere a la instancia de Eevee
+            AttackCatalog.Instance.Tackle(this); // Aquí this se refiere a la instancia de Eevee
         }
     }
 

@@ -23,6 +23,17 @@ public class PokedexUIController : MonoBehaviour
     private PokemonBase selectedPokemon;
     private TrainerBase selectedTrainer;
 
+    public GameObject attackPanel;
+
+    public void ToggleAttackPanel()
+    {
+        if (attackPanel != null)
+        {
+            // Cambia el estado activo del panel a lo contrario de su estado actual
+            attackPanel.SetActive(!attackPanel.activeSelf);
+        }
+    }
+
 
     // Este método será llamado cuando selecciones un Pokémon
     public void UpdatePokedex(object entity)

@@ -37,6 +37,9 @@ public class PokemonMovement : MonoBehaviour
     private PokedexUIController pokedexUIController;
     public PokemonBase.StatusCondition statusCondition;
 
+    private AttackSelectionUI attackSelectionUI;
+
+
 
 
 
@@ -500,6 +503,29 @@ private bool IsWithinMapBounds(Vector3 position)
     else
     {
         Debug.LogError("No se pudo encontrar el componente PokemonBase o PokedexUIController.");
+    }
+
+    if (pokemon != null)
+    {
+        // Si el AttackSelectionUI está desactivado, intenta encontrarlo
+        if (attackSelectionUI == null)
+        {
+            attackSelectionUI = FindObjectOfType<AttackSelectionUI>(true); // Incluye objetos inactivos en la búsqueda
+        }
+
+        // Actualiza AttackSelectionUI con los ataques del Pokémon si se encontró
+        if (attackSelectionUI != null)
+        {
+            attackSelectionUI.UpdateAttackInfo(pokemon.attackList);
+        }
+        else
+        {
+            Debug.LogWarning("No se pudo encontrar AttackSelectionUI en la escena o no está asignado.");
+        }
+    }
+    else
+    {
+        Debug.LogWarning("No se encontró PokemonBase en el objeto seleccionado.");
     }
 
     if (!pokemon.isSelectedForAttack)
