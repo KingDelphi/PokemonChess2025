@@ -28,6 +28,12 @@ public class AttackSelectionUI : MonoBehaviour
 
     public Dictionary<string, Sprite> typeSprites = new Dictionary<string, Sprite>();
 
+    public Sprite physicalSprite;
+    public Sprite specialSprite;
+    public Sprite statusSprite;
+
+    private Dictionary<AttackCategory, Sprite> categorySprites = new Dictionary<AttackCategory, Sprite>();
+
 
     [System.Serializable]
     public class AttackInfoUI
@@ -47,6 +53,8 @@ public class AttackSelectionUI : MonoBehaviour
 {
     // Inicializar sprites
     InitializeTypeSprites();
+    InitializeCategorySprites(); // Inicializar sprites de categorías de ataque
+
 }
 
     public void Start()
@@ -77,6 +85,13 @@ private void InitializeTypeSprites()
     typeSprites.Add("Fairy", fairySprite);
 }
 
+private void InitializeCategorySprites()
+    {
+        categorySprites.Add(AttackCategory.Physical, physicalSprite);
+        categorySprites.Add(AttackCategory.Special, specialSprite);
+        categorySprites.Add(AttackCategory.Status, statusSprite);
+    }
+
     public void UpdateAttackInfo(List<PokemonBase.LearnedAttack> attacks)
 {
     Debug.Log($"Cantidad de ataques: {attacks.Count}, Cantidad de paneles: {attackPanels.Count}");
@@ -102,6 +117,15 @@ private void InitializeTypeSprites()
                              $"SpriteRenderer: {(spriteRenderer == null ? "No encontrado" : "Encontrado")}, " +
                              $"Tipo: {attackData.type}");
         }
+
+        if (attackPanels[i].moveTypePanel.TryGetComponent<SpriteRenderer>(out var categorySpriteRenderer) &&
+                categorySprites.TryGetValue(attackData.category, out var categorySprite))
+            {
+                bool wasActive = categorySpriteRenderer.enabled;
+                categorySpriteRenderer.enabled = true;
+                categorySpriteRenderer.sprite = categorySprite;
+                categorySpriteRenderer.enabled = wasActive;
+            }
 
         // Actualizar textos y configuración de paneles
         attackPanels[i].attackName.text = attackData.name;
