@@ -5,6 +5,8 @@ public class AttackButton : MonoBehaviour
 {
     private Button button;
     private string attackName;
+    public GameObject attackPanel; // Agregar esta variable para la referencia al panel
+
 
     private void Awake()
     {
@@ -14,6 +16,9 @@ public class AttackButton : MonoBehaviour
 
     public void OnClick()
     {
+        Debug.Log("Corre y debe desactivar el panel.");
+        attackPanel.SetActive(false); // Oculta el panel al hacer clic en el ataque
+
         if (!string.IsNullOrEmpty(attackName))
         {
             // Convertimos el nombre del ataque para llamar al método adecuado en AttackCatalog

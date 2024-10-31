@@ -25,12 +25,26 @@ public class PokedexUIController : MonoBehaviour
 
     public GameObject attackPanel;
 
+    private PokemonMovement currentPokemonMovement; // Añadir esta variable
+
+
+    public void SetCurrentPokemonMovement(PokemonMovement movement)
+    {
+        currentPokemonMovement = movement; // Guardar la referencia al movimiento del Pokémon
+    }
+
     public void ToggleAttackPanel()
     {
         if (attackPanel != null)
         {
-            // Cambia el estado activo del panel a lo contrario de su estado actual
+            // Cambia el estado activo del panel
             attackPanel.SetActive(!attackPanel.activeSelf);
+
+            // Si el panel está activo, destruye los tiles movibles
+            if (attackPanel.activeSelf && currentPokemonMovement != null)
+            {
+                currentPokemonMovement.DestroyMoveableTiles(); // Llamar al método para destruir tiles
+            }
         }
     }
 

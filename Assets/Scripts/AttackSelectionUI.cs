@@ -7,6 +7,27 @@ public class AttackSelectionUI : MonoBehaviour
 {
     public PokemonBase currentPokemon; // Agrega este campo
 
+    public Sprite normalSprite;
+    public Sprite fightingSprite;
+    public Sprite flyingSprite;
+    public Sprite poisonSprite;
+    public Sprite groundSprite;
+    public Sprite rockSprite;
+    public Sprite bugSprite;
+    public Sprite ghostSprite;
+    public Sprite steelSprite;
+    public Sprite fireSprite;
+    public Sprite waterSprite;
+    public Sprite grassSprite;
+    public Sprite electricSprite;
+    public Sprite psychicSprite;
+    public Sprite iceSprite;
+    public Sprite dragonSprite;
+    public Sprite darkSprite;
+    public Sprite fairySprite;
+
+    public Dictionary<string, Sprite> typeSprites = new Dictionary<string, Sprite>();
+
 
     [System.Serializable]
     public class AttackInfoUI
@@ -22,47 +43,96 @@ public class AttackSelectionUI : MonoBehaviour
 
     public List<AttackInfoUI> attackPanels = new List<AttackInfoUI>(); // 4 paneles, uno por cada ataque
 
-    public void UpdateAttackInfo(List<PokemonBase.LearnedAttack> attacks)
+    public void Awake()
+{
+    // Inicializar sprites
+    InitializeTypeSprites();
+}
+
+    public void Start()
     {
-        Debug.Log($"Cantidad de ataques: {attacks.Count}, Cantidad de paneles: {attackPanels.Count}");
+        gameObject.SetActive(false);
+    }
 
-        int numAttacksToDisplay = Mathf.Min(attacks.Count, attackPanels.Count);
-        for (int i = 0; i < numAttacksToDisplay; i++)
+// Método para inicializar los sprites de tipo
+private void InitializeTypeSprites()
+{
+    typeSprites.Add("Normal", normalSprite);
+    typeSprites.Add("Fighting", fightingSprite);
+    typeSprites.Add("Flying", flyingSprite);
+    typeSprites.Add("Poison", poisonSprite);
+    typeSprites.Add("Ground", groundSprite);
+    typeSprites.Add("Rock", rockSprite);
+    typeSprites.Add("Bug", bugSprite);
+    typeSprites.Add("Ghost", ghostSprite);
+    typeSprites.Add("Steel", steelSprite);
+    typeSprites.Add("Fire", fireSprite);
+    typeSprites.Add("Water", waterSprite);
+    typeSprites.Add("Grass", grassSprite);
+    typeSprites.Add("Electric", electricSprite);
+    typeSprites.Add("Psychic", psychicSprite);
+    typeSprites.Add("Ice", iceSprite);
+    typeSprites.Add("Dragon", dragonSprite);
+    typeSprites.Add("Dark", darkSprite);
+    typeSprites.Add("Fairy", fairySprite);
+}
+
+    public void UpdateAttackInfo(List<PokemonBase.LearnedAttack> attacks)
+{
+    Debug.Log($"Cantidad de ataques: {attacks.Count}, Cantidad de paneles: {attackPanels.Count}");
+
+    int numAttacksToDisplay = Mathf.Min(attacks.Count, attackPanels.Count);
+    for (int i = 0; i < numAttacksToDisplay; i++)
+    {
+        var attack = attacks[i];
+        var attackData = attack.attack;
+
+        // Accedemos al SpriteRenderer incluso cuando el panel está desactivado
+        if (attackPanels[i].attackTypePanel.TryGetComponent<SpriteRenderer>(out var spriteRenderer) &&
+            typeSprites.TryGetValue(attackData.type, out var typeSprite))
         {
-            var attack = attacks[i];
-            var attackData = attack.attack;
+            bool wasActive = spriteRenderer.enabled;  // Guarda el estado original
+            spriteRenderer.enabled = true;            // Activa temporalmente el SpriteRenderer
+            spriteRenderer.sprite = typeSprite;       // Cambia el sprite
+            spriteRenderer.enabled = wasActive;       // Restaura el estado original
+        }
+        else
+        {
+            Debug.LogWarning($"No se pudo actualizar el sprite para el ataque '{attackData.name}'. " +
+                             $"SpriteRenderer: {(spriteRenderer == null ? "No encontrado" : "Encontrado")}, " +
+                             $"Tipo: {attackData.type}");
+        }
 
-            attackPanels[i].attackTypePanel.SetActive(true);
-            attackPanels[i].moveTypePanel.SetActive(true);
+        // Actualizar textos y configuración de paneles
+        attackPanels[i].attackName.text = attackData.name;
+        attackPanels[i].power.text = "Power = " + attackData.power.ToString();
+        attackPanels[i].accuracy.text = "Accuracy = " + attackData.accuracy.ToString();
+        attackPanels[i].description.text = attackData.description;
 
-            attackPanels[i].attackName.text = attackData.name;
-            attackPanels[i].power.text = "Power = " + attackData.power.ToString();
-            attackPanels[i].accuracy.text = "Accuracy = " + attackData.accuracy.ToString();
-            attackPanels[i].description.text = attackData.description;
-
-            attackPanels[i].panel.SetActive(true);
-
-            int index = i; 
-
-            Button attackButton = attackPanels[i].panel.GetComponent<Button>();
-            if (attackButton != null)
+        // Configuración de botones de ataque
+        Button attackButton = attackPanels[i].panel.GetComponent<Button>();
+        if (attackButton != null)
+        {
+            attackButton.onClick.RemoveAllListeners();
+            attackButton.onClick.AddListener(() =>
             {
-                attackButton.onClick.RemoveAllListeners();
-                attackButton.onClick.AddListener(() =>
-                {
-                    string attackNameFormatted = FormatAttackName(attackData.name);
-                    CallAttackMethod(attackNameFormatted); // Aquí llamamos a la función
-                });
-            }
+                string attackNameFormatted = FormatAttackName(attackData.name);
+                CallAttackMethod(attackNameFormatted);
+            });
         }
     }
+}
+
+
 
     private void CallAttackMethod(string attackName)
     {
+        
         var method = typeof(AttackCatalog).GetMethod(attackName);
         if (method != null)
         {
             method.Invoke(AttackCatalog.Instance, new object[] { currentPokemon }); // Cambia 'this' por 'currentPokemon'
+            gameObject.SetActive(false);
         }
         else
         {

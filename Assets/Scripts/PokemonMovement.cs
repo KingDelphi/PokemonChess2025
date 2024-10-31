@@ -470,7 +470,7 @@ private bool IsWithinMapBounds(Vector3 position)
 }
 
 
-    private void DestroyMoveableTiles()
+    public void DestroyMoveableTiles()
     {
 
         // Destruir todos los tiles instanciados
@@ -517,6 +517,8 @@ private bool IsWithinMapBounds(Vector3 position)
         if (attackSelectionUI != null)
         {
             attackSelectionUI.currentPokemon = pokemon;
+            pokedexUIController.SetCurrentPokemonMovement(this); // 'this' es la instancia de PokemonMovement
+
             attackSelectionUI.UpdateAttackInfo(pokemon.attackList);
         }
         else

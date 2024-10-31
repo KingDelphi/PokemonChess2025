@@ -139,7 +139,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!212 &9230490
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -223,6 +223,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6caee6264ee3b403882ab0d6b70fe781, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentPokemon: {fileID: 0}
+  normalSprite: {fileID: -546236905, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  fightingSprite: {fileID: 2106607875, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  flyingSprite: {fileID: 370149853, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  poisonSprite: {fileID: 1844331997, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  groundSprite: {fileID: 1241841331, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  rockSprite: {fileID: -1973628389, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  bugSprite: {fileID: 1192543867, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  ghostSprite: {fileID: 2134917575, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  steelSprite: {fileID: -1815303613, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  fireSprite: {fileID: 2045471335, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  waterSprite: {fileID: 518072353, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  grassSprite: {fileID: 1220426812, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  electricSprite: {fileID: 76270973, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  psychicSprite: {fileID: -2077335145, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  iceSprite: {fileID: 574131824, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  dragonSprite: {fileID: -1065471562, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  darkSprite: {fileID: 1815305477, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
+  fairySprite: {fileID: 928240612, guid: 56bf326e8036d498f98bc12eb13eba9d, type: 3}
   attackPanels:
   - panel: {fileID: 296691475}
     attackTypePanel: {fileID: 94294181}
@@ -1679,6 +1698,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65884e00652e94240b21960928e98275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackPanel: {fileID: 9230489}
 --- !u!114 &296691479
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5522,6 +5542,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65884e00652e94240b21960928e98275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackPanel: {fileID: 9230489}
 --- !u!114 &1508420745
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6001,6 +6022,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65884e00652e94240b21960928e98275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackPanel: {fileID: 9230489}
 --- !u!114 &1569873211
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6328,6 +6350,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65884e00652e94240b21960928e98275, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attackPanel: {fileID: 9230489}
 --- !u!114 &1650263848
 MonoBehaviour:
   m_ObjectHideFlags: 0
