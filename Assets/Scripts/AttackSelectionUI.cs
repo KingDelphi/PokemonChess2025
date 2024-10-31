@@ -5,6 +5,9 @@ using UnityEngine.UI;
 
 public class AttackSelectionUI : MonoBehaviour
 {
+    public PokemonBase currentPokemon; // Agrega este campo
+
+
     [System.Serializable]
     public class AttackInfoUI
     {
@@ -20,25 +23,62 @@ public class AttackSelectionUI : MonoBehaviour
     public List<AttackInfoUI> attackPanels = new List<AttackInfoUI>(); // 4 paneles, uno por cada ataque
 
     public void UpdateAttackInfo(List<PokemonBase.LearnedAttack> attacks)
-{
-    for (int i = 0; i < attackPanels.Count; i++)
     {
-        var attack = attacks[i];
-        var attackData = attack.attack; // Obtenemos el ataque de LearnedAttack
+        Debug.Log($"Cantidad de ataques: {attacks.Count}, Cantidad de paneles: {attackPanels.Count}");
 
-        // Asigna los paneles de ataque
-        attackPanels[i].attackTypePanel.SetActive(true); // Activar panel del tipo de ataque
-        attackPanels[i].moveTypePanel.SetActive(true); // Activar panel de la categoría de ataque
+        int numAttacksToDisplay = Mathf.Min(attacks.Count, attackPanels.Count);
+        for (int i = 0; i < numAttacksToDisplay; i++)
+        {
+            var attack = attacks[i];
+            var attackData = attack.attack;
 
-        attackPanels[i].attackName.text = attackData.name;
-        attackPanels[i].power.text = "Power = " + attackData.power.ToString();
-        attackPanels[i].accuracy.text = "Accuracy = " + attackData.accuracy.ToString();
+            attackPanels[i].attackTypePanel.SetActive(true);
+            attackPanels[i].moveTypePanel.SetActive(true);
 
-        attackPanels[i].description.text = attackData.description;
+            attackPanels[i].attackName.text = attackData.name;
+            attackPanels[i].power.text = "Power = " + attackData.power.ToString();
+            attackPanels[i].accuracy.text = "Accuracy = " + attackData.accuracy.ToString();
+            attackPanels[i].description.text = attackData.description;
 
-        attackPanels[i].panel.SetActive(true); // Activar el panel del ataque
+            attackPanels[i].panel.SetActive(true);
+
+            int index = i; 
+
+            Button attackButton = attackPanels[i].panel.GetComponent<Button>();
+            if (attackButton != null)
+            {
+                attackButton.onClick.RemoveAllListeners();
+                attackButton.onClick.AddListener(() =>
+                {
+                    string attackNameFormatted = FormatAttackName(attackData.name);
+                    CallAttackMethod(attackNameFormatted); // Aquí llamamos a la función
+                });
+            }
+        }
     }
-}
+
+    private void CallAttackMethod(string attackName)
+    {
+        var method = typeof(AttackCatalog).GetMethod(attackName);
+        if (method != null)
+        {
+            method.Invoke(AttackCatalog.Instance, new object[] { currentPokemon }); // Cambia 'this' por 'currentPokemon'
+        }
+        else
+        {
+            Debug.LogWarning($"Método {attackName} no encontrado en AttackCatalog.");
+        }
+    }
+
+    private string FormatAttackName(string attackName)
+    {
+        return attackName.Replace(" ", ""); // Quita los espacios
+    }
+
+
+
+
+
 
 
     private Sprite GetAttackTypeIcon(string type)

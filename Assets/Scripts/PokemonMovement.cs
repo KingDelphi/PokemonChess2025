@@ -516,6 +516,7 @@ private bool IsWithinMapBounds(Vector3 position)
         // Actualiza AttackSelectionUI con los ataques del Pokémon si se encontró
         if (attackSelectionUI != null)
         {
+            attackSelectionUI.currentPokemon = pokemon;
             attackSelectionUI.UpdateAttackInfo(pokemon.attackList);
         }
         else

@@ -1,44 +1,33 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AttackButton : MonoBehaviour
 {
-    private AttackSelectionUI attackSelectionUI;
+    private Button button;
+    private string attackName;
 
-    private void Start()
+    private void Awake()
     {
-        attackSelectionUI = FindObjectOfType<AttackSelectionUI>();
+        button = GetComponent<Button>();
+        button.onClick.AddListener(OnClick);
     }
 
-    public void OnAttackButtonClicked()
-{
-    // Busca AttackSelectionUI
-    attackSelectionUI = FindObjectOfType<AttackSelectionUI>();
-
-    if (attackSelectionUI != null)
+    public void OnClick()
     {
-        // Alterna la visibilidad del AttackSelectionUI
-        attackSelectionUI.gameObject.SetActive(!attackSelectionUI.gameObject.activeSelf);
-
-        // Si se activa, actualiza la información de ataques
-        if (attackSelectionUI.gameObject.activeSelf)
+        if (!string.IsNullOrEmpty(attackName))
         {
-            // Aquí asumimos que Eevee es el Pokémon seleccionado
-            Eevee eevee = FindObjectOfType<Eevee>();
-            if (eevee != null)
+            // Convertimos el nombre del ataque para llamar al método adecuado en AttackCatalog
+            string methodName = attackName.Replace(" ", ""); // Quita los espacios en blanco
+            var method = typeof(AttackCatalog).GetMethod(methodName);
+
+            if (method != null)
             {
-                // Actualiza la información de ataques del Eevee
-                attackSelectionUI.UpdateAttackInfo(eevee.attackList);
+                method.Invoke(AttackCatalog.Instance, new object[] { this });
             }
             else
             {
-                Debug.LogWarning("Eevee no encontrado en la escena.");
+                Debug.LogWarning($"Método {methodName} no encontrado en AttackCatalog.");
             }
         }
     }
-    else
-    {
-        Debug.LogWarning("AttackSelectionUI no encontrado.");
-    }
-}
-
 }
