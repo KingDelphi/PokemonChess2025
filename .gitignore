@@ -1,4 +1,4 @@
-# Unity
+# ============= Unity =============
 /[Ll]ibrary/
 /[Tt]emp/
 /[Oo]bj/
@@ -8,21 +8,28 @@
 /[Mm]emoryCaptures/
 /[Pp]ackages/
 /ProjectSettings/
+/[Uu]serSettings/
 
-# No ignorar los .meta de Assets (importante)
 !/[Aa]ssets/**/*.meta
 
-# Archivos autogenerados
+# ============= Autogenerados =============
 *.csproj
+*.unityproj
 *.sln
 *.user
-*.pidb
 *.suo
+*.userprefs
+*.pidb
+*.booproj
 mono_crash.*
+*.log
+*.tmp
 
-# Sistema operativo
+# ============= IDEs =============
+.idea/
+.vscode/
+*.sln.iml
+
+# ============= OS =============
 .DS_Store
 Thumbs.db
-
-# Logs y otros
-*.log
